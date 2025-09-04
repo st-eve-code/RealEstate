@@ -1,16 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+// src/App.jsx
+import Hero from './components/Hero'
+import FeaturedProperties from './components/FeaturedProperties'
 import './App.css'
-import Home from './pages/Home'
-function App() {
-  const [count, setCount] = useState(0)
 
+function App() {
   return (
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-      <Home/>
-    </h1>
+    <div className="App">
+      <Hero />
+      <FeaturedProperties />
+    </div>
   )
 }
 
