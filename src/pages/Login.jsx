@@ -5,7 +5,6 @@ import google from '../assets/images/google.png';
 function Login() {
   return (
     <section>
-        <Nav_bar/>
         <div className='max-w-[28rem] shadow-lg shadow-gray-200 mx-auto p-8 m-8 rounded-xl'>
             <img src={logo} alt="logo" className='w-36 mx-auto'/>
             <p className='font-Nunito font-medium text-md pt-2 text-gray-500 text-center'>
@@ -22,6 +21,7 @@ function Login() {
                 </label><br />
                 <input type="password" name="password" id="password" maxLength={24} placeholder='****************'
                 autoComplete='yes'  className='mt-3 w-full h-11 rounded-lg outline-blue-400 p-3 font-Nunito font-medium text-md border border-gray-200'/>
+                {/* forgot password link */}
                 <a href="#">
                     <p className='text-blue-600 font-Nunito font-medium text-md pt-4'>
                         forgot password ?
@@ -31,9 +31,9 @@ function Login() {
                     Login
                 </button>
                 {/* link to the login page */}
-                <a href="#">
+                <Link to="/signup">
                     <p className='font-Nunito font-medium text-md text-blue-600 text-center mx-auto pt-8'>Don't have an account ? Signup </p><br /><p className='font-Nunito font-medium text-sm text-gray-500 text-center mx-auto'>OR</p>
-                </a>
+                </Link>
                 <button type="button" className='justify-evenly bg-white text-gray-600 font-Nunito font-medium text-md w-full h-11 rounded-md shadow-md shadow-gray-200 mt-2 flex fle-col items-center text-center gap-2 mx-auto'>
                     <img src={google} alt="" className='w-12'/>
                     Continue with google
