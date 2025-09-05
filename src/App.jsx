@@ -1,13 +1,9 @@
-// src/App.jsx
-import Hero from './components/Hero'
-import FeaturedProperties from './components/FeaturedProperties'
-import './App.css'
-
+import React from 'react'
+import Signup from './pages/Signup'
 function App() {
   return (
-    <div className="App">
-      <Hero />
-      <FeaturedProperties />
+    <div>
+      <Signup/>
     </div>
   )
 }
