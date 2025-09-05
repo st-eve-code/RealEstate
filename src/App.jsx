@@ -4,7 +4,12 @@ import Signup from './pages/Signup';
 // import Login from './pages/Login';
 function App() {
   return (
-   <Signup/>
+    <Router>
+      <Routes>
+        <Route path="/signup" element={<Signup />} />
+        {/* <Route path="/Login" element={<Login />} /> */}
+      </Routes>
+    </Router>
   )
 }
 
