@@ -71,8 +71,8 @@ function Login() {
   };
 
   return (
-    <section>
-      <div className='max-w-[28rem] shadow-xl shadow-gray-300 mx-auto p-8 mt-2 rounded-xl'>
+    <section className='flex justify-center items-center min-h-screen bg-gray-50'>
+      <div className='max-w-[28rem] shadow-lg shadow-gray-300 min-h-screen mx-auto  p-8 rounded-xl'>
         <img src={logo} alt="Rentspot logo" className='w-[11rem] py-2 mx-auto' />
         <p className='font-Nunito font-medium text-md pt-2 text-gray-500 text-center'>
           Welcome back to Rentspot. Fill in the form to login
@@ -137,7 +137,7 @@ function Login() {
             type="button"
             className='justify-center bg-white border text-gray-800 font-Nunito font-medium text-md w-full h-12 rounded-md shadow-md shadow-gray-300 mt-4 flex items-center gap-2 mx-auto'
           >
-            <img src={google} alt="Google logo" className='w-6 h-6' />
+            <img src={google} alt="Google logo" className='w-12 h-13' />
             Continue with Google
           </button>
 

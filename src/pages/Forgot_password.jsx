@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css';
 import logo from '../assets/logo.svg';
-import {ArrowLeft} from 'lucide-react'
+import {ArrowLeft} from 'lucide-react';
 import { Link } from 'react-router-dom';
 function Forgot_password() {
   return (
