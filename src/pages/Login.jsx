@@ -2,7 +2,6 @@ import React from 'react';
 import '../App.css';
 import logo from '../assets/logo.svg';
 import google from '../assets/images/google.png';
-import Nav_bar from '../components/Nav_bar';
 function Login() {
   return (
     <section>
