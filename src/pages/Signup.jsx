@@ -5,8 +5,8 @@ import google from '../assets/images/google.png';
 import { Link } from 'react-router-dom';
 function Signup() {
   return (
-    <section>
-         <div className='max-w-[28rem] shadow-lg shadow-gray-300 mx-auto p-8 rounded-xl'>
+    <section className='flex justify-center items-center min-h-screen bg-gray-50'>
+         <div className='max-w-[28rem] shadow-lg shadow-gray-300 mx-auto  p-8 rounded-xl'>
             <img src={logo} alt="logo" className='w-[11rem] py-4 mx-auto'/>
             <p className='font-Nunito font-medium text-sm  text-gray-500 text-center'>
                 Welcome to Rentspot where every rental property has a calling. Fill in the form to get started.
