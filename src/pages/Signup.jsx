@@ -2,7 +2,6 @@ import React from 'react';
 import '../App.css';
 import logo from '../assets/logo.svg';
 import google from '../assets/images/google.png';
-import { Link } from 'react-router-dom';
 function Signup() {
   return (
     <section>
@@ -31,15 +30,15 @@ function Signup() {
                     Register
                 </button>
                 {/* link to the login page */}
-                <Link to="/login">
+                <a href="#">
                     <p className='font-Nunito font-medium text-md text-blue-600 text-center mx-auto pt-8'>Already have an account ? login </p><br /><p className='font-Nunito font-medium text-sm text-gray-500 text-center mx-auto'>OR</p>
-                </Link>
+                </a>
                 <button type="button" className='justify-evenly bg-white text-gray-600 font-Nunito font-medium text-md w-full h-11 rounded-md shadow-md shadow-gray-200 mt-2 flex fle-col items-center text-center gap-2 mx-auto'>
                     <img src={google} alt="" className='w-12'/>
                     Continue with google
                 </button>
                 <p className='font-Nunito font-medium text-md text-gray-500 text-center pt-8'>
-                    Sign up for an account means you agreed with our <Link to="/terms"><span className='text-blue-600'>Terms & conditions</span></Link> alongside <Link to="/privacy"><span className='text-blue-600'>user privacy</span></Link>
+                    Sign up for an account means you agreed with our <a href="#"><span className='text-blue-600'>Terms</span></a> and <a href="#"><span className='text-blue-600'>Conditions</span></a>
                 </p>
             </form>
          </div>
