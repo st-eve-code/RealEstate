@@ -6,11 +6,11 @@ function Signup() {
   return (
     <section>
          <div className='max-w-[28rem] shadow-lg shadow-gray-200 mx-auto p-8 m-8 rounded-xl'>
-            <img src={logo} alt="logo" className='w-36 mx-auto'/>
-            <p className='font-Nunito font-medium text-sm pt-2 text-gray-500 text-center'>
+            <img src={logo} alt="logo" className='w-36 py-4 mx-auto'/>
+            <p className='font-Nunito font-medium pt-2 text-gray-500 text-center'>
                 Welcome to Rentspot where everything property has a calling.
             </p>
-            <form action="" className='max-w-[25rem] p-10'>
+            <form action="" className='max-w-[28rem] p-10'>
                 <label htmlFor="username" className='font-Nunito font-semibold text-gray-600 text-md'>
                     Username
                 </label><br />
