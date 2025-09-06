@@ -22,7 +22,7 @@ const validateEmail = (email) => {
 };
 
 const validatePhone = (phone) => {
-  const phoneRegex = /^\d{10}$/;
+  const phoneRegex = /^\d{9}$/;
   return phoneRegex.test(phone.replace(/[-\s]/g, ''));
 };
 
@@ -116,9 +116,9 @@ const ContactInfoForm = ({ method, onSubmit, onGoBack, isLoading, error }) => {
       label: 'Phone Number',
       type: 'tel',
       placeholder: '237-68********4',
-      maxLength: 15,
+      maxLength: 9,
       validator: validatePhone,
-      errorMessage: 'Please enter a valid 10-digit phone number'
+      errorMessage: 'Please enter a valid 9-digit phone number'
     }
   };
 
@@ -265,6 +265,15 @@ function OtpVerificationMethod() {
   return (
     <section>
       <div className='mx-auto p-2'>
+        {/* Debug info */}
+        {process.env.NODE_ENV === 'development' && (
+          <div style={{ position: 'fixed', top: 0, right: 0, background: 'rgba(0,0,0,0.8)', color: 'white', padding: '10px', zIndex: 1000 }}>
+            Step: {currentStep}<br/>
+            Method: {selectedMethod}<br/>
+            Contact: {contactInfo}
+          </div>
+        )}
+
         {currentStep === STEPS.METHOD_SELECTION && (
           <MethodSelection
             selectedMethod={selectedMethod}
@@ -281,6 +290,16 @@ function OtpVerificationMethod() {
             onGoBack={handleBackToMethodSelection}
             isLoading={isLoading}
             error={error}
+          />
+        )}
+
+        {currentStep === STEPS.OTP_CONFIRMATION && (
+          <OtpConfirmation
+            method={selectedMethod}
+            contactInfo={contactInfo}
+            onGoBack={handleBackToContactInput}
+            onResend={handleResendOtp}
+            onProceed={handleOtpSubmit}
           />
         )}
       </div>
