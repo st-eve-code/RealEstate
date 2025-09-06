@@ -3,16 +3,23 @@ import '../App.css';
 import logo from '../assets/logo.svg';
 import google from '../assets/images/google.png';
 import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 function Login() {
   // State
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate(); // for future redirection
+
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   // Simulated login API
   const fakeLoginApi = () => {
@@ -100,22 +107,36 @@ function Login() {
           />
           {errors.email && <p className="text-red-500 text-sm mb-3">{errors.email}</p>}
 
-          {/* Password */}
+          {/* Password with Toggle */}
           <label htmlFor="password" className='font-Nunito font-semibold text-gray-800 text-md'>
             Password
           </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            maxLength={30}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete='current-password'
-            placeholder='••••••••••••••••'
-            className={`mt-3 w-full h-11 rounded-lg p-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'} text-gray-700 outline-blue-400 font-Nunito font-medium text-md`}
-          />
-          {errors.password && <p className="text-red-500 text-sm mb-3">{errors.password}</p>}
+          <div className='relative mt-3'>
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              name="password"
+              maxLength={30}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete='current-password'
+              placeholder='••••••••••••••••'
+              className={`w-full h-11 rounded-lg p-3 pr-12 border ${errors.password ? 'border-red-500' : 'border-gray-300'} text-gray-700 outline-blue-400 font-Nunito font-medium text-md`}
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 focus:outline-none'
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? (
+                <EyeOff size={20} />
+              ) : (
+                <Eye size={20} />
+              )}
+            </button>
+          </div>
+          {errors.password && <p className="text-red-500 text-sm mb-3 mt-1">{errors.password}</p>}
 
           <Link to="/otpmethod">
             <p className='text-blue-600 font-Nunito font-medium text-sm pt-4'>

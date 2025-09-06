@@ -12,7 +12,8 @@ const VERIFICATION_METHODS = {
 
 const STEPS = {
   METHOD_SELECTION: 'method-selection',
-  CONTACT_INPUT: 'contact-input'
+  CONTACT_INPUT: 'contact-input',
+  OTP_CONFIRMATION: 'otp-confirmation'
 };
 
 // Validation utilities
@@ -22,7 +23,7 @@ const validateEmail = (email) => {
 };
 
 const validatePhone = (phone) => {
-  const phoneRegex = /^\d{9}$/;
+  const phoneRegex = /^\d{10}$/;
   return phoneRegex.test(phone.replace(/[-\s]/g, ''));
 };
 
@@ -116,9 +117,9 @@ const ContactInfoForm = ({ method, onSubmit, onGoBack, isLoading, error }) => {
       label: 'Phone Number',
       type: 'tel',
       placeholder: '237-68********4',
-      maxLength: 9,
+      maxLength: 15,
       validator: validatePhone,
-      errorMessage: 'Please enter a valid 9-digit phone number'
+      errorMessage: 'Please enter a valid 10-digit phone number'
     }
   };
 
@@ -204,6 +205,113 @@ const ContactInfoForm = ({ method, onSubmit, onGoBack, isLoading, error }) => {
   );
 };
 
+// OTP Confirmation Component
+const OtpConfirmation = ({ method, contactInfo, onGoBack, onResend, onProceed, isLoading, isVerifying }) => {
+  const [otpValues, setOtpValues] = useState(['', '', '', '', '']);
+  const [error, setError] = useState('');
+  
+  const isEmail = method === VERIFICATION_METHODS.EMAIL;
+
+  const handleInputChange = (index, value) => {
+    if (value.length <= 1 && /^[0-9]*$/.test(value)) {
+      const newOtpValues = [...otpValues];
+      newOtpValues[index] = value;
+      setOtpValues(newOtpValues);
+      setError('');
+
+      // Auto-focus next input
+      if (value && index < 4) {
+        const nextInput = document.getElementById(`key${index + 2}`);
+        if (nextInput) nextInput.focus();
+      }
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    // Handle backspace to go to previous input
+    if (e.key === 'Backspace' && !otpValues[index] && index > 0) {
+      const prevInput = document.getElementById(`key${index}`);
+      if (prevInput) prevInput.focus();
+    }
+  };
+
+  const handleSubmit = () => {
+    const otpCode = otpValues.join('');
+    if (otpCode.length !== 5) {
+      setError('Please enter all 5 digits');
+      return;
+    }
+    onProceed(otpCode);
+  };
+
+  return (
+    <div className='mt-[10rem] m-5 p-5 bg-white shadow-lg rounded-xl shadow-gray-200 max-w-[28rem] mx-auto'>
+      <h1 className='font-Nunito font-bold text-lg text-gray-800 text-center mx-auto'>
+        Verify OTP Code
+      </h1>
+      <p className='font-Nunito font-medium text-md text-center mx-auto text-gray-600'>
+        Enter the OTP verification code sent to you through {isEmail ? 'email' : 'SMS'}
+      </p>
+      <p className='font-Nunito font-medium text-sm text-center mx-auto text-gray-500 mt-2'>
+        Code sent to: {contactInfo}
+      </p>
+
+      {error && (
+        <div className='mt-4 p-3 bg-red-50 border border-red-200 rounded-lg'>
+          <p className='font-Nunito text-sm text-red-600 text-center'>{error}</p>
+        </div>
+      )}
+
+      <div className='flex flex-wrap justify-evenly items-center mt-4'>
+        {[1, 2, 3, 4, 5].map((num, index) => (
+          <input
+            key={num}
+            type="text"
+            name={`key${num}`}
+            id={`key${num}`}
+            value={otpValues[index]}
+            onChange={(e) => handleInputChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            placeholder='*'
+            maxLength="1"
+            disabled={isVerifying}
+            className={`bg-white shadow-md shadow-gray-200 max-w-[3rem] rounded-lg h-10 font-medium font-Nunito text-md text-gray-600 text-center outline-blue-400 border border-gray-300 ${
+              isVerifying ? 'bg-gray-50 cursor-not-allowed' : ''
+            }`}
+          />
+        ))}
+      </div>
+
+      <button 
+        type="button" 
+        onClick={onResend}
+        disabled={isLoading || isVerifying}
+        className='font-Nunito font-medium text-sm text-blue-600 hover:text-blue-700 disabled:text-blue-400 transition-colors text-center mx-auto pt-8 bg-transparent border-none cursor-pointer w-full'
+      >
+        {isLoading ? 'Resending...' : "Didn't receive the code? Resend"}
+      </button>
+
+      <button 
+        type="button" 
+        onClick={handleSubmit}
+        disabled={isVerifying}
+        className='font-Nunito font-medium text-white text-md bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors rounded-lg p-3 w-full mt-4'
+      >
+        {isVerifying ? 'Processing...' : 'Proceed'}
+      </button>
+
+      <button
+        type="button"
+        onClick={onGoBack}
+        disabled={isVerifying}
+        className='font-Nunito font-medium text-md text-blue-600 hover:text-blue-700 disabled:text-blue-400 transition-colors text-center mx-auto pt-4 flex items-center justify-center gap-3 w-full bg-transparent border-none cursor-pointer'
+      >
+        <ArrowLeft size={20} />Go back
+      </button>
+    </div>
+  );
+};
+
 // Back Link Component
 const BackLink = () => (
   <Link to="/login">
@@ -217,7 +325,9 @@ const BackLink = () => (
 function OtpVerificationMethod() {
   const [currentStep, setCurrentStep] = useState(STEPS.METHOD_SELECTION);
   const [selectedMethod, setSelectedMethod] = useState('');
+  const [contactInfo, setContactInfo] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState('');
 
   const handleMethodSelect = (method) => {
@@ -240,16 +350,22 @@ function OtpVerificationMethod() {
     setError('');
     
     try {
+      // Store contact info for OTP screen
+      setContactInfo(contactValue);
+      
       // Simulate API call
       console.log(`Sending verification code via ${selectedMethod} to:`, contactValue);
       
       // Replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Handle success (redirect to OTP input page)
-      // navigate('/otp-input');
+      console.log('Moving to OTP confirmation step');
+      
+      // On success, move to OTP confirmation step
+      setCurrentStep(STEPS.OTP_CONFIRMATION);
       
     } catch (err) {
+      console.error('Error sending verification code:', err);
       setError('Failed to send verification code. Please try again.');
     } finally {
       setIsLoading(false);
@@ -257,23 +373,70 @@ function OtpVerificationMethod() {
   };
 
   const handleBackToMethodSelection = () => {
-    console.log('Going back to method selection'); // Debug log
+    console.log('Going back to method selection');
     setCurrentStep(STEPS.METHOD_SELECTION);
     setError('');
+  };
+
+  const handleBackToContactInput = () => {
+    console.log('Going back to contact input');
+    setCurrentStep(STEPS.CONTACT_INPUT);
+    setError('');
+  };
+
+  const handleResendOtp = async () => {
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      console.log(`Resending verification code via ${selectedMethod} to:`, contactInfo);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('OTP resent successfully');
+    } catch (err) {
+      console.error('Error resending OTP:', err);
+      setError('Failed to resend code. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOtpSubmit = async (otpCode) => {
+    setIsVerifying(true);
+    setError('');
+    
+    try {
+      console.log('OTP Code entered:', otpCode);
+      console.log('Verifying OTP...');
+      
+      // Simulate OTP verification API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // For demonstration purposes, let's simulate both success and failure scenarios
+      // You can replace this with actual API validation logic
+      const isValidOtp = otpCode === '12345'; // Example: only '12345' is valid
+      
+      if (isValidOtp) {
+        console.log('OTP verification successful');
+        // Handle successful verification
+        // Example: navigate to dashboard or show success message
+        // navigate('/dashboard');
+        alert('OTP verification successful! Redirecting...');
+      } else {
+        console.log('OTP verification failed');
+        setError('Invalid OTP code. Please try again.');
+      }
+      
+    } catch (err) {
+      console.error('Error verifying OTP:', err);
+      setError('Failed to verify OTP. Please try again.');
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   return (
     <section>
       <div className='mx-auto p-2'>
-        {/* Debug info */}
-        {process.env.NODE_ENV === 'development' && (
-          <div style={{ position: 'fixed', top: 0, right: 0, background: 'rgba(0,0,0,0.8)', color: 'white', padding: '10px', zIndex: 1000 }}>
-            Step: {currentStep}<br/>
-            Method: {selectedMethod}<br/>
-            Contact: {contactInfo}
-          </div>
-        )}
-
         {currentStep === STEPS.METHOD_SELECTION && (
           <MethodSelection
             selectedMethod={selectedMethod}
@@ -300,6 +463,8 @@ function OtpVerificationMethod() {
             onGoBack={handleBackToContactInput}
             onResend={handleResendOtp}
             onProceed={handleOtpSubmit}
+            isLoading={isLoading}
+            isVerifying={isVerifying}
           />
         )}
       </div>
