@@ -45,7 +45,7 @@ function Signup() {
   };
 
   return (
-    <section className='flex justify-center items-center min-h-screen bg-gray-50'>
+    <section className='flex justify-center items-center  bg-gray-50'>
       <div className='max-w-[28rem] shadow-lg shadow-gray-300 mx-auto p-8 rounded-xl'>
         <img src={logo} alt="Rentspot logo" className='w-[11rem] py-4 mx-auto' />
         <p className='font-Nunito font-medium text-sm text-gray-500 text-center'>
