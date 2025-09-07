@@ -45,9 +45,9 @@ function Signup() {
   };
 
   return (
-    <section className='flex justify-center items-center min-h-screen lg:h-[40rem] p-[0.5rem] bg-gray-50'>
-      <div className='max-w-[28rem] shadow-lg shadow-gray-300 mx-auto px-8  rounded-xl'>
-        <img src={logo} alt="Rentspot logo" className='w-[11rem] py-4 mx-auto' />
+    <section className='flex justify-center items-center min-h-screen xl:h-[40rem] bg-gray-50'>
+      <div className='max-w-[28rem] bg-white shadow-lg shadow-gray-300 mx-auto p-[2rem] rounded-xl'>
+        <img src={logo} alt="Rentspot logo" className='w-[11rem] mx-auto' />
         <p className='font-Nunito font-medium text-sm text-gray-500 text-center'>
           Welcome to Rentspot where every rental property has a calling. Fill in the form to get started.
         </p>
@@ -133,7 +133,7 @@ function Signup() {
 
           {/* Link to login */}
           <Link to="/login">
-            <p className='font-Nunito font-medium text-sm underline text-blue-600 text-center mx-auto pt-8'>
+            <p className='font-Nunito font-medium text-sm underline text-blue-600 text-center mx-auto pt-6'>
               Already have an account? Log in
             </p>
           </Link>
