@@ -245,7 +245,7 @@ const OtpConfirmation = ({ method, contactInfo, onGoBack, onResend, onProceed, i
   };
 
   return (
-    <div className='mt-[10rem] m-5 p-5 py-10 xl:mt-[20rem] bg-white shadow-lg rounded-xl shadow-gray-200/40 max-w-[28rem] mx-auto'>
+    <div className='mt-[5rem] m-5 p-5 py-10 xl:mt-[20rem] bg-white shadow-lg rounded-xl shadow-gray-200/40 max-w-[28rem] mx-auto'>
       <h1 className='font-Nunito font-bold text-lg text-gray-800 text-center mx-auto'>
         Verify OTP Code
       </h1>
