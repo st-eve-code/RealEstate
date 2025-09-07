@@ -29,7 +29,7 @@ const validatePhone = (phone) => {
 
 // Method Selection Component
 const MethodSelection = ({ selectedMethod, onMethodSelect, onProceed, error }) => (
-  <div className='mt-10 min-h-2.5 lg:mt-[5rem] xl:mt-[20rem] p-5 py-10 bg-white shadow-lg rounded-xl shadow-gray-200 max-w-[28rem] mx-auto'>
+  <div className='mt-10 min-h-2.5 lg:mt-[5rem] xl:mt-[20rem] p-5 py-10 bg-white shadow-lg rounded-xl shadow-gray-200/40 max-w-[28rem] mx-auto'>
     <h1 className='font-Nunito font-bold text-lg text-gray-800 text-center mx-auto'>
       Select a method of verification
     </h1>
@@ -150,7 +150,7 @@ const ContactInfoForm = ({ method, onSubmit, onGoBack, isLoading, error }) => {
   };
 
   return (
-    <div className='max-w-[28rem] shadow-lg shadow-gray-200 mx-auto mt-10 py-10  lg:mt-[10rem] xl:mt-[20rem] bg-white rounded-xl'>
+    <div className='max-w-[28rem] shadow-lg shadow-gray-200/40 mx-auto mt-10 py-10 px-4  lg:mt-[10rem] xl:mt-[20rem] bg-white rounded-xl'>
       <img src={logo} alt="logo" className='w-[11rem] py-2 mx-auto' />
       <p className='font-Nunito font-medium text-md pt-2 text-gray-600 text-center'>
         Enter the {isEmail ? 'email' : 'phone number'} associated with your account
@@ -245,7 +245,7 @@ const OtpConfirmation = ({ method, contactInfo, onGoBack, onResend, onProceed, i
   };
 
   return (
-    <div className='mt-[10rem] m-5 p-5 py-10 xl:mt-[20rem] bg-white shadow-lg rounded-xl shadow-gray-200 max-w-[28rem] mx-auto'>
+    <div className='mt-[10rem] m-5 p-5 py-10 xl:mt-[20rem] bg-white shadow-lg rounded-xl shadow-gray-200/40 max-w-[28rem] mx-auto'>
       <h1 className='font-Nunito font-bold text-lg text-gray-800 text-center mx-auto'>
         Verify OTP Code
       </h1>
