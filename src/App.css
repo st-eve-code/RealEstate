@@ -1,0 +1,14 @@
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-2px); }
+}
+.animate-shake {
+  animation: shake 0.3s ease;
+}
+
+@font-face {
+  font-family: 'Custom';
+  src: url('../src/assets/fonts/Nunito/Nunito-Regular.ttf');
+}

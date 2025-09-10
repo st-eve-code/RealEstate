@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-
+import { useNavigate } from 'react-router-dom';
 function Client_data() {
     const [openDropdown, setOpenDropdown] = useState(null);
     const [selections, setSelections] = useState({
@@ -25,7 +25,7 @@ function Client_data() {
     const toggleDropdown = (dropdown) => {
         setOpenDropdown(openDropdown === dropdown ? null : dropdown);
     };
-
+    const navigate = useNavigate();
     return (
         <section className="p-6">
             <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">

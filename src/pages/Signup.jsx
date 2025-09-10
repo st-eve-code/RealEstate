@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import '../App.css';
 import logo from '../assets/logo.svg';
 import google from '../assets/images/google.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -14,11 +15,15 @@ function Signup() {
 
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [shake, setShake] = useState(false); // for shaking animation
+  const navigate = useNavigate();
 
+  // Handle form input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Validate form inputs
   const validate = () => {
     const newErrors = {};
     if (!formData.username.trim()) newErrors.username = 'Username is required';
@@ -29,24 +34,42 @@ function Signup() {
     return newErrors;
   };
 
+  // Form submission handler
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log('Form submitted:', formData);
-      // TODO: API call or further logic
+      // Show SweetAlert with confetti
+      Swal.fire({
+        title: '🎉 Congrats!',
+        text: 'You have successfully created your account!',
+        icon: 'success',
+        confirmButtonText: 'Continue',
+        backdrop: `
+          rgba(0,10,0,0.4)
+          url("https://cdn.jsdelivr.net/gh/aniftyco/party-js@1.0.4/assets/confetti.gif")
+          left top
+          no-repeat
+        `,
+      }).then(() => {
+        // Navigate to Welcome component after confirmation
+        navigate('/dashboard');
+      });
     }
   };
 
+  // Toggle password visibility and trigger shake animation
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+    setShake(true);
+    setTimeout(() => setShake(false), 300); // Reset shake after animation
   };
 
   return (
     <section className='flex justify-center items-center min-h-screen xl:h-[40rem] bg-gray-50'>
-      <div className='max-w-[28rem] bg-white shadow-lg shadow-gray-300 mx-auto p-[2rem] rounded-xl'>
+      <div className='max-w-[28rem] border bg-white shadow-lg shadow-gray-300 mx-auto p-[2rem] rounded-xl'>
         <img src={logo} alt="Rentspot logo" className='w-[11rem] mx-auto' />
         <p className='font-Nunito font-medium text-sm text-gray-500 text-center'>
           Welcome to Rentspot where every rental property has a calling. Fill in the form to get started.
@@ -61,8 +84,8 @@ function Signup() {
             <input
               type="text"
               name="username"
-              maxLength={24}
               id="username"
+              maxLength={24}
               placeholder='John Doe'
               autoComplete='on'
               value={formData.username}
@@ -80,8 +103,8 @@ function Signup() {
             <input
               type="email"
               name="email"
-              maxLength={24}
               id="email"
+              maxLength={24}
               placeholder='your@email.com'
               autoComplete='on'
               value={formData.email}
@@ -100,21 +123,41 @@ function Signup() {
               type={showPassword ? 'text' : 'password'}
               name="password"
               id="password"
-              maxLength={25}
+              maxLength={30}
               placeholder='****************'
               autoComplete='off'
               value={formData.password}
               onChange={handleChange}
-              className={`mt-2 w-full h-11 rounded-lg outline-blue-400 p-3 pr-10 font-Nunito font-medium text-md border text-gray-700 ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+              className={`mt-2 w-full h-11 rounded-lg outline-blue-400 p-3 pr-12 font-Nunito font-medium text-md border text-gray-700 ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
             />
-            <span
+
+            {/* Eye icon with shake animation */}
+            {/* using the password error to align the eye icon in the middle right corner */}
+            {errors.password ?  
+            <button
+              type="button"
               onClick={togglePasswordVisibility}
-              className="absolute top-1/2 right-4 transform translate-y-2 cursor-pointer text-gray-500 hover:text-gray-700"
-              title={showPassword ? 'Hide password' : 'Show password'}
+              className={`absolute top-1/2  text-gray-500  right-4 transform -translate-y-2 transition duration-300 ${
+                shake ? 'animate-shake' : ''
+              }`}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-            </span>
-            {errors.password && <p className='text-red-500 text-sm mt-1'>{errors.password}</p>}
+              {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+            </button> 
+            : 
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className={`absolute top-1/2 pt-2 text-gray-500  right-4 transform -translate-y-1 transition duration-300 ${
+                shake ? 'animate-shake' : ''
+              }`}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+            </button>}
+            
+
+            {errors.password ? <span className="text-red-500 text-sm mt-1">{errors.password}</span> : ''}
           </div>
 
           {/* Register Button */}
