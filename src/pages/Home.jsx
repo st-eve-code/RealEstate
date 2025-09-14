@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import Questions from '../components/Questions';
 import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon } from 'lucide-react';
 import Properties from '../components/Properties';
 import image1 from '../assets/images/6.jpg';
 import image2 from '../assets/images/7.jpg';
 import image3 from '../assets/images/8.jpg';
 import '../App.css';
+import { GrTransaction } from 'react-icons/gr';
 function Home() {
-  const [Selected, setSelected] = useState('');
-  const handleClick= (value) => {
-    setSelected(value)
-    console.log(value)
-  }
+  const navigate = useNavigate()
   const values= [
     {
       icon: MapPinHouse,
@@ -74,8 +73,8 @@ function Home() {
           </div>
         </div>
         {/* values */}
-        <div className='mt-24'>
-          <h2 className='font-Custom font-semibold text-lg lg:text-2xl py-2 text-gray-800 flex justify-center items-center '>
+        <div className='mt-20'>
+          <h2 className='font-Custom font-semibold text-2xl px-2 text-center  py-2 text-gray-800 flex justify-center items-center '>
             We Locate, Rent, Advertise Properties
           </h2>
           <p className='font-medium font-Custom text-gray-500 text-sm flex justify-center items-center text-center px-3'>Let us be your got-to partner for all your real estate endeavors</p>
@@ -97,19 +96,71 @@ function Home() {
           {/* different properties (apartments, studios, hostels). this comes from 
           the backend of the api containing the properties  */}
           <div className='mt-32'>
-             <h2 className='font-Custom font-semibold text-lg lg:text-2xl py-2 text-gray-800 flex justify-center items-center '>
+             <h2 className='font-Custom font-semibold text-2xl text-center px-2 lg:text-2xl py-2 text-gray-800 flex justify-center items-center '>
               We Help You To Make Better Deals
             </h2>
             <p className='font-medium font-Custom text-gray-500 text-sm flex justify-center items-center text-center px-3'>Rely on our seasoned professionals who posses in-depth knowledge of the real estate landscape.</p>
             {/* search filter based on user clicks or selection */}
-            <div className='grid max-md:grid-cols-1 justify-center mx-5 md:mx-32 mt-8 items-center gap-2 grid-cols-4'>
-              <button id='apartment' onClick={()=>handleClick('apartment')} className='font-Custom font-semibold text-sm hover:text-blue-600 text-gray-600 w-full bg-gray-50 py-3 hover:bg-gray-100 rounded-md hover:border-b-blue-300 border-b-2 my-4'>Apartments</button>
-              <button id='studio' onClick={()=>handleClick('Studios')} className='font-Custom font-semibold text-sm hover:text-blue-600 text-gray-600 w-full bg-gray-50 py-3 hover:bg-gray-100 rounded-md hover:border-b-blue-300 border-b-2 my-4'>Studios</button>
-              <button id='hostel' onClick={()=>handleClick('Hostels')} className='font-Custom font-semibold text-sm hover:text-blue-600 text-gray-600 w-full bg-gray-50 py-3 hover:bg-gray-100 rounded-md hover:border-b-blue-300 border-b-2 my-4'>Hostels</button>
-              <button id='all' onClick={()=>handleClick('all')} className='font-Custom font-semibold text-sm text-gray-700 hover:text-blue-600 w-full bg-gray-50 py-3 hover:bg-gray-100 rounded-md hover:border-b-blue-300 border-b-2 my-4'>All Properties</button>
+            <Properties/>
+            <button onClick={()=> navigate('/dashboard')} className='bg-blue-600 text-white font-Custom font-medium text-sm rounded-full max-w-[10rem] px-5 py-2 my-5 flex justify-center items-center mx-auto'>
+              Load More
+            </button>
+          </div>
+          <div className='mt-32'>
+             <h2 className='font-Custom font-semibold text-2xl text-center px-2 lg:text-2xl py-2 text-gray-800 flex justify-center items-center '>
+              Why Choose Us ?
+            </h2>
+            <p className='font-medium font-Custom text-gray-500 text-sm flex justify-center items-center text-center px-3'>
+              Your satisfaction is our priority, and we look forward to being the key to unlock your renting process
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-12 justify-center lg:px-20 mt-4 gap-8 md:mt-20">
+              <div className='md:col-span-7 border bg-white shadow-md shadow-gray-200/40 border-gray-200/30 mx-2 rounded-xl p-4 max-w-[28rem]'>
+                <div className='flex justify-items-start gap-3 items-center'>
+                    <button className='max-w-[4rem] h-12 bg-white shadow-xl shadow-gray-300/40 p-4 rounded-lg py-4'>
+                      <GrTransaction size={20} className='text-blue-500'/>
+                    </button>
+                    <div>
+                      <h2 className='font-Custom font-medium text-lg text-gray-800'>
+                        Transparent Transaction Process
+                      </h2>
+                      <p className='font-Custom font-medium text-xs text-gray-400'>
+                        We kick off our partnership with open and honest communication
+                      </p>
+                    </div>
+                </div>
+                <Questions/>
+              </div>
+              <div className='md:col-span-5 max-w-[24rem] p-3 mx-2 bg-white rounded-lg shadow-sm border border-gray-100/60 overflow-hidden transition-all duration-200 hover:shadow-md'>
+                <div className='flex-1'>
+                  <div className='flex justify-items-start gap-3 items-center'>
+                      <button className='max-w-[4rem] h-12 bg-white shadow-xl shadow-gray-300/40 p-4 rounded-lg py-4'>
+                        <GrTransaction size={20} className='text-blue-500'/>
+                      </button>
+                      <div>
+                        <h2 className='font-Custom font-medium text-lg text-gray-800'>
+                          Easy Payment
+                        </h2>
+                        <p className='font-Custom font-medium text-xs text-gray-400 max-w-[18rem]'>
+                          Our commitment to providing an easy payment process ensures
+                          that you can navigate the financial aspects of your platform transactions effortlessly.
+                        </p>
+                      </div>
+                  </div>
+                  {/* main payment methods */}
+                  <div className='mt-10'>
+                    <div className='flex items-center justify-center gap-4'>
+                      <img src={image1} alt="" className='object-cover w-full h-20 rounded-lg' />
+                      
+                    </div>
+                    <div className='flex items-center justify-center gap-4 mt-5'>
+                      <img src={image1} alt="" className='object-cover w-full h-20 rounded-lg' />
+                      <img src={image1} alt="" className='object-cover w-full h-20 rounded-lg' />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <Properties/>
         </div>
     </section>
   )
