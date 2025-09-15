@@ -1,8 +1,8 @@
 import React from 'react';
 import logo from '../assets/logo.svg';
-import { IonIcon } from '@ionic/react';
-import { logoInstagram, logoLinkedin, logoTwitter, logoFacebook, call, mail} from 'ionicons/icons';
+import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaPhone, FaEnvelope } from 'react-icons/fa';
 import '../App.css';
+
 function Footer() {
   return (
     <section className='bg-gray-100 mt-[5rem]'>
@@ -12,23 +12,23 @@ function Footer() {
             <h1 className='font-Nunito font-bold text-2xl text-gray-800 text-left max-w-[20rem] pt-3'>Discover real estate ideas from your own ease !</h1>
             <div className='flex items-center gap-4 pt-5'>
                 <a href="#">
-                   <div className='bg-blue-600 size-7 rounded-full p-1'>
-                        <IonIcon icon={logoFacebook} className='size-5 text-white'/>
+                   <div className='bg-blue-600 size-7 rounded-full p-1 flex items-center justify-center'>
+                        <FaFacebook className='text-white text-sm'/>
                     </div>
                 </a>
                 <a href="#">
-                   <div className='bg-blue-600 size-7 rounded-full p-1'>
-                        <IonIcon icon={logoInstagram} className='size-5 text-white'/>
+                   <div className='bg-blue-600 size-7 rounded-full p-1 flex items-center justify-center'>
+                        <FaInstagram className='text-white text-sm'/>
                     </div>
                 </a>
                 <a href="#">
-                    <div className='bg-blue-600 size-7 rounded-full p-1'>
-                        <IonIcon icon={logoLinkedin} className='size-5 text-white'/>
+                    <div className='bg-blue-600 size-7 rounded-full p-1 flex items-center justify-center'>
+                        <FaLinkedin className='text-white text-sm'/>
                     </div>
                 </a>
                 <a href="#">
-                    <div className='bg-blue-600 size-7 rounded-full p-1'>
-                        <IonIcon icon={logoTwitter} className='size-5 text-white'/>
+                    <div className='bg-blue-600 size-7 rounded-full p-1 flex items-center justify-center'>
+                        <FaTwitter className='text-white text-sm'/>
                     </div>
                 </a>
             </div>
@@ -113,15 +113,15 @@ function Footer() {
                     Contacts
                 </h1>
                 <div className='flex items-center gap-2 text-gray-600'>
-                    <IonIcon icon={call} className='text-gray-500'/>
+                    <FaPhone className='text-gray-500'/>
                     <p className='font-Nunito font-medium text-md'>+237681987524</p>
                 </div>
                 <div className='flex items-center gap-2 text-gray-600 py-2'>
-                    <IonIcon icon={call} className='text-gray-500'/>
+                    <FaPhone className='text-gray-500'/>
                     <p className='font-Nunito font-medium text-md'>+237651820548</p>
                 </div>
                 <div className='flex items-center gap-2 text-gray-600'>
-                    <IonIcon icon={mail} className='text-gray-500'/>
+                    <FaEnvelope className='text-gray-500'/>
                     <p className='font-Nunito font-medium text-md'>rentspot@gmail.com</p>
                 </div>
             </div>
