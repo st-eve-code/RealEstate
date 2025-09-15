@@ -1,13 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Questions from '../components/Questions';
-import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon } from 'lucide-react';
+import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map } from 'lucide-react';
+import Navbar from '../components/Navbar';
 import Properties from '../components/Properties';
 import image1 from '../assets/images/6.jpg';
 import image2 from '../assets/images/7.jpg';
 import image3 from '../assets/images/8.jpg';
+import plan from '../assets/images/plan.jpg';
+import map from '../assets/houses/map.jpg';
 import '../App.css';
-import { GrTransaction } from 'react-icons/gr';
+import { GrPlan, GrTransaction } from 'react-icons/gr';
 function Home() {
   const navigate = useNavigate()
   const values= [
@@ -29,6 +32,7 @@ function Home() {
   ]
   return (
     <section className='w-full mx-auto'>
+      <Navbar/>
         <div className='bg-white border px-1 py-1 my-4 border-gray-300  mx-auto w-[17.8rem] h-10 rounded-full flex items-center justify-between '>
           <button className='bg-blue-400 text-white font-Custom font-medium px-1 text-md w-20 flex items-center justify-center h-8 rounded-full'>New</button>
           <p className='h-9 font-Custom text-gray-400 font-normal text-sm  pt-2'>We've just released an update</p>
@@ -83,7 +87,7 @@ function Home() {
             {
               values.map(
                 (items) => {const Icons = items.icon; return (
-                  <div className='bg-white border col-span-4 shadow-xl shadow-gray-400/20 max-w-[22rem] mt-1 p-3 rounded-2xl'>
+                  <div className='bg-white border col-span-4 shadow-md shadow-gray-400/20 max-w-[22rem] mt-1 p-3  rounded-2xl'>
                     <div className='size-10 my-2 bg-blue-600 p-1 rounded-md'><Icons size={30} className='text-white'/></div>
                      <h1 className='font-Custom font-bold text-lg text-gray-700 py-2'>{items.title}</h1>
                      <p className='font-Custom font-medium text-sm text-gray-600 text-left'>{items.body}</p>
@@ -113,7 +117,7 @@ function Home() {
             <p className='font-medium font-Custom text-gray-500 text-sm flex justify-center items-center text-center px-3'>
               Your satisfaction is our priority, and we look forward to being the key to unlock your renting process
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-12 justify-center lg:px-20 mt-4 gap-8 md:mt-20">
+            <div className="grid grid-cols-1 md:grid-cols-12 justify-center lg:px-20 mt-4 gap-8 md:mt-16">
               <div className='md:col-span-7 border bg-white shadow-md shadow-gray-200/40 border-gray-200/30 mx-2 rounded-xl p-4 max-w-[28rem]'>
                 <div className='flex justify-items-start gap-3 items-center'>
                     <button className='max-w-[4rem] h-12 bg-white shadow-xl shadow-gray-300/40 p-4 rounded-lg py-4'>
@@ -130,8 +134,8 @@ function Home() {
                 </div>
                 <Questions/>
               </div>
-              <div className='md:col-span-5 max-w-[24rem] p-3 mx-2 bg-white rounded-lg shadow-sm border border-gray-100/60 overflow-hidden transition-all duration-200 hover:shadow-md'>
-                <div className='flex-1'>
+              <div className='md:col-span-5 max-w-full py-3 px-4  mx-2 bg-white rounded-lg shadow-sm border border-gray-100/60 overflow-hidden transition-all duration-200 hover:shadow-md'>
+                <div className='flex-1 mx-auto '>
                   <div className='flex justify-items-start gap-3 items-center'>
                       <button className='max-w-[4rem] h-12 bg-white shadow-xl shadow-gray-300/40 p-4 rounded-lg py-4'>
                         <GrTransaction size={20} className='text-blue-500'/>
@@ -156,6 +160,52 @@ function Home() {
                       <img src={image1} alt="" className='object-cover w-full h-20 rounded-lg' />
                       <img src={image1} alt="" className='object-cover w-full h-20 rounded-lg' />
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* second section for the map and others */}
+            <div className='px-3 md:px-1 lg:px-10 mt-8 grid grid-cols-1 md:grid-cols-12 md:mx-0.5 lg:mx-12 items-center gap-8 mx-auto '>
+              <div className='md:col-span-5 max-w-full p-3 py-4 mx-auto bg-white rounded-lg shadow-sm border border-gray-100/60 overflow-hidden transition-all duration-200 hover:shadow-md'>
+                <div className='flex-1'>
+                  <div className='flex justify-items-start gap-3 items-center'>
+                      <button className='max-w-[4rem] h-12 bg-white shadow-xl shadow-gray-300/40 p-4 rounded-lg py-4'>
+                        <GrPlan size={20} className='text-blue-500'/>
+                      </button>
+                      <div>
+                        <h2 className='font-Custom font-medium text-lg text-gray-800'>
+                          Data Security
+                        </h2>
+                        <p className='font-Custom font-medium text-xs text-gray-400 max-w-[18rem]'>
+                          Time is valuable and your needs are unique, that's why we have curated a subscription.
+                        </p>
+                      </div>
+                  </div>
+                  {/* subscription plan */}
+                  <div className='mt-12'>
+                    <img src={plan} alt="plan" className='rounded-lg'/>
+                  </div>
+                </div>
+              </div>
+              {/* map */}
+              <div className='md:col-span-7 w-full py-3 mx-auto px-2 rounded-lg shadow-sm border border-gray-100/60 overflow-hidden transition-all duration-200 hover:shadow-md'>
+                <div className='flex-1'>
+                  <div className='flex justify-items-start gap-3 items-center'>
+                      <button className='max-w-[4rem] h-12 bg-white shadow-xl shadow-gray-300/40 p-4 rounded-lg py-4'>
+                        <Map size={20} className='text-blue-500'/>
+                      </button>
+                      <div>
+                        <h2 className='font-Custom font-medium text-lg text-gray-800'>
+                          Comprehensive Property Listings
+                        </h2>
+                        <p className='font-Custom font-medium text-xs text-gray-400 max-w-[28rem]'>
+                          We pride ourselves on offering an extensive and diverse range of property listings to carter to every unique situation
+                        </p>
+                      </div>
+                  </div>
+                  {/* subscription plan */}
+                  <div className='mt-5'>
+                    <img src={map} alt="map" className='rounded-lg h-[14rem] w-full object-cover '/>
                   </div>
                 </div>
               </div>

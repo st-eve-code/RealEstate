@@ -1,452 +1,320 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Menu, X, ChevronDown, User, Globe } from 'lucide-react';
+import Logo from '../assets/logo.svg'; // Update this path
+import { Link } from 'react-router-dom';
+const Nav_bar = () => {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [activeDropdown, setActiveDropdown] = useState(null);
+    const [currentLanguage, setCurrentLanguage] = useState('en');
 
-const Navbar = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState(null);
-  const [selectedLanguage, setSelectedLanguage] = useState('EN');
-  const dropdownRef = useRef(null);
+    // Available languages
+    const Languages = [
+        { code: 'en', name: 'English' },
+        { code: 'fr', name: 'Français' },
+    ];
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setOpenDropdown(null);
-      }
+    // Close dropdowns when clicking anywhere
+    useEffect(() => {
+        const handleClickOutside = () => {
+            if (activeDropdown) {
+                setActiveDropdown(null);
+            }
+            if (isMenuOpen) {
+                setIsMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [activeDropdown, isMenuOpen]);
+
+    const toggleMenu = (e) => {
+        e.stopPropagation();
+        setIsMenuOpen(!isMenuOpen);
+        if (isMenuOpen) setActiveDropdown(null);
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+    const toggleDropdown = (e, dropdown) => {
+        e.stopPropagation();
+        setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
     };
-  }, []);
 
-  const toggleDropdown = (dropdownName) => {
-    setOpenDropdown(openDropdown === dropdownName ? null : dropdownName);
-  };
+    const handleLanguageChange = (langCode) => {
+        setCurrentLanguage(langCode);
+        setActiveDropdown(null);
+    };
 
-  const closeAllDropdowns = () => {
-    setOpenDropdown(null);
-    setIsMobileMenuOpen(false);
-  };
+    // Navigation data
+    const propertyTypes = [
+        { name: 'Hostels', link: '/properties/hostels' },
+        { name: 'Apartments', link: '/properties/apartments' },
+        { name: 'Studios', link: '/properties/studios' },
+    ];
 
-  const handleLanguageChange = (language) => {
-    setSelectedLanguage(language);
-    setOpenDropdown(null);
-  };
+    const servicesLinks = [
+        { name: 'Cite Cleaning', link: '/services/management' },
+        { name: 'Pickups', link: '/services/valuation' },
+    ];
 
-  const languages = [
-    { code: 'EN', name: 'English', flag: '🇺🇸' },
-    { code: 'FR', name: 'Français', flag: '🇫🇷' },
-   
-  ];
+    const accountLinks = [
+        { name: 'Login', link: '/login' },
+        { name: 'Sign Up', link: '/signup' },
+    ];
 
-  const centerNavigationItems = [
-    
-    {
-      name: 'Resources',
-      dropdown: [
-        { name: 'About', href: '/about' },
-        { name: 'Contact', href: '/contact' },
-        { name: 'Blog', href: '/blog' }
-      ]
-    },
-    {
-      name: 'Rent',
-      dropdown: [
-        { name: 'Apartment', href: '/rent/apartment' },
-        { name: 'Hostel', href: '/rent/hostel' },
-        { name: 'Studio', href: '/rent/studio' }
-      ]
-    },
-    {
-      name: 'Services',
-      dropdown: [
-        { name: 'Property Cleaning', href: '/services/cleaning' },
-        { name: 'Load Carrier', href: '/services/carrier' },
-        { name: 'Help', href: '/services/help' }
-      ]
-    }
-  ];
+    // Mobile menu component
+    const MobileMenu = () => (
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg z-50">
+            <div className="px-2 pt-2 pb-4 space-y-1">
+                <MobileNavItem href="/" text="Home" />
+                <MobileNavItem href="/about" text="About" />
+                
+                <MobileDropdown 
+                    title="Properties"
+                    items={propertyTypes}
+                    isOpen={activeDropdown === 'propertiesMobile'}
+                    toggle={(e) => toggleDropdown(e, 'propertiesMobile')}
+                />
+                
+                <MobileNavItem href="/plans" text="Plans" />
+                
+                
+                <MobileDropdown
+                    icon={<Globe size={16} className="mr-2" />}
+                    title={Languages.find(l => l.code === currentLanguage)?.name}
+                    items={Languages}
+                    isOpen={activeDropdown === 'languageMobile'}
+                    toggle={(e) => toggleDropdown(e, 'languageMobile')}
+                    isLanguage
+                />
+                
+                <AccountMobileDropdown />
+            </div>
+        </div>
+    );
 
-  const rightNavigationItems = [
-    {
-      name: 'Account',
-      dropdown: [
-        { name: 'Login', href: '/login' },
-        { name: 'Signup', href: '/signup' }
-      ]
-    }
-  ];
+    // Account dropdown for mobile
+    const AccountMobileDropdown = () => {
+        const [showServices, setShowServices] = useState(false);
 
-  return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50" ref={dropdownRef}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Left - Logo and Home */}
-          <div className="flex items-center space-x-8">
-            <div className="flex-shrink-0">
-              <a href="/" className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
-                Logo
-              </a>
+        return (
+            <div>
+                <button
+                    onClick={(e) => toggleDropdown(e, 'accountMobile')}
+                    className="w-full flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                >
+                    <User className="mr-2" size={16} />
+                    <span>Account</span>
+                    <ChevronDown
+                        className={`ml-auto transition-transform ${activeDropdown === 'accountMobile' ? 'transform rotate-180' : ''}`}
+                        size={16}
+                    />
+                </button>
+                
+                {activeDropdown === 'accountMobile' && (
+                    <div className="pl-6 py-2 space-y-1">
+                        {accountLinks.map(link => (
+                            <a
+                                key={link.name}
+                                href={link.link}
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {link.name}
+                            </a>
+                        ))}
+                        
+                        <button 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowServices(!showServices);
+                            }}
+                            className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                        >
+                            <div className="flex justify-between items-center">
+                                <span>Services</span>
+                                <ChevronDown
+                                    className={`transition-transform ${showServices ? 'transform rotate-180' : ''}`}
+                                    size={12}
+                                />
+                            </div>
+                        </button>
+                        
+                        {showServices && (
+                            <div className="pl-4 space-y-1">
+                                {servicesLinks.map(service => (
+                                    <a
+                                        key={service.name}
+                                        href={service.link}
+                                        className="block px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        {service.name}
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    // Reusable components
+    const MobileNavItem = ({ href, text }) => (
+        <a
+            href={href}
+            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+            onClick={(e) => {
+                e.stopPropagation();
+                setIsMenuOpen(false);
+            }}
+        >
+            {text}
+        </a>
+    );
+
+    const MobileDropdown = ({ icon, title, items, isOpen, toggle, isLanguage = false }) => (
+        <div>
+            <button
+                onClick={toggle}
+                className="w-full flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+            >
+                {icon}
+                <span className={icon ? 'ml-2' : ''}>{title}</span>
+                <ChevronDown
+                    className={`ml-auto transition-transform ${isOpen ? 'transform rotate-180' : ''}`}
+                    size={16}
+                />
+            </button>
+            {isOpen && (
+                <div className="pl-6 py-2 space-y-1" onClick={(e) => e.stopPropagation()}>
+                    {items.map((item) => (
+                        <a
+                            key={item.name || item.code}
+                            href={isLanguage ? '#' : item.link}
+                            className={`block px-4 py-2 text-sm ${isLanguage && item.code === currentLanguage ? 'text-blue-600 font-medium' : 'text-gray-700'} hover:bg-blue-50 hover:text-blue-600`}
+                            onClick={(e) => {
+                                if (isLanguage) {
+                                    e.preventDefault();
+                                    handleLanguageChange(item.code);
+                                }
+                                setActiveDropdown(null);
+                            }}
+                        >
+                            {item.name}
+                        </a>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+
+    const DesktopDropdown = ({ title, icon, items, dropdownKey, isLanguage = false }) => (
+        <div className="relative">
+            <button
+                onClick={(e) => toggleDropdown(e, dropdownKey)}
+                className="flex items-center px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600"
+            >
+                {icon}
+                <span className={icon ? 'ml-1' : ''}>
+                    {isLanguage ? Languages.find(l => l.code === currentLanguage)?.name : title}
+                </span>
+                <ChevronDown className="ml-1" size={16} />
+            </button>
+            {activeDropdown === dropdownKey && (
+                <div className="absolute right-0 z-10 mt-2 w-48 bg-white rounded-md shadow-lg py-1" onClick={(e) => e.stopPropagation()}>
+                    {items.map((item) => (
+                        <React.Fragment key={item.name || item.code}>
+                            {item.isDivider ? (
+                                <div className="border-t border-gray-200 my-1"></div>
+                            ) : (
+                                <a
+                                    href={isLanguage ? '#' : item.link}
+                                    className={`block px-4 py-2 text-sm ${isLanguage && item.code === currentLanguage ? 'text-blue-600 font-medium' : 'text-gray-700'} hover:bg-blue-50 hover:text-blue-600`}
+                                    onClick={(e) => {
+                                        if (isLanguage) {
+                                            e.preventDefault();
+                                            handleLanguageChange(item.code);
+                                        }
+                                        setActiveDropdown(null);
+                                    }}
+                                >
+                                    {item.name}
+                                </a>
+                            )}
+                        </React.Fragment>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+
+    return (
+        <nav className="bg-white shadow-sm h-13 top-0 sticky z-50">
+            <div className="max-w-7xl mx-auto sm:px-20 lg:px-10">
+                <div className="flex justify-between h-16">
+                    {/* Logo - using imported SVG */}
+                    <div className="flex-shrink-0 flex items-center">
+                        <img src={Logo} alt="RentSpot Logo" className="h-8 w-auto" />
+                    </div>
+                    
+                    {/* Desktop navigation */}
+                    <div className="hidden md:flex items-center space-x-4">
+                        <Link to="/" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600">
+                            Home
+                        </Link>
+                        <a href="/about" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600">
+                            About
+                        </a>
+                        
+                        <DesktopDropdown 
+                            title="Properties"
+                            items={propertyTypes} 
+                            dropdownKey="properties" 
+                        />
+                        
+                        <a href="/plans" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600">
+                            Contact Us
+                        </a>
+                        
+                        
+                        <DesktopDropdown
+                            icon={<Globe size={16} />}
+                            title="Language"
+                            items={Languages}
+                            dropdownKey="language"
+                            isLanguage
+                        />
+                        
+                        <DesktopDropdown 
+                            icon={<User size={16} />}
+                            title="Account"
+                            items={[
+                                ...accountLinks,
+                                { isDivider: true },
+                                ...servicesLinks
+                            ]} 
+                            dropdownKey="account" 
+                        />
+                    </div>
+                    
+                    {/* Mobile menu button */}
+                    <div className="flex items-center md:hidden">
+                        <button
+                            onClick={toggleMenu}
+                            className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none"
+                            aria-expanded={isMenuOpen}
+                        >
+                            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                        </button>
+                    </div>
+                </div>
             </div>
             
-          </div>
-
-          {/* Center - Main Navigation (Resources, Rent, Services) */}
-          <div className="hidden md:flex items-center space-x-1">
-            {/* Home Link - Desktop Only */}
-            <div className="hidden md:block">
-              <a
-                href="/"
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
-              >
-                Home
-              </a>
-            </div>
-            {centerNavigationItems.map((item) => (
-              <div key={item.name} className="relative">
-                <button
-                  onClick={() => toggleDropdown(item.name)}
-                  className="flex items-center px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  {item.name}
-                  <svg
-                    className={`ml-1 h-4 w-4 transition-transform duration-200 ${
-                      openDropdown === item.name ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {/* Dropdown Menu */}
-                {openDropdown === item.name && (
-                  <div className="absolute top-full left-0 mt-1 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                    <div className="py-1" role="menu">
-                      {item.dropdown.map((dropdownItem) => (
-                        <a
-                          key={dropdownItem.name}
-                          href={dropdownItem.href}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                          role="menuitem"
-                          onClick={closeAllDropdowns}
-                        >
-                          {dropdownItem.name}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-            {/* Language Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => toggleDropdown('language')}
-                className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-                <span className="mr-1">
-                  {languages.find(lang => lang.code === selectedLanguage)?.flag}
-                </span>
-                {selectedLanguage}
-                <svg
-                  className={`ml-1 h-4 w-4 transition-transform duration-200 ${
-                    openDropdown === 'language' ? 'rotate-180' : ''
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {/* Language Dropdown Menu */}
-              {openDropdown === 'language' && (
-                <div className="absolute top-full right-0 mt-1 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 max-h-60 overflow-y-auto z-50">
-                  <div className="py-1" role="menu">
-                    {languages.map((language) => (
-                      <button
-                        key={language.code}
-                        onClick={() => handleLanguageChange(language.code)}
-                        className={`w-full text-left flex items-center px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 transition-colors ${
-                          selectedLanguage === language.code 
-                            ? 'bg-blue-50 text-blue-600 font-medium' 
-                            : 'text-gray-700'
-                        }`}
-                        role="menuitem"
-                      >
-                        <span className="mr-3">{language.flag}</span>
-                        <div>
-                          <div className="font-medium">{language.code}</div>
-                          <div className="text-xs text-gray-500">{language.name}</div>
-                        </div>
-                        {selectedLanguage === language.code && (
-                          <svg className="ml-auto h-4 w-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-            {/* Right - Account and Language */}
-            <div className="hidden md:flex items-center space-x-2">
-              {/* Account Dropdown */}
-              {rightNavigationItems.map((item) => (
-                <div key={item.name} className="relative">
-                  <button
-                    onClick={() => toggleDropdown(item.name)}
-                    className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  >
-                    {item.name}
-                    <svg
-                      className={`ml-1 h-4 w-4 transition-transform duration-200 ${
-                        openDropdown === item.name ? 'rotate-180' : ''
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-
-                  {/* Account Dropdown Menu */}
-                  {openDropdown === item.name && (
-                    <div className="absolute top-full right-0 mt-1 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                      <div className="py-1" role="menu">
-                        {item.dropdown.map((dropdownItem) => (
-                          <a
-                            key={dropdownItem.name}
-                            href={dropdownItem.href}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                            role="menuitem"
-                            onClick={closeAllDropdowns}
-                          >
-                            {dropdownItem.name}
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"
-              aria-expanded="false"
-            >
-              <span className="sr-only">Open main menu</span>
-              {!isMobileMenuOpen ? (
-                <svg className="block h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              ) : (
-                <svg className="block h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Navigation */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-50 border-t">
-            {/* Home Link - Mobile */}
-            <a
-              href="/"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-white transition-colors"
-              onClick={closeAllDropdowns}
-            >
-              Home
-            </a>
-
-            {/* Center Navigation Items - Mobile */}
-            {centerNavigationItems.map((item) => (
-              <div key={item.name}>
-                <button
-                  onClick={() => toggleDropdown(`mobile-${item.name}`)}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {item.name}
-                  <svg
-                    className={`h-4 w-4 transition-transform duration-200 ${
-                      openDropdown === `mobile-${item.name}` ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {/* Mobile Dropdown */}
-                {openDropdown === `mobile-${item.name}` && (
-                  <div className="pl-6 space-y-1">
-                    {item.dropdown.map((dropdownItem) => (
-                      <a
-                        key={dropdownItem.name}
-                        href={dropdownItem.href}
-                        className="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-white transition-colors"
-                        onClick={closeAllDropdowns}
-                      >
-                        {dropdownItem.name}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {/* Account - Mobile */}
-            {rightNavigationItems.map((item) => (
-              <div key={item.name}>
-                <button
-                  onClick={() => toggleDropdown(`mobile-${item.name}`)}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {item.name}
-                  <svg
-                    className={`h-4 w-4 transition-transform duration-200 ${
-                      openDropdown === `mobile-${item.name}` ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {/* Mobile Account Dropdown */}
-                {openDropdown === `mobile-${item.name}` && (
-                  <div className="pl-6 space-y-1">
-                    {item.dropdown.map((dropdownItem) => (
-                      <a
-                        key={dropdownItem.name}
-                        href={dropdownItem.href}
-                        className="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-white transition-colors"
-                        onClick={closeAllDropdowns}
-                      >
-                        {dropdownItem.name}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {/* Mobile Language Dropdown */}
-            <div>
-              <button
-                onClick={() => toggleDropdown('mobile-language')}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <div className="flex items-center">
-                  <span className="mr-2">
-                    {languages.find(lang => lang.code === selectedLanguage)?.flag}
-                  </span>
-                  Language ({selectedLanguage})
-                </div>
-                <svg
-                  className={`h-4 w-4 transition-transform duration-200 ${
-                    openDropdown === 'mobile-language' ? 'rotate-180' : ''
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {/* Mobile Language Dropdown */}
-              {openDropdown === 'mobile-language' && (
-                <div className="pl-6 space-y-1 max-h-48 overflow-y-auto">
-                  {languages.map((language) => (
-                    <button
-                      key={language.code}
-                      onClick={() => handleLanguageChange(language.code)}
-                      className={`w-full text-left flex items-center px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600 hover:bg-white transition-colors ${
-                        selectedLanguage === language.code 
-                          ? 'bg-white text-blue-600 font-semibold' 
-                          : 'text-gray-600'
-                      }`}
-                    >
-                      <span className="mr-3">{language.flag}</span>
-                      <div className="flex-1">
-                        <div>{language.code}</div>
-                        <div className="text-xs text-gray-500">{language.name}</div>
-                      </div>
-                      {selectedLanguage === language.code && (
-                        <svg className="h-4 w-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-    </nav>
-  );
+            {/* Mobile menu */}
+            {isMenuOpen && <MobileMenu />}
+        </nav>
+    );
 };
 
-// Demo component to show the navbar in action
-const App = () => {
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      
-      {/* Demo content */}
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow p-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to Our Website</h1>
-              <p className="text-gray-600">
-                This navigation bar features a three-section layout with main services in the center and account functions on the right.
-              </p>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            <div className="bg-blue-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">Resources</h3>
-              <p className="text-blue-700">Access our comprehensive resources including about us, contact information, and blog posts.</p>
-            </div>
-            <div className="bg-green-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-green-900 mb-2">Rent</h3>
-              <p className="text-green-700">Find the perfect rental property including apartments, hostels, and studios.</p>
-            </div>
-            <div className="bg-purple-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-purple-900 mb-2">Services</h3>
-              <p className="text-purple-700">Explore our services including property cleaning, load carrier, and help desk.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default App;
+export default Nav_bar;
