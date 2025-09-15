@@ -4,13 +4,17 @@ import Questions from '../components/Questions';
 import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Properties from '../components/Properties';
-import image1 from '../assets/images/6.jpg';
-import image2 from '../assets/images/7.jpg';
+import image1 from '../assets/images/mobile-money.jpg';
+import image2 from '../assets/images/mastercard.png';
+import image6 from '../assets/images/paypal.jpg'
 import image3 from '../assets/images/8.jpg';
+import image4 from '../assets/images/9.jpg';
+import image5 from '../assets/images/10.jpg';
 import plan from '../assets/images/plan.jpg';
 import map from '../assets/houses/map.jpg';
 import '../App.css';
 import { GrPlan, GrTransaction } from 'react-icons/gr';
+import Footer from './Footer';
 function Home() {
   const navigate = useNavigate()
   const values= [
@@ -65,13 +69,13 @@ function Home() {
           </div>
           <div className="col-span-4 sm:col-span-4 md:col-span-4 lg:col-span-4 rounded-2xl overflow-hidden">
             <img 
-              src={image2}
+              src={image5}
               alt="Image 2" 
               className="w-full h-full object-cover"
             />
           </div>
           <div className='col-span-6 sm:col-span-6 md:col-span-6 lg:col-span-6 rounded-2xl overflow-hidden'>
-            <img src={image1}
+            <img src={image4}
              alt="image1"
              className='object-cover h-full w-full' />
           </div>
@@ -102,7 +106,7 @@ function Home() {
           <div className='mt-32'>
              <h2 className='font-Custom font-semibold text-2xl text-center px-2 lg:text-2xl py-2 text-gray-800 flex justify-center items-center '>
               We Help You To Make Better Deals
-            </h2>
+             </h2>
             <p className='font-medium font-Custom text-gray-500 text-sm flex justify-center items-center text-center px-3'>Rely on our seasoned professionals who posses in-depth knowledge of the real estate landscape.</p>
             {/* search filter based on user clicks or selection */}
             <Properties/>
@@ -118,7 +122,7 @@ function Home() {
               Your satisfaction is our priority, and we look forward to being the key to unlock your renting process
             </p>
             <div className="grid grid-cols-1 md:grid-cols-12 justify-center lg:px-20 mt-4 gap-8 md:mt-16">
-              <div className='md:col-span-7 border bg-white shadow-md shadow-gray-200/40 border-gray-200/30 mx-2 rounded-xl p-4 max-w-[28rem]'>
+              <div className='md:col-span-7 border bg-white shadow-md shadow-gray-200/60 border-gray-200/40 mx-2 rounded-xl p-4 max-w-[28rem] transition-colors duration-100 hover:shadow-md'>
                 <div className='flex justify-items-start gap-3 items-center'>
                     <button className='max-w-[4rem] h-12 bg-white shadow-xl shadow-gray-300/40 p-4 rounded-lg py-4'>
                       <GrTransaction size={20} className='text-blue-500'/>
@@ -153,12 +157,12 @@ function Home() {
                   {/* main payment methods */}
                   <div className='mt-10'>
                     <div className='flex items-center justify-center gap-4'>
-                      <img src={image1} alt="" className='object-cover w-full h-20 rounded-lg' />
+                      <img src={image1} alt="" className='object-fill w-full h-24 rounded-lg' />
                       
                     </div>
-                    <div className='flex items-center justify-center gap-4 mt-5'>
-                      <img src={image1} alt="" className='object-cover w-full h-20 rounded-lg' />
-                      <img src={image1} alt="" className='object-cover w-full h-20 rounded-lg' />
+                    <div className='flex items-center justify-center gap-4 mt-1'>
+                      <img src={image2} alt="" className='object-fill w-full h-20 rounded-lg' />
+                      <img src={image6} alt="" className='object-fill w-full h-28 rounded-lg' />
                     </div>
                   </div>
                 </div>
@@ -211,7 +215,27 @@ function Home() {
               </div>
             </div>
           </div>
+          {/* end of why choose us */}
+          {/* testimonials */}
+          <div className='mt-8 md:mt-28'>
+             <h2 className='font-Custom font-semibold text-2xl text-center px-2 lg:text-2xl py-2 text-gray-800 flex justify-center items-center '>
+              Hear From Our Clients Around The World
+             </h2>
+            <p className='font-medium font-Custom text-gray-500 text-sm flex justify-center items-center text-center px-3'>explore the first hand experience of individuals who have us with their real estate journeys.</p>
+            {/* search filter based on user clicks or selection */}
+          </div>
+          {/* section for  */}
+          <div className='mt-8 md:mt-28 w-full bg-blue-700/80 py-8'>
+             <h2 className='font-Custom font-semibold text-3xl text-center px-2 lg:text-4xl md:max-w-[24rem] mx-auto py-2 text-white flex justify-center items-center '>
+              Personalized Services, Globally Recognized 
+             </h2>
+            <p className='font-medium font-Custom text-white text-sm flex justify-center md:max-w-[34rem] leading-5 mx-auto items-center text-center px-3'>whether renting, investing or advertising, our clients appreciate the tailored approach that transcends geographical boundaries.</p>
+            <button className='max-w-[10rem] mx-auto flex mt-5 h-8 bg-white font-Custom font-medium text-xs text-blue-700 rounded-full px-8 py-2'>
+              Contact Us
+            </button>
+          </div>
         </div>
+        <Footer/>
     </section>
   )
 }

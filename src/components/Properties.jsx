@@ -153,7 +153,7 @@ function List_products() {
       className={`px-3 py-2 rounded-lg font-Custom font-medium text-sm transition-all duration-200 transform hover:scale-105 ${
         isActive 
           ? 'bg-blue-500 text-white shadow-md' 
-          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          : 'bg-gray-100 text-gray-700 hover:bg-gray-300'
       }`}
     >
       {label}
