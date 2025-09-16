@@ -80,7 +80,7 @@ function Login() {
   return (
     <section className='flex justify-center items-center min-h-screen xl:h-[40rem] p-[0.5rem] bg-gray-50'>
       <div className='max-w-[28rem] bg-white shadow-lg shadow-gray-300  mx-auto  px-8 rounded-xl py-5'>
-        <img src={logo} alt="Rentspot logo" className='w-[11rem] py-2 mx-auto' />
+        <img src={logo} onClick={()=>navigate('/')} alt="RentSpot Logo" className="h-9 lg:h-10 w-auto cursor-pointer mx-auto" />
         <p className='font-Nunito font-medium text-md pt-2 text-gray-500 text-center'>
           Welcome back to Rentspot. Fill in the form to login
         </p>

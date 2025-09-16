@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown, User, Globe } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Logo from '../assets/logo.svg'; // Update this path
 import { Link } from 'react-router-dom';
 const Nav_bar = () => {
@@ -13,6 +14,8 @@ const Nav_bar = () => {
         { code: 'fr', name: 'Français' },
     ];
 
+    //passing useNavigate to navigate for better accessibility
+    const navigate = useNavigate();
     // Close dropdowns when clicking anywhere
     useEffect(() => {
         const handleClickOutside = () => {
@@ -130,7 +133,7 @@ const Nav_bar = () => {
                             }}
                             className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                         >
-                            <div className="flex justify-between items-center">
+                            <div className="flex justify-between items-center font-Custom font-normal">
                                 <span>Services</span>
                                 <ChevronDown
                                     className={`transition-transform ${showServices ? 'transform rotate-180' : ''}`}
@@ -251,11 +254,11 @@ const Nav_bar = () => {
 
     return (
         <nav className="bg-white shadow-sm h-13 top-0 sticky z-50">
-            <div className="max-w-7xl mx-auto sm:px-20 lg:px-10">
+            <div className="md:max-w-7xl w-full mx-auto px-3 lg:px-10">
                 <div className="flex justify-between h-16">
                     {/* Logo - using imported SVG */}
                     <div className="flex-shrink-0 flex items-center">
-                        <img src={Logo} alt="RentSpot Logo" className="h-8 w-auto" />
+                        <img src={Logo} onClick={()=>navigate('/')} alt="RentSpot Logo" className="h-9 lg:h-9 w-auto cursor-pointer" />
                     </div>
                     
                     {/* Desktop navigation */}

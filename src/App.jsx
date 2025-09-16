@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import OtpVerificationMethod from  './pages/ForgotPassword';
 import Reset_password from './pages/Reset_password';
 import Client_data from './pages/Client_data';
+import Testimonial from './components/ScrollTestimonials';
 import './App.css';
 import Dashboard from './pages/Dashboard';
 function App() {

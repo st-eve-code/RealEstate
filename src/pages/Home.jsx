@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Questions from '../components/Questions';
 import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import Testimonial from '../components/ScrollTestimonials';
 import Properties from '../components/Properties';
 import image1 from '../assets/images/mobile-money.jpg';
 import image2 from '../assets/images/mastercard.png';
@@ -223,6 +224,7 @@ function Home() {
              </h2>
             <p className='font-medium font-Custom text-gray-500 text-sm flex justify-center items-center text-center px-3'>explore the first hand experience of individuals who have us with their real estate journeys.</p>
             {/* search filter based on user clicks or selection */}
+            <Testimonial/>
           </div>
           {/* section for  */}
           <div className='mt-8 md:mt-28 w-full bg-blue-700/80 py-8'>
