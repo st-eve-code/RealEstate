@@ -5,7 +5,6 @@ import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map } from 'lucide-rea
 import Navbar from '../components/Navbar';
 import Testimonial from '../components/ScrollTestimonials';
 import Properties from '../components/Properties';
-
 import image1 from '../assets/images/mobile-money.jpg';
 import image2 from '../assets/images/mastercard.png';
 import image6 from '../assets/images/paypal.jpg'
@@ -13,10 +12,9 @@ import image3 from '../assets/images/8.jpg';
 import image4 from '../assets/images/9.jpg';
 import image5 from '../assets/images/10.jpg';
 import plan from '../assets/images/plan.jpg';
-import map from '../assets/houses/map.jpg';
 import '../App.css';
 import L from 'leaflet';
-import { GrPlan, GrTransaction } from 'react-icons/gr';
+import { GrMoney, GrPlan, GrTransaction } from 'react-icons/gr';
 import Footer from './Footer';
 
 function Home() {
@@ -184,7 +182,7 @@ function Home() {
                 <div className='flex-1 mx-auto '>
                   <div className='flex justify-items-start gap-3 items-center'>
                       <button className='max-w-[4rem] h-12 bg-white shadow-xl shadow-gray-300/40 p-4 rounded-lg py-4'>
-                        <GrTransaction size={20} className='text-blue-500'/>
+                        <GrMoney size={20} className='text-blue-500'/>
                       </button>
                       <div>
                         <h2 className='font-Custom font-medium text-lg text-gray-800'>
@@ -252,8 +250,8 @@ function Home() {
                       </div>
                   </div>
                   {/* Map container */}
-                  <div className='mt-5'>
-                    <div ref={mapRef} className="h-[230px] w-full rounded-lg"></div>
+                  <div className='mt-5 z-10'>
+                    <div ref={mapRef} className="h-[230px] w-full rounded-lg z-0"></div>
                   </div>
                 </div>
               </div>
