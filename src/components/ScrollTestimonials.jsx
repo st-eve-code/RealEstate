@@ -58,7 +58,7 @@ function Testimonial(){
                                         <p className='font-Custom font-normal text-xs text-blue-400/95'>{data.position}</p>
                                     </div>
                                 </div>
-                                <h2 className='py-3 font-Custom font-normal text-xs text-gray-600'>
+                                <h2 className='py-3 font-Custom font-normal text-xs text-gray-800'>
                                     {data.body}
                                 </h2>
                                 {starRating ? (
@@ -95,7 +95,7 @@ function Testimonial(){
                                         <p className='font-Custom font-normal text-xs text-blue-400/95'>{data.position}</p>
                                     </div>
                                 </div>
-                                <h2 className='py-3 font-Custom font-normal text-xs text-gray-600'>
+                                <h2 className='py-3 font-Custom font-normal text-xs text-gray-800'>
                                     {data.body}
                                 </h2>
                                 {starRating ? (
@@ -139,7 +139,7 @@ function Testimonial(){
                                         <p className='font-Custom font-normal text-xs text-blue-400/95'>{data.position}</p>
                                     </div>
                                 </div>
-                                <h2 className='py-3 font-Custom font-normal text-xs text-gray-600'>
+                                <h2 className='py-3 font-Custom font-normal text-xs text-gray-800'>
                                     {data.body}
                                 </h2>
                                 {starRating ? (
@@ -176,7 +176,7 @@ function Testimonial(){
                                         <p className='font-Custom font-normal text-xs text-blue-400/95'>{data.position}</p>
                                     </div>
                                 </div>
-                                <h2 className='py-3 font-Custom font-normal text-xs text-gray-600'>
+                                <h2 className='py-3 font-Custom font-normal text-xs text-gray-800'>
                                     {data.body}
                                 </h2>
                                 {starRating ? (

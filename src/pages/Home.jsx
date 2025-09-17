@@ -5,6 +5,7 @@ import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map } from 'lucide-rea
 import Navbar from '../components/Navbar';
 import Testimonial from '../components/ScrollTestimonials';
 import Properties from '../components/Properties';
+
 import image1 from '../assets/images/mobile-money.jpg';
 import image2 from '../assets/images/mastercard.png';
 import image6 from '../assets/images/paypal.jpg'
@@ -123,7 +124,7 @@ function Home() {
               Your satisfaction is our priority, and we look forward to being the key to unlock your renting process
             </p>
             <div className="grid grid-cols-1 md:grid-cols-12 justify-center lg:px-20 mt-4 gap-8 md:mt-16">
-              <div className='md:col-span-7 border bg-white shadow-md shadow-gray-200/60 border-gray-200/40 mx-2 rounded-xl p-4 max-w-[28rem] transition-colors duration-100 hover:shadow-md'>
+              <div className='md:col-span-7 border bg-white shadow-md shadow-gray-200/60 border-gray-200/40 mx-2 rounded-xl p-4 max-w-full transition-colors duration-100 hover:shadow-md'>
                 <div className='flex justify-items-start gap-3 items-center'>
                     <button className='max-w-[4rem] h-12 bg-white shadow-xl shadow-gray-300/40 p-4 rounded-lg py-4'>
                       <GrTransaction size={20} className='text-blue-500'/>
@@ -139,7 +140,7 @@ function Home() {
                 </div>
                 <Questions/>
               </div>
-              <div className='md:col-span-5 max-w-full py-3 px-4  mx-2 bg-white rounded-lg shadow-sm border border-gray-100/60 overflow-hidden transition-all duration-200 hover:shadow-md'>
+              <div className='md:col-span-5 max-w-[28rem] py-3 px-4  mx-2 bg-white rounded-lg shadow-sm border border-gray-100/60 overflow-hidden transition-all duration-200 hover:shadow-md'>
                 <div className='flex-1 mx-auto '>
                   <div className='flex justify-items-start gap-3 items-center'>
                       <button className='max-w-[4rem] h-12 bg-white shadow-xl shadow-gray-300/40 p-4 rounded-lg py-4'>
@@ -156,14 +157,18 @@ function Home() {
                       </div>
                   </div>
                   {/* main payment methods */}
-                  <div className='mt-10'>
-                    <div className='flex items-center justify-center gap-4'>
-                      <img src={image1} alt="" className='object-fill w-full h-24 rounded-lg' />
-                      
+                  <div className='mt-10 mx-auto'>
+                    <div className='flex items-center gap-1 md:gap-3 justify-center'>
+                      <img src={image1} alt="mtn" className='object-cover max-w-full h-12 rounded-md' />
+                      <img src={image2} alt="mastercard" className='object-cover w-auto h-14 rounded-lg' />
+                      <img src={image6} alt="paypal" className='object-cover w-auto h-16 rounded-lg' />
+
+
                     </div>
-                    <div className='flex items-center justify-center gap-4 mt-1'>
-                      <img src={image2} alt="" className='object-fill w-full h-20 rounded-lg' />
-                      <img src={image6} alt="" className='object-fill w-full h-28 rounded-lg' />
+                    <div className='flex items-center justify-center mt-6 w-full'>
+                      <p className='font-Custom font-normal text-xs text-gray-500 leading-4 flex-wrap w-full'>
+                        <span className='text-red-600/80 font-bold text-sm'>Note !</span> not all payment methods are available for now. We are still under continous development , but we can assure you that these missing features will soon be made available for everyone .
+                      </p>
                     </div>
                   </div>
                 </div>
