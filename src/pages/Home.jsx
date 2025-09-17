@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Questions from '../components/Questions';
 import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map } from 'lucide-react';
@@ -15,9 +15,49 @@ import image5 from '../assets/images/10.jpg';
 import plan from '../assets/images/plan.jpg';
 import map from '../assets/houses/map.jpg';
 import '../App.css';
+import L from 'leaflet';
 import { GrPlan, GrTransaction } from 'react-icons/gr';
 import Footer from './Footer';
+
 function Home() {
+  const mapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+
+  // Initialize the map
+  useEffect(() => {
+    if (mapRef.current && !mapInstanceRef.current) {
+      try {
+        const mapInstance = L.map(mapRef.current, {
+          center: [51.5074, -0.1278],
+          zoom: 14,
+          maxBounds: [
+            [40, -10],
+            [60, 10]
+          ],
+          maxBoundsViscosity: 1.0
+        });
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          minZoom: 2,
+          attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(mapInstance);
+
+        mapInstanceRef.current = mapInstance;
+      } catch (error) {
+        console.error('Error initializing map:', error);
+      }
+    }
+
+    // Cleanup function
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
   const navigate = useNavigate()
   const values= [
     {
@@ -92,8 +132,8 @@ function Home() {
             {/* values or services */}
             {
               values.map(
-                (items) => {const Icons = items.icon; return (
-                  <div className='bg-white border col-span-4 shadow-md shadow-gray-400/20 max-w-[22rem] mt-1 p-3  rounded-2xl'>
+                (items, index) => {const Icons = items.icon; return (
+                  <div key={index} className='bg-white border col-span-4 shadow-md shadow-gray-400/20 max-w-[22rem] mt-1 p-3  rounded-2xl'>
                     <div className='size-10 my-2 bg-blue-600 p-1 rounded-md'><Icons size={30} className='text-white'/></div>
                      <h1 className='font-Custom font-bold text-lg text-gray-700 py-2'>{items.title}</h1>
                      <p className='font-Custom font-medium text-sm text-gray-600 text-left'>{items.body}</p>
@@ -162,8 +202,6 @@ function Home() {
                       <img src={image1} alt="mtn" className='object-cover max-w-full h-12 rounded-md' />
                       <img src={image2} alt="mastercard" className='object-cover w-auto h-14 rounded-lg' />
                       <img src={image6} alt="paypal" className='object-cover w-auto h-16 rounded-lg' />
-
-
                     </div>
                     <div className='flex items-center justify-center mt-6 w-full'>
                       <p className='font-Custom font-normal text-xs text-gray-500 leading-4 flex-wrap w-full'>
@@ -213,9 +251,9 @@ function Home() {
                         </p>
                       </div>
                   </div>
-                  {/* subscription plan */}
+                  {/* Map container */}
                   <div className='mt-5'>
-                    <img src={map} alt="map" className='rounded-lg h-[14rem] w-full object-cover '/>
+                    <div ref={mapRef} className="h-[230px] w-full rounded-lg"></div>
                   </div>
                 </div>
               </div>
