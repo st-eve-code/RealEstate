@@ -8,7 +8,39 @@
   animation: shake 0.3s ease;
 }
 
+#bg{
+  background-image: url('./assets/images/world.webp');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  
+}
+
 @font-face {
   font-family: 'Custom';
   src: url('../src/assets/fonts/Nunito/Nunito-Regular.ttf');
+}
+
+@keyframes appear {
+  from{
+    opacity: 0;
+    scale: 0.5;
+  }
+  to{
+    opacity: 1;
+    scale: 1;
+  }
+}
+.block-animate{
+  animation: appear 5s linear;
+  animation-timeline: view();
+  animation-range: entry 0% cover 40%;
+}
+
+
+#contactus{
+  background-image: url('./assets/images/team.jpg');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }

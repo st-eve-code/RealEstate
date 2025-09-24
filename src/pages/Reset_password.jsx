@@ -174,12 +174,12 @@ function ResetPassword() {
   }
 
   return (
-    <section className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="max-w-md w-full bg-white shadow-lg rounded-xl p-8">
+    <section className="flex items-center justify-center bg-gray-50 p-4">
+      <div className="max-w-md w-full bg-white shadow-lg shadow-gray-200/40 rounded-xl p-8">
         <Logo />
         
         <div className="text-center mb-6">
-          <p className="text-gray-600">Enter a new password to continue.</p>
+          <p className="text-gray-600 font-Custom font-bold text-sm">Enter a new password to continue.</p>
         </div>
 
         <div className="space-y-6">
@@ -187,7 +187,7 @@ function ResetPassword() {
           <div>
             <label 
               htmlFor="password" 
-              className="block text-sm font-semibold text-gray-700 mb-2"
+              className="block text-sm font-semibold font-Custom text-gray-700 mb-2"
             >
               New Password
             </label>
@@ -200,7 +200,7 @@ function ResetPassword() {
                 onChange={handleChange}
                 maxLength={50}
                 placeholder="Enter your new password"
-                className={`w-full px-3 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors ${
+                className={`w-full font-Custom h-10 text-md px-3 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors ${
                   errors.password ? 'border-red-500' : 'border-gray-300'
                 }`}
                 aria-describedby={errors.password ? "password-error" : undefined}
@@ -225,7 +225,7 @@ function ResetPassword() {
               </button>
             </div>
             {errors.password && (
-              <p id="password-error" className="mt-1 text-sm text-red-600">
+              <p id="password-error" className="mt-1 font-Custom text-sm text-red-600">
                 {errors.password}
               </p>
             )}
@@ -235,7 +235,7 @@ function ResetPassword() {
           <div>
             <label 
               htmlFor="confirmPassword" 
-              className="block text-sm font-semibold text-gray-700 mb-2"
+              className="block text-sm font-Custom font-semibold text-gray-700 mb-2"
             >
               Confirm Password
             </label>
@@ -248,7 +248,7 @@ function ResetPassword() {
                 onChange={handleChange}
                 maxLength={50}
                 placeholder="Confirm your new password"
-                className={`w-full px-3 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors ${
+                className={`w-full h-10 font-Custom px-3 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors ${
                   errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                 }`}
                 aria-describedby={errors.confirmPassword ? "confirm-password-error" : undefined}
@@ -273,7 +273,7 @@ function ResetPassword() {
               </button>
             </div>
             {errors.confirmPassword && (
-              <p id="confirm-password-error" className="mt-1 text-sm text-red-600">
+              <p id="confirm-password-error" className="mt-1 text-sm font-Custom text-red-600">
                 {errors.confirmPassword}
               </p>
             )}
@@ -282,7 +282,7 @@ function ResetPassword() {
           {/* Submit Error */}
           {errors.submit && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-600">{errors.submit}</p>
+              <p className="text-sm font-Custom text-red-600">{errors.submit}</p>
             </div>
           )}
 
@@ -295,7 +295,7 @@ function ResetPassword() {
               isLoading
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-            } text-white`}
+            } text-white font-Custom`}
           >
             {isLoading ? (
               <span className="flex items-center justify-center">
@@ -319,7 +319,7 @@ function ResetPassword() {
                 console.log('Navigating back to login page');
                 navigate('/login');
               }}
-              className="text-sm text-blue-600 hover:text-blue-800 underline font-medium bg-transparent border-none cursor-pointer"
+              className="text-sm text-blue-600 font-Custom hover:text-blue-800 underline font-medium bg-transparent border-none cursor-pointer"
             >
               Cancel
             </button>

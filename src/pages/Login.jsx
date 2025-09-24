@@ -79,9 +79,9 @@ function Login() {
 
   return (
     <section className='flex justify-center items-center min-h-screen xl:h-[40rem] p-[0.5rem] bg-gray-50'>
-      <div className='max-w-[28rem] bg-white shadow-lg shadow-gray-300  mx-auto  px-8 rounded-xl py-5'>
+      <div className='max-w-[28rem] bg-white shadow-lg shadow-gray-300/40 h-screen mx-auto px-8 rounded-xl py-5'>
         <img src={logo} onClick={()=>navigate('/')} alt="RentSpot Logo" className="h-9 lg:h-10 w-auto cursor-pointer mx-auto" />
-        <p className='font-Nunito font-medium text-md pt-2 text-gray-500 text-center'>
+        <p className='font-Custom font-medium text-sm pt-2 text-gray-500 text-center'>
           Welcome back to Rentspot. Fill in the form to login
         </p>
 
@@ -89,9 +89,9 @@ function Login() {
           <p className="text-red-500 text-sm text-center mt-3">{errors.general}</p>
         )}
 
-        <form onSubmit={handleLogin} className='max-w-[25rem] py-6'>
+        <form onSubmit={handleLogin} className='max-w-[25rem] py-2'>
           {/* Email */}
-          <label htmlFor="email" className='font-Nunito font-semibold text-gray-800 text-md'>
+          <label htmlFor="email" className='font-Custom font-semibold text-gray-800 text-md'>
             Email
           </label>
           <input
@@ -103,12 +103,12 @@ function Login() {
             onChange={(e) => setEmail(e.target.value)}
             autoComplete='email'
             placeholder='your@gmail.com'
-            className={`mb-1 mt-3 w-full h-11 rounded-lg p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} text-gray-700 outline-blue-400 font-Nunito font-medium text-md`}
+            className={`mb-1 mt-3 w-full h-10 rounded-lg px-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} text-gray-700 outline-blue-400 font-Custom font-medium text-md`}
           />
           {errors.email && <p className="text-red-500 text-sm mb-3">{errors.email}</p>}
 
           {/* Password with Toggle */}
-          <label htmlFor="password" className='font-Nunito font-semibold text-gray-800 text-md'>
+          <label htmlFor="password" className='font-Custom font-semibold text-gray-800 text-md'>
             Password
           </label>
           <div className='relative mt-3'>
@@ -121,7 +121,7 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete='current-password'
               placeholder='••••••••••••••••'
-              className={`w-full h-11 rounded-lg p-3 pr-12 border ${errors.password ? 'border-red-500' : 'border-gray-300'} text-gray-700 outline-blue-400 font-Nunito font-medium text-md`}
+              className={`w-full h-10 rounded-lg px-3 pr-12 border ${errors.password ? 'border-red-500' : 'border-gray-300'} text-gray-700 outline-blue-400 font-Custom font-medium text-md`}
             />
             <button
               type="button"
@@ -139,7 +139,7 @@ function Login() {
           {errors.password && <p className="text-red-500 text-sm mb-3 mt-1">{errors.password}</p>}
 
           <Link to="/otpmethod">
-            <p className='text-blue-600 font-Nunito font-medium text-sm pt-4'>
+            <p className='text-blue-600 font-Custom font-medium text-sm pt-4'>
               Forgot password?
             </p>
           </Link>
@@ -148,7 +148,7 @@ function Login() {
           <button
             type="submit"
             disabled={loading}
-            className={`font-Nunito font-medium text-lg h-12 rounded-md mt-5 w-full ${loading ? 'bg-blue-400' : 'bg-blue-600'} text-white transition duration-300`}
+            className={`font-Custom font-medium text-lg h-12 rounded-md mt-5 w-full ${loading ? 'bg-blue-400' : 'bg-blue-600'} text-white transition duration-300`}
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
@@ -156,7 +156,7 @@ function Login() {
           {/* Continue with Google */}
           <button
             type="button"
-            className='justify-center bg-white border text-gray-800 font-Nunito font-medium text-md w-full h-12 rounded-md shadow-md shadow-gray-300 mt-4 flex items-center gap-2 mx-auto'
+            className='justify-center bg-white border text-gray-800 font-Custom font-medium text-md w-full h-12 rounded-md shadow-md shadow-gray-300 mt-4 flex items-center gap-2 mx-auto'
           >
             <img src={google} alt="Google logo" className='w-12 h-13' />
             Continue with Google
@@ -164,7 +164,7 @@ function Login() {
 
           {/* Signup link */}
           <Link to="/signup">
-            <p className='underline font-Nunito font-medium text-sm text-blue-600 text-center mx-auto pt-8'>
+            <p className='underline font-Custom font-medium text-sm text-blue-600 text-center mx-auto pt-8'>
               Don't have an account? Sign up
             </p>
           </Link>

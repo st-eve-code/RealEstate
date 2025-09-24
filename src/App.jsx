@@ -8,6 +8,8 @@ import Reset_password from './pages/Reset_password';
 import Client_data from './pages/Client_data';
 import Testimonial from './components/ScrollTestimonials';
 import './App.css';
+import Payment from './pages/Subscription';
+import Contact_us from './pages/Contact_us';
 import Dashboard from './pages/Dashboard';
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
         <Route path="/otpmethod" element={<OtpVerificationMethod/>} />
         <Route path="/resetpassword" element={<Reset_password/>} />
         <Route path="/dashboard" element={<Dashboard/>} />
+        <Route path="/contact" element={<Contact_us/>}/>
       </Routes>
     </Router>
   )

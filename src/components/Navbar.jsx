@@ -3,7 +3,7 @@ import { Menu, X, ChevronDown, User, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../assets/logo.svg'; // Update this path
 import { Link } from 'react-router-dom';
-const Nav_bar = () => {
+const Nav_bar = ({onAboutClick}) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [currentLanguage, setCurrentLanguage] = useState('en');
@@ -266,8 +266,8 @@ const Nav_bar = () => {
                         <Link to="/" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600">
                             Home
                         </Link>
-                        <a href="/about" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600">
-                            About
+                        <a onClick={onAboutClick} className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600 cursor-pointer">
+                            About us
                         </a>
                         
                         <DesktopDropdown 
@@ -276,10 +276,9 @@ const Nav_bar = () => {
                             dropdownKey="properties" 
                         />
                         
-                        <a href="/plans" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600">
+                        <a href="/contact" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600">
                             Contact Us
                         </a>
-                        
                         
                         <DesktopDropdown
                             icon={<Globe size={16} />}

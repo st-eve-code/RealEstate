@@ -69,16 +69,16 @@ function Signup() {
 
   return (
     <section className='flex justify-center items-center min-h-screen xl:h-[40rem] bg-gray-50'>
-      <div className='max-w-[28rem] border bg-white shadow-lg shadow-gray-300 mx-auto p-[2rem] rounded-xl'>
-        <img src={logo} onClick={()=>navigate('/')} alt="RentSpot Logo" className="h-9 lg:h-10 w-auto cursor-pointer mx-auto my-2" />
-        <p className='font-Nunito font-medium text-sm text-gray-500 text-center'>
+      <div className='max-w-[28rem] border bg-white shadow-lg h-auto shadow-gray-300/40 mx-auto px-[2rem] py-4 rounded-xl'>
+        <img src={logo} onClick={()=>navigate('/')} alt="RentSpot Logo" className="h-9 lg:h-10 w-auto pb-2 cursor-pointer mx-auto " />
+        <p className='font-Nunito font-medium text-xs text-gray-500 text-center'>
           Welcome to Rentspot where every rental property has a calling. Fill in the form to get started.
         </p>
 
-        <form onSubmit={handleSubmit} className='max-w-[28rem] mx-auto py-5'>
+        <form onSubmit={handleSubmit} className='max-w-[28rem] mx-auto py-2'>
           {/* Username */}
-          <div className='mb-5'>
-            <label htmlFor="username" className='font-Nunito font-semibold text-gray-800 text-md block'>
+          <div className='mb-3'>
+            <label htmlFor="username" className='font-Custom font-semibold text-gray-800 text-md block'>
               Username
             </label>
             <input
@@ -90,13 +90,13 @@ function Signup() {
               autoComplete='on'
               value={formData.username}
               onChange={handleChange}
-              className={`mt-2 w-full h-11 rounded-lg outline-blue-400 p-3 font-Nunito font-medium text-md border text-gray-700 ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
+              className={`mt-2 w-full h-10 rounded-lg outline-blue-400 px-3 font-Custom font-medium text-md border text-gray-600 ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
             />
             {errors.username && <p className='text-red-500 text-sm mt-1'>{errors.username}</p>}
           </div>
 
           {/* Email */}
-          <div className='mb-5'>
+          <div className='mb-3'>
             <label htmlFor="email" className='font-Nunito font-semibold text-gray-800 text-md block'>
               Email
             </label>
@@ -109,13 +109,13 @@ function Signup() {
               autoComplete='on'
               value={formData.email}
               onChange={handleChange}
-              className={`mt-2 w-full h-11 rounded-lg outline-blue-400 p-3 font-Nunito font-medium text-md border text-gray-700 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+              className={`mt-2 w-full h-10 rounded-lg outline-blue-400 px-3 font-Custom font-medium text-md border text-gray-600 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
             />
             {errors.email && <p className='text-red-500 text-sm mt-1'>{errors.email}</p>}
           </div>
 
           {/* Password */}
-          <div className="mb-5 relative">
+          <div className="mb-3 relative">
             <label htmlFor="password" className='font-Nunito font-semibold text-gray-800 text-md block'>
               Password
             </label>
@@ -128,7 +128,7 @@ function Signup() {
               autoComplete='off'
               value={formData.password}
               onChange={handleChange}
-              className={`mt-2 w-full h-11 rounded-lg outline-blue-400 p-3 pr-12 font-Nunito font-medium text-md border text-gray-700 ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+              className={`mt-2 w-full h-10 rounded-lg outline-blue-400 px-3 pr-12 font-Custom font-medium text-md border text-gray-600 ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
             />
 
             {/* Eye icon with shake animation */}
@@ -168,7 +168,7 @@ function Signup() {
           {/* Google Button */}
           <button
             type="button"
-            className='justify-center border bg-white text-gray-800 font-Nunito font-medium text-md w-full h-12 rounded-md shadow-md shadow-gray-300/70 mt-4 flex items-center text-center gap-2 mx-auto hover:bg-gray-100 transition'
+            className='justify-center border bg-white text-gray-800 font-Custom font-medium text-md w-full h-12 rounded-md shadow-md shadow-gray-300/40 mt-2 flex items-center text-center gap-2 mx-auto hover:bg-gray-50 transition'
           >
             <img src={google} alt="Google logo" className='w-12 h-13' />
             Continue with Google
@@ -176,13 +176,13 @@ function Signup() {
 
           {/* Link to login */}
           <Link to="/login">
-            <p className='font-Nunito font-medium text-sm underline text-blue-600 text-center mx-auto pt-6'>
+            <p className='font-Custom font-medium text-sm underline text-blue-600 text-center mx-auto pt-4'>
               Already have an account? Log in
             </p>
           </Link>
 
           {/* Terms */}
-          <p className='font-Nunito font-medium text-sm text-gray-500 text-center pt-4'>
+          <p className='font-Custom font-medium text-sm text-gray-600 text-center pt-3'>
             Signing up means you agree to our{' '}
             <a href="#" className='text-blue-600 underline'>Terms & Conditions</a> and{' '}
             <a href="#" className='text-blue-600 underline'>Privacy Policy</a>.

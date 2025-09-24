@@ -3,13 +3,15 @@ import { Link } from 'react-router-dom';
 import logo from '../assets/logo.svg';
 import { IonIcon } from '@ionic/react';
 import { logoInstagram, logoLinkedin, logoTwitter, logoFacebook, call, mail} from 'ionicons/icons';
+import { useNavigate } from 'react-router-dom';
 import '../App.css';
 function Footer() {
+    const navigate = useNavigate();
   return (
-    <section className='bg-gray-100 mt-[5rem]'>
+    <section className='bg-blue-100/40 backdrop-blur-sm mt-[5rem]'>
         <div className='flex flex-wrap justify-between items-start m-8 p-[1rem]'>
             <div className='p-3 max-w-[20rem]'> {/* links to all social medias */}
-                <img src={logo} alt="" className='w-[8rem]'/>
+                <img src={logo} onClick={()=>navigate('/')} alt="" className='w-[8rem] cursor-pointer'/>
                 <h1 className='font-Custom font-bold text-2xl text-gray-800 text-left max-w-[20rem] pt-3'>Discover real estate ideas from your own ease !</h1>
                 <div className='flex items-center gap-4 pt-5'>
                     <a href="#">

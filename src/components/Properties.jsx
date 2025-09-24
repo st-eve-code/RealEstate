@@ -299,7 +299,7 @@ function List_products() {
           return (
             <div 
               key={property.id} 
-              className="rounded-2xl shadow-md shadow-gray-200 bg-white p-3 relative hover:shadow-lg transition-shadow duration-300"
+              className="rounded-2xl block-animate shadow-md shadow-gray-200 bg-white p-3 relative hover:shadow-lg transition-shadow duration-300"
             >
               {/* Heart/Like Button */}
               <button
