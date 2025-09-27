@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown, User, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Logo from '../assets/logo.svg'; // Update this path
+import Logo from '../assets/logo.svg';
 import { Link } from 'react-router-dom';
 const Nav_bar = ({onAboutClick}) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -69,7 +69,7 @@ const Nav_bar = ({onAboutClick}) => {
         <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg z-50">
             <div className="px-2 pt-2 pb-4 space-y-1">
                 <MobileNavItem href="/" text="Home" />
-                <MobileNavItem href="/about" text="About" />
+                <MobileNavItem href="/#about-us" text="About" />
                 
                 <MobileDropdown 
                     title="Properties"
@@ -78,7 +78,7 @@ const Nav_bar = ({onAboutClick}) => {
                     toggle={(e) => toggleDropdown(e, 'propertiesMobile')}
                 />
                 
-                <MobileNavItem href="/plans" text="Plans" />
+                <MobileNavItem href="/contact" text="Contact Us" />
                 
                 
                 <MobileDropdown
@@ -163,9 +163,11 @@ const Nav_bar = ({onAboutClick}) => {
     };
 
     // Reusable components
+    //mobile screen navigation links 
+    
     const MobileNavItem = ({ href, text }) => (
-        <a
-            href={href}
+        <Link
+            to={href}
             className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
             onClick={(e) => {
                 e.stopPropagation();
@@ -173,7 +175,7 @@ const Nav_bar = ({onAboutClick}) => {
             }}
         >
             {text}
-        </a>
+        </Link>
     );
 
     const MobileDropdown = ({ icon, title, items, isOpen, toggle, isLanguage = false }) => (
@@ -266,9 +268,9 @@ const Nav_bar = ({onAboutClick}) => {
                         <Link to="/" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600">
                             Home
                         </Link>
-                        <a onClick={onAboutClick} className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600 cursor-pointer">
+                        <Link to="/#about-us" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600 cursor-pointer">
                             About us
-                        </a>
+                        </Link>
                         
                         <DesktopDropdown 
                             title="Properties"

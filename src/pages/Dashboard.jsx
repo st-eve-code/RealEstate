@@ -1,5 +1,5 @@
 import { useUser } from '../components/UserContext';
-
+import Sidebar from '../components/Sidebar';
 function Dashboard() {
   const { role } = useUser();
 
@@ -7,7 +7,6 @@ function Dashboard() {
     <div className="flex h-screen bg-gray-100 dark:bg-gray-800">
       <Sidebar />
       <div className="flex-1 flex flex-col">
-        <Header />
         <main className="p-6 overflow-y-auto text-gray-900 dark:text-white">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="mt-2">Welcome to your dashboard!</p>

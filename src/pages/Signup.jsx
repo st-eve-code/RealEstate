@@ -68,8 +68,8 @@ function Signup() {
   };
 
   return (
-    <section className='flex justify-center items-center min-h-screen xl:h-[40rem] bg-gray-50'>
-      <div className='max-w-[28rem] border bg-white shadow-lg h-auto shadow-gray-300/40 mx-auto px-[2rem] py-4 rounded-xl'>
+    <section className='flex justify-center items-center min-h-screen mx-auto xl:h-[40rem] bg-gray-50'>
+      <div className='max-w-[28rem] m-[2rem] border bg-white shadow-lg h-auto shadow-gray-300/40 mx-auto px-[2rem] py-4 rounded-xl'>
         <img src={logo} onClick={()=>navigate('/')} alt="RentSpot Logo" className="h-9 lg:h-10 w-auto pb-2 cursor-pointer mx-auto " />
         <p className='font-Nunito font-medium text-xs text-gray-500 text-center'>
           Welcome to Rentspot where every rental property has a calling. Fill in the form to get started.

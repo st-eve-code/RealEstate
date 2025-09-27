@@ -53,7 +53,7 @@ function Footer() {
                     <Link to="/blog">
                         <li className='font-Custom font-normal text-xs text-gray-600'> Blog </li>
                     </Link>
-                    <Link to="/contact">
+                    <Link to="/contact#faqs">
                         <li className='font-Custom font-normal text-xs text-gray-600'> FAQS </li>
                     </Link>
                     <Link to="/plans">

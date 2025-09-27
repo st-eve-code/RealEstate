@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Questions from '../components/Questions';
 import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -11,7 +11,7 @@ import image6 from '../assets/images/paypal.jpg'
 import image3 from '../assets/images/8.jpg';
 import image4 from '../assets/images/9.jpg';
 import image5 from '../assets/images/10.jpg';
-import plan from '../assets/images/plan.jpg';
+import plan from '../assets/images/plan.png';
 import '../App.css';
 import L from 'leaflet';
 import { GrMoney, GrPlan, GrTransaction } from 'react-icons/gr';
@@ -23,9 +23,6 @@ function Home() {
   const mapInstanceRef = useRef(null);
   const aboutRef = useRef(null);
 
-  const ScrollToAbout = () => {
-    aboutRef.current?.scrollIntoView({behavior: 'smooth'});
-  };
   // Initialize the map
   useEffect(() => {
     if (mapRef.current && !mapInstanceRef.current) {
@@ -60,6 +57,21 @@ function Home() {
       }
     };
   }, []);
+
+  const ScrollToAbout = () => {
+    aboutRef.current?.scrollIntoView({behavior: 'smooth'});
+  };
+  const location = useLocation();
+  useEffect(
+    ()=> {
+      if (location.hash){
+        setTimeout(() => {
+          const element = document.getElementById(location.hash.substring(1));
+          element?.scrollIntoView({behavior: 'smooth'});
+        }, 100);
+      }
+    }, [location.hash]
+  );
 
   const navigate = useNavigate()
   const values= [
@@ -126,11 +138,11 @@ function Home() {
           </div>
         </div>
         {/* values */}
-        <div className='mt-20'>
-          <div ref={aboutRef}>
+        <div ref={aboutRef} id='about-us' className='mt-20'>
+          <div>
             <h2 className='font-Custom font-semibold text-2xl px-2 text-center  py-2 text-gray-800 flex justify-center items-center '>
-            We Locate, Rent, Advertise Properties
-          </h2>
+              We Locate, Rent, Advertise Properties
+            </h2>
           <p className='font-medium font-Custom text-gray-500 text-sm flex justify-center items-center text-center px-3'>Let us be your got-to partner for all your real estate endeavors</p>
           </div>
           <div className='grid md:grid-cols-12 grid-cols-1 mx-auto gap-3 lg:px-20 md:px-10 px-8 mt-10'>
@@ -284,7 +296,7 @@ function Home() {
             {/* search filter based on user clicks or selection */}
             <Testimonial/>
           </div>
-          {/* section for  */}
+          {/* section for contact us */}
           <div className='mt-8 md:mt-28 w-full bg-blue-700/80 py-8'>
              <h2 className='font-Custom font-semibold text-3xl text-center px-2 lg:text-4xl md:max-w-[24rem] mx-auto py-2 text-white flex justify-center items-center '>
               Personalized Services, Globally Recognized 

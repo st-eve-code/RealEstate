@@ -7,9 +7,8 @@
 .animate-shake {
   animation: shake 0.3s ease;
 }
-
-#bg{
-  background-image: url('./assets/images/world.webp');
+.bg{
+  background-image: url('./assets/images/bg.jpg');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
