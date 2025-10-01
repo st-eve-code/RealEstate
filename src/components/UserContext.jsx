@@ -6,7 +6,7 @@ export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
   // You can fetch this from login response
-  const [role, setRole] = useState('admin'); // or 'user'
+  const [role, setRole] = useState('user'); // or 'user'
 
   return (
     <UserContext.Provider value={{ role, setRole }}>

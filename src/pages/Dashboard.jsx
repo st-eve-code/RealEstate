@@ -1,32 +1,39 @@
-import { useUser } from '../components/UserContext';
 import Sidebar from '../components/Sidebar';
-function Dashboard() {
-  const { role } = useUser();
+import MainContent from '../components/MainContent';
+import React, { useState , useEffect} from 'react';
+// Main Dashboard Component
+export default function Dashboard() {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    
+
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+      };
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-800">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <main className="p-6 overflow-y-auto text-gray-900 dark:text-white">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="mt-2">Welcome to your dashboard!</p>
-
-          {role === 'admin' && (
-            <div className="mt-6 p-4 border rounded bg-white dark:bg-gray-900">
-              <h2 className="text-xl font-semibold">Admin Panel</h2>
-              <p className="text-sm mt-2">Manage users, settings, etc.</p>
-            </div>
-          )}
-
-          {role === 'user' && (
-            <div className="mt-6 p-4 border rounded bg-white dark:bg-gray-900">
-              <h2 className="text-xl font-semibold">User Panel</h2>
-              <p className="text-sm mt-2">Your bookings and account info.</p>
-            </div>
-          )}
-        </main>
-      </div>
+    <div className="min-h-screen bg-gray-400/50 block md:flex">
+      <Sidebar 
+        isCollapsed={isSidebarCollapsed} 
+        onToggle={toggleSidebar} 
+      />
+      <MainContent 
+        isSidebarCollapsed={isSidebarCollapsed} 
+      />
     </div>
   );
 }
-export default Dashboard;
