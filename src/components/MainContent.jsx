@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import '../App.css';
 import userProfile from '../assets/images/tiger.jpg'
 import { Bell, ChevronDown, Eye, Languages, Plus, Search, Store } from 'lucide-react';
+import Contents from './Contents';
 
-function MainContent({isSidebarCollapsed}) {
+function MainContent({isSidebarCollapsed, data}) {
   // initialize dark mode state
   const [isDark, setDarkMode] = useState(false);
 
@@ -15,7 +16,7 @@ function MainContent({isSidebarCollapsed}) {
 
   return (
     <section className='bg-gray-50/80 md:px-1 w-full'>
-        <div className='bg-white px-1 py-2 block md:flex justify-between gap-10 max-md:space-y-5 items-center'>
+        <div className='bg-white rounded-md px-1 py-2 block md:flex justify-between gap-10 max-md:space-y-5 items-center'>
           
           {/* form control for the different user search */}
           <div className='ml-2'>
@@ -38,21 +39,10 @@ function MainContent({isSidebarCollapsed}) {
                     <Plus size={20} className='text-white'/>
                   </div>
                 </button>
-                <button type="button" className='bg-blue-600 rounded-lg flex justify-center gap-1 px-2 md:px-2 py-2  items-center'>
-                  <Plus size={20} className='text-white'/>
-                  <p className='font-Custom font-medium text-xs lg:text-sm text-white'>Property</p>
-                </button>
+                
               </div> */}
-              {/* on and off dark mode */}
-                {/* <div className={`${isDark ? 'bg-gray-200/40 shadow' : 'bg-black/40'} max-w-5 shadow transition-colors max-lg:hidden duration-300 px-5 h-5 rounded-full`}>
-                  <button className={`bg-white size-5 rounded-full ${isDark ? 'bg-black/70 -translate-x-5 ease-in-out duration-300 transition-all': '-translate-x-0 ease-in-out duration-300 transition-all'}`} onClick={()=>setDarkMode(!isDark)}></button>
-                </div> */}
-               {/* <button type="button" className='bg-white lg:hidden shadow rounded-lg flex justify-center gap-2 px-2 md:px-2 py-1  items-center'>
-                  <Languages size={18} className='text-blue-500'/>
-                  <p className='font-Custom font-medium text-xs lg:text-sm text-gray-600'>EN</p>
-                  <ChevronDown size={15} className='text-gray-600'/>
-                </button> */}
-              <div className='pt-2 flex gap-6 px-3 max-md:hidden mx-auto items-center'>
+              
+              <div className='pt-2 flex md:gap-6 gap-8 px-3 items-center'>
                 {/* notification button */}
                 <button className='relative'>
                   <Bell size={23} className='text-gray-600'/>
@@ -66,7 +56,7 @@ function MainContent({isSidebarCollapsed}) {
                   and stored in the store so as to come and review anytime */}
                   <div className='bg-red-500 rounded-full size-4 absolute -top-1.5 left-2 font-Custom font-normal text-xs text-white transition-colors'>2</div>
                 </button>
-                <div className='flex gap-2 shrink-0 items-center justify-center'>
+                <div className='flex gap-2 shrink-0 max-md:hidden items-center justify-center'>
                     {/* user profile image or avatar */}
                     <div className='relative shrink-0'>
                       <img src={userProfile} alt="" srcset="" className='size-8 rounded-full'/>
@@ -74,6 +64,7 @@ function MainContent({isSidebarCollapsed}) {
                       <div className='bg-green-400 rounded-full size-2 absolute top-6 left-6 transition-colors'></div>
                     </div>
                     {/* user name gotten after login */}
+                    {/* change contents based on the selected link */}
                     <p className='font-bold font-Custom text-sm text-gray-600'>
                       Hamed Safari
                     </p>
@@ -82,11 +73,9 @@ function MainContent({isSidebarCollapsed}) {
             </div>
         </div>
         {/* section for the different links */}
-        <section>
-          <div className='bg-red-400 mt-2 px-2 h-auto'>
-             hello
-          </div>
-        </section>
+        <div className='bg-white rounded-md py-3 lg:mt-1 px-2 h-auto'>
+            <Contents data={data}/>
+        </div>
     </section>
   )
 }

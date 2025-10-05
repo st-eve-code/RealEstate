@@ -28,7 +28,7 @@ function Client_data() {
     const navigate = useNavigate();
     return (
         <section className="p-6">
-            <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
+            <div className="max-w-md mx-auto bg-white font-Custom rounded-lg shadow-lg p-6">
                 <h1 className="text-xl font-bold text-gray-800 text-center mb-2">
                     Tell us about yourself
                 </h1>
@@ -37,7 +37,7 @@ function Client_data() {
                 </p>
 
                 {Object.entries(dropdownData).map(([key, options]) => (
-                    <div key={key} className="mb-4">
+                    <div key={key} className="mb-4 font-Custom ">
                         <button
                             onClick={() => toggleDropdown(key)}
                             className="w-full flex justify-between items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
@@ -57,7 +57,7 @@ function Client_data() {
                                     <button
                                         key={option}
                                         onClick={() => handleSelect(key, option)}
-                                        className="w-full text-left p-3 hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0"
+                                        className="w-full font-Custom text-left p-3 hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0"
                                     >
                                         {option}
                                     </button>
@@ -67,9 +67,10 @@ function Client_data() {
                     </div>
                 ))}
 
-                <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors mt-4">
+                <button onClick={()=>navigate('/dashboard')} className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors mt-4">
                     Continue
                 </button>
+                <p onClick={()=>navigate('/dashboard')} className='flex justify-center cursor-pointer mt-4 underline text-blue-600 hover:text-blue-400'>skip</p>
             </div>
         </section>
     );

@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import '../App.css';
 
-function List_products() {
+function List_products({number}) {
   // State management
   const [likedProperties, setLikedProperties] = useState({});
   const [selectedFilter, setSelectedFilter] = useState('all');

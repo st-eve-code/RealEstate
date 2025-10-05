@@ -8,7 +8,7 @@ module.exports = {
     extend: {
       fontFamily:{
         'Custom': 'Custom',
-       
+        'Poppins':'Poppins'
       },
       keyframes:{
         "scroll": {

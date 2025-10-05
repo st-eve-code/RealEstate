@@ -20,6 +20,11 @@
   src: url('../src/assets/fonts/Nunito/Nunito-Regular.ttf');
 }
 
+@font-face {
+  font-family: 'Poppins';
+  src: url('../src/assets/fonts/Poppins/Poppins-Regular.ttf');
+}
+
 @keyframes appear {
   from{
     opacity: 0;

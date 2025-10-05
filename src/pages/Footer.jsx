@@ -6,6 +6,94 @@ import { logoInstagram, logoLinkedin, logoTwitter, logoFacebook, call, mail} fro
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
 function Footer() {
+    const links =[
+        {
+            path: '/',
+            name: 'Home'
+        },
+        {
+            path: '/about',
+            name: 'About'
+        },
+        {
+            path: '/contact#faqs',
+            name: 'Contact Us'
+        },
+        {
+            path: '/blog',
+            name: 'Blog'
+        },
+        {
+            path: '/plans',
+            name: 'Subscription'
+        },
+    ];
+
+    const legals = [
+        {
+            path: '/policy',
+            name: 'Cookie Policy'
+        },
+        {
+            path: '/terms',
+            name: 'Terms & Conditions'
+        },
+        {
+            path: '/user-policy',
+            name: 'User Policy'
+        },
+    ];
+    
+    const Locations = [
+        {
+            path: "/location/muea",
+            name: 'Muea'
+        },
+        {
+            path: "/location/bomaka",
+            name: 'Bomaka'
+        },
+        {
+            path: "/location/malingo",
+            name: 'Malingo'
+        },
+        {
+            path: "/location/mayor-street",
+            name: 'Mayor-Street'
+        },
+        {
+            path: "/location/molyko",
+            name: 'Molyko'
+        },
+            {
+            path: "/location/checkpoint",
+            name: 'CheckPoint'
+        },
+        {
+            path: "/location/biaka",
+            name: 'Biaka'
+        },
+        {
+            path: "/location/all",
+            name: 'More'
+        },
+    ];
+
+    const Contact =[
+        {
+            Icons: call,
+            name: '+237681987524'
+        },
+        {
+            Icons: call,
+            name: '+237651820548'
+        },
+        {
+            Icons: mail,
+            name: 'rentspot@gmail.com'
+        },
+    ];
+
     const navigate = useNavigate();
   return (
     <section className='bg-blue-100/40 backdrop-blur-sm mt-[5rem]'>
@@ -40,25 +128,16 @@ function Footer() {
                 <h1 className='font-bold text-md font-Custom text-gray-800'> 
                     Quick Links
                 </h1>
-                <ul>
-                    <Link to="/">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Home </li>
-                    </Link>
-                    <Link to="/about">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> About </li>
-                    </Link>
-                    <Link to="/contact">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Contact us</li>
-                    </Link>
-                    <Link to="/blog">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Blog </li>
-                    </Link>
-                    <Link to="/contact#faqs">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> FAQS </li>
-                    </Link>
-                    <Link to="/plans">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Plans </li>
-                    </Link>
+                <ul className='font-Custom font-normal text-sm text-gray-600'>
+                    {links.map(
+                        (name, index) => (
+                            <div key={index} className='py-1'>
+                                <li>
+                                    <Link to={name.path}>{name.name}</Link>
+                                </li>
+                            </div>
+                        )
+                    )}
                 </ul>
             </div>
             {/* links to different location */}
@@ -66,31 +145,16 @@ function Footer() {
                 <h1 className='font-bold text-md font-Custom text-gray-800'> 
                     Locations
                 </h1>
-                <ul>
-                    <Link to="/location/muea">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Muea </li>
-                    </Link>
-                    <Link to="/location/bomaka">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Bomaka </li>
-                    </Link>
-                    <Link to="/location/malingo">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Malingo </li>
-                    </Link>
-                    <Link to="/location/mayor-street">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Mayor Street </li>
-                    </Link>
-                    <Link to="/location/molyko">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Molyko </li>
-                    </Link>
-                    <Link to="/location/checkpoint">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Checkpoint </li>
-                    </Link>
-                    <Link to="/location/biaka">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Biaka </li>
-                    </Link>
-                    <Link to="/location/all">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> More </li>
-                    </Link>
+                <ul className='font-Custom font-normal text-sm text-gray-600'>
+                    {Locations.map(
+                        (name, index) => (
+                            <div key={index} className='py-1'>
+                                <li>
+                                    <Link to={name.path}>{name.name}</Link>
+                                </li>
+                            </div>
+                        )
+                    )}
                 </ul>
             </div>
             {/* information concerning legals */}
@@ -98,16 +162,16 @@ function Footer() {
                 <h1 className='font-bold text-md font-Custom text-gray-800'> 
                     Legals
                 </h1>
-                <ul>
-                    <Link to="/policy">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Cookie Policy </li>
-                    </Link>
-                    <Link to="/terms">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> Terms & Conditions </li>
-                    </Link>
-                    <Link to="/user-policy">
-                        <li className='font-Custom font-normal text-xs text-gray-600'> User Policy </li>
-                    </Link>
+                <ul className='font-Custom font-normal text-sm text-gray-600'>
+                    {legals.map(
+                        (name, index) => (
+                            <div key={index} className='py-1'>
+                                <li>
+                                    <Link to={name.path}>{name.name}</Link>
+                                </li>
+                            </div>
+                        )
+                    )}
                 </ul>
             </div>
             {/* information concerning contacts */}
@@ -115,17 +179,16 @@ function Footer() {
                 <h1 className='font-bold text-md font-Custom text-gray-800 pb-2'> 
                     Contacts
                 </h1>
-                <div className='flex items-center gap-2 text-gray-600'>
-                    <IonIcon icon={call} className='text-gray-500'/>
-                    <p className='font-Custom font-normal text-xs'>+237681987524</p>
-                </div>
-                <div className='flex items-center gap-2 text-gray-600 py-2'>
-                    <IonIcon icon={call} className='text-gray-500'/>
-                    <p className='font-Custom font-normal text-xs'>+237651820548</p>
-                </div>
-                <div className='flex items-center gap-2 text-gray-600'>
-                    <IonIcon icon={mail} className='text-gray-500'/>
-                    <p className='font-Custom font-normal text-xs'>rentspot@gmail.com</p>
+                <div >
+                    {Contact.map(
+                        (detail, index) => (
+                           <div key={index} className='flex p-1 mx-auto items-center gap-2 space-y-2 font-Custom font-normal text-sm text-gray-600'>
+                             <IonIcon icon={detail.Icons} className='text-gray-500 size-4 pt-2'/>
+                             <p className={`${detail.name.includes('@') ? 'text-blue-500' : 'text-gray-600'}`}>{detail.name}</p>
+                           </div>
+                        )
+                    )}
+                    
                 </div>
             </div>
         </div>

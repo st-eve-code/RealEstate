@@ -5,6 +5,10 @@ import React, { useState , useEffect} from 'react';
 export default function Dashboard() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  // get the selected link from sidebar
+  const [option, setOption] = useState('dashboard');
+
   // Detect mobile screen size
   useEffect(() => {
     const checkIfMobile = () => {
@@ -26,13 +30,15 @@ export default function Dashboard() {
       };
 
   return (
-    <div className="min-h-screen bg-gray-400/50 block md:flex">
+    <div className="min-h-screen bg-gray-100/50 block md:flex">
       <Sidebar 
         isCollapsed={isSidebarCollapsed} 
-        onToggle={toggleSidebar} 
+        onToggle={toggleSidebar}
+        onSelect={setOption} 
       />
       <MainContent 
-        isSidebarCollapsed={isSidebarCollapsed} 
+        isSidebarCollapsed={isSidebarCollapsed}
+        data={option} 
       />
     </div>
   );

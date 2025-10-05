@@ -55,7 +55,7 @@ function Signup() {
         `,
       }).then(() => {
         // Navigate to Welcome component after confirmation
-        navigate('/dashboard');
+        navigate('/clientdata');
       });
     }
   };
