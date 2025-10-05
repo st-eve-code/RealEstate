@@ -272,8 +272,8 @@ function ContactUs() {
       </section>
 
       {/* Map and FAQ Section */}
-      <section className='py-16'>
-        <div className='max-w-6xl mx-auto px-4'>
+      <section className='my-20'>
+        <div className='max-w-full mx-auto px-2'>
           <div className='text-center mb-12'>
             <h2 className='font-bold text-4xl text-gray-800 mb-4'>Let's Talk</h2>
             <p className='font-medium text-lg text-gray-700 mb-2'>Tell us your needs, and we'll contact you</p>
@@ -284,7 +284,7 @@ function ContactUs() {
           </div>
 
           {/* Map */}
-          <div className='mb-16 z-0'>
+          <div className='mb-16 w-full z-0'>
             <div ref={mapRef} className="z-0 h-96 w-full rounded-xl shadow-lg" />
           </div>
 

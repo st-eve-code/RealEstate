@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Questions from '../components/Questions';
-import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map } from 'lucide-react';
+import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map, Facebook, Linkedin, Mail, AtSign } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Testimonial from '../components/ScrollTestimonials';
 import Properties from '../components/Properties';
@@ -73,6 +73,51 @@ function Home() {
     }, [location.hash]
   );
 
+  // team members
+  const Member = [
+    {
+      name: 'Steve Caleb',
+      position: 'Founder/Coordinator and a vivid gamer who loves arts in all forms.',
+      facebooklink: 'https://www.facebook.com',
+      email: 'steve@gmail.com',
+      linkin: 'stevecaleb@linkedin.com'
+    },
+    {
+      name: 'Nji Rodney',
+      position: 'Ceo/Project Manager and a vivid gamer who loves solving problems .',
+      facebooklink: 'https://www.facebook.com',
+      email: 'rod@gmail.com',
+      linkin: 'rodney@linkedin.com'
+    },
+    {
+      name: 'Presly Takop',
+      position: 'Developer/Designer and a vivid gamer who loves tech and building sides projects. ',
+      facebooklink: 'https://www.facebook.com',
+      email: 'presly@gmail.com',
+      linkin: 'presly@linkedin.com'
+    },
+    {
+      name: 'Dorine Bless',
+      position: 'Marketing Strategist , Obsessed with video editing and music, enjoys attending shows.',
+      facebooklink: 'https://www.facebook.com',
+      email: 'Dorine@gmail.com',
+      linkin: 'Dorine@linkedin.com'
+    },
+    {
+      name: 'Bro Wesly',
+      position: 'Marketing Strategist and a vivid gamer , loves tech and building side projects.',
+      facebooklink: 'https://www.facebook.com',
+      email: 'wesly@gmail.com',
+      linkin: 'wesly@linkedin.com'
+    },
+    {
+      name: 'Elakie Leonie',
+      position: 'Customer support and Enthusiast of travel and photography, enjoys cooking new recipes.',
+      facebooklink: 'https://www.facebook.com',
+      email: 'Leo@gmail.com',
+      linkin: 'Leo@linkedin.com'
+    },
+  ]
   const navigate = useNavigate()
   const values= [
     {
@@ -287,6 +332,50 @@ function Home() {
             </div>
           </div>
           {/* end of why choose us */}
+          {/* meet our team section */}
+          <section className='mt-20 mx-auto'>
+            <h2 className='font-Custom font-semibold text-2xl text-center px-2 lg:text-2xl py-2 text-gray-800 flex justify-center items-center '>
+              Meet Our Team 
+            </h2>
+            <p className='font-medium font-Custom text-gray-500 text-sm flex justify-center items-center text-center px-3'>
+              Unleashing creativity our team of design visionaries turns ordinary spaces into extraordinary experiences.
+            </p>
+            <div className='flex flex-1 justify-center items-center gap-2 mt-5'>
+               <button onClick={()=>navigate('/signup')} className='bg-red-500 text-white px-5 py-2 rounded-md shadow font-Poppins font-normal'>
+                Get started
+               </button>
+               <button onClick={()=>navigate('/contact')} className='bg-white border text-gray-600 px-5 py-2 rounded-md shadow font-Custom font-normal'>
+                Support Us !
+               </button>
+            </div>
+            <div className='mt-5 grid grid-cols-1 md:grid-cols-3 gap-4 px-10 '>
+               {Member.map(
+                (person, index) => {
+                  return (
+                    <div key={index} className='block-animate mx-auto mt-4 bg-gray-50/20 p-3 rounded-lg hover:shadow-lg  max-w-[20rem]'>
+                      <img src={image4} alt="" className='size-24 rounded-full shrink-0 mx-auto my-4'/>
+                      <div className='mx-auto text-center'>
+                        <h1 className='font-Poppins font-bold text-sm text-gray-800/70'>
+                          {person.name}
+                        </h1>
+                        <p className='font-Custom font-medium text-xs text-gray-500 max-w-[28rem] py-2'>
+                          {person.position}
+                        </p>
+                      </div>
+                      <div className='flex justify-center items-center gap-2'>
+                        <button onClick={()=>navigate(`${person.linkin}`)}>
+                          <Linkedin size={20} fill='white' color='' className='bg-black/60 px-[2px] rounded'/>
+                        </button>
+                        <button>
+                          <AtSign size={20} className='text-red-500'/>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
+               )};
+            </div>
+          </section>
           {/* testimonials */}
           <div className='mt-8 md:mt-28'>
              <h2 className='font-Custom font-semibold text-2xl text-center px-2 lg:text-2xl py-2 text-gray-800 flex justify-center items-center '>

@@ -73,7 +73,7 @@ function MainContent({isSidebarCollapsed, data}) {
             </div>
         </div>
         {/* section for the different links */}
-        <div className='bg-white rounded-md py-3 lg:mt-1 px-2 h-auto'>
+        <div className='bg-white rounded-md py-2 pb-10 lg:mt-1 px-2  h-auto'>
             <Contents data={data}/>
         </div>
     </section>
