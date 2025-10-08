@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import '../App.css';
 import userProfile from '../assets/images/tiger.jpg'
-import { Bell, ChevronDown, Eye, Languages, Plus, Search, Store } from 'lucide-react';
+import { Bell, ChevronDown, Eye, Heart, Languages, Plus, Search, Settings, Store, UserCircle } from 'lucide-react';
 import Contents from './Contents';
 
 function MainContent({isSidebarCollapsed, data}) {
@@ -43,6 +43,17 @@ function MainContent({isSidebarCollapsed, data}) {
               </div> */}
               
               <div className='pt-2 flex md:gap-6 gap-8 px-3 items-center'>
+                {/* settings */}
+                <button className='relative'>
+                  <Settings size={23} className='text-gray-600'/>
+                </button>
+                {/* likes and heart */}
+                <button className='relative'>
+                  <Heart size={23} className='text-gray-600'/>
+                  {/* this line of code depends if there are any properties the user has viewed 
+                  and stored in the store so as to come and review anytime */}
+                  <div className='bg-red-500 rounded-full size-4 absolute  -top-1.5 left-2 font-Custom font-medium text-xs text-white transition-colors'>5</div>
+                </button>
                 {/* notification button */}
                 <button className='relative'>
                   <Bell size={23} className='text-gray-600'/>
@@ -56,19 +67,18 @@ function MainContent({isSidebarCollapsed, data}) {
                   and stored in the store so as to come and review anytime */}
                   <div className='bg-red-500 rounded-full size-4 absolute -top-1.5 left-2 font-Custom font-normal text-xs text-white transition-colors'>2</div>
                 </button>
-                <div className='flex gap-2 shrink-0 max-md:hidden items-center justify-center'>
+                <div className='flex gap-2 shrink-0 items-center justify-center'>
                     {/* user profile image or avatar */}
                     <div className='relative shrink-0'>
-                      <img src={userProfile} alt="" srcset="" className='size-8 rounded-full'/>
+                      <img src={userProfile} alt="" srcset="" className='md:size-8 size-7 rounded-full'/>
                       {/* green light for if user is active */}
-                      <div className='bg-green-400 rounded-full size-2 absolute top-6 left-6 transition-colors'></div>
+                      <div className='bg-green-400 rounded-full size-2.5 absolute top-5 md:top-6 left-5 transition-colors'></div>
                     </div>
                     {/* user name gotten after login */}
                     {/* change contents based on the selected link */}
-                    <p className='font-bold font-Custom text-sm text-gray-600'>
-                      Hamed Safari
-                    </p>
+                    
                 </div>
+                
               </div>
             </div>
         </div>

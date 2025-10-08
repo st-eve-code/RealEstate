@@ -363,10 +363,10 @@ function Home() {
                         </p>
                       </div>
                       <div className='flex justify-center items-center gap-2'>
-                        <button onClick={()=>navigate(`${person.linkin}`)}>
+                        <button onClick={()=>window.location.href=person.linkin}>
                           <Linkedin size={20} fill='white' color='' className='bg-black/60 px-[2px] rounded'/>
                         </button>
-                        <button>
+                        <button onClick={()=>window.location.href=person.email}>
                           <AtSign size={20} className='text-red-500'/>
                         </button>
                       </div>
