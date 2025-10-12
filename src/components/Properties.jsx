@@ -297,14 +297,14 @@ function List_products({number}) {
           const isLiked = likedProperties[property.id] || false;
           
           return (
-            <div 
+            <div onClick={()=>console.log(property.id)} // onclick on the particular container or property it should take you to the selected property details /
               key={property.id} 
-              className="rounded-2xl block-animate shadow-md shadow-gray-200 bg-white p-3 relative hover:shadow-lg transition-shadow duration-300"
+              className="cursor-pointer rounded-2xl block-animate shadow-md shadow-gray-200 bg-white p-3 relative hover:shadow-lg transition-shadow duration-300"
             >
               {/* Heart/Like Button */}
               <button
                 onClick={() => handleHeartClick(property.id)}
-                className="size-9 rounded-full bg-white shadow-md shadow-gray-200 p-2 transition-all duration-200 absolute top-4 right-4 z-20 hover:scale-110"
+                className="size-9 rounded-full bg-white shadow-md shadow-gray-200 p-2 transition-all duration-200 absolute top-5 right-6 z-20 hover:scale-110"
                 aria-label={isLiked ? 'Unlike property' : 'Like property'}
               >
                 <Heart 

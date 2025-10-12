@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Languages, ChevronDown, Plus, Eye, Coins, UserCircle, BookOpen } from 'lucide-react';
+import { Languages, ChevronDown, Plus, Eye, Coins, UserCircle, BookOpen, Heart, MapPin, Star, Bed } from 'lucide-react';
 import banner from  '../../assets/images/banner.jpg';
+import image from '../../assets/houses/5.jpg';
 import { Chart } from 'chart.js/auto';
 
 // Charts Component with proper sizing and different data sets
@@ -119,7 +120,7 @@ function Dashboard() {
   };
   
   const options = ['EN', 'FR'];
-  
+
   const userDetails = [
     {
       icon: Eye,
@@ -160,10 +161,10 @@ function Dashboard() {
   ];
   
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4">
-      <section className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-4">
+      <section className="max-w-7xl mx-auto px-1">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+        <div className="flex flex-col max-md:space-y-4 max-md:py-2 sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
           <h1 className="font-bold text-lg text-gray-600">Dashboard</h1>
           <div className="flex justify-start sm:justify-center gap-2 w-full sm:w-auto">
             <div className="relative">
@@ -241,7 +242,7 @@ function Dashboard() {
         {/* Statistics Section */}
         <main className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="bg-white rounded-lg p-3 sm:p-4 md:col-span-7 lg:col-span-8">
-            <h1 className="font-semibold text-gray-600 text-xs sm:text-sm mb-1 sm:mb-2">Recent Activities</h1>
+            <h1 className="font-bold text-gray-700 text-md mb-1 sm:mb-2">Recent Activities</h1>
             <p className="font-medium text-gray-600 text-xs mb-3 sm:mb-4">
               Take a look at the visual records of all your activities
             </p>
@@ -251,7 +252,7 @@ function Dashboard() {
           </div>
           
           <div className="bg-white rounded-lg p-3 sm:p-4 md:col-span-5 lg:col-span-4">
-            <h1 className="font-semibold text-gray-600 text-xs sm:text-sm mb-1 sm:mb-2">Distribution</h1>
+            <h1 className="font-bold text-gray-700 text-md mb-1 sm:mb-2">Distribution</h1>
             <p className="font-medium text-gray-600 text-xs mb-3 sm:mb-4">
               Visual breakdown of property categories
             </p>

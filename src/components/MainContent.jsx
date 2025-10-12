@@ -15,7 +15,7 @@ function MainContent({isSidebarCollapsed, data}) {
   };
 
   return (
-    <section className='bg-gray-50/80 md:px-1 w-full'>
+    <section className='bg-gray-100/20 md:px-1 w-full min-h-screen'>
         <div className='bg-white rounded-md px-1 py-2 block md:flex justify-between gap-10 max-md:space-y-5 items-center'>
           
           {/* form control for the different user search */}
@@ -44,30 +44,24 @@ function MainContent({isSidebarCollapsed, data}) {
               
               <div className='pt-2 flex md:gap-6 gap-8 px-3 items-center'>
                 {/* settings */}
-                <button className='relative'>
+                <button className='relative max-md:hidden'>
                   <Settings size={23} className='text-gray-600'/>
                 </button>
-                {/* likes and heart */}
-                <button className='relative'>
-                  <Heart size={23} className='text-gray-600'/>
-                  {/* this line of code depends if there are any properties the user has viewed 
-                  and stored in the store so as to come and review anytime */}
-                  <div className='bg-red-500 rounded-full size-4 absolute  -top-1.5 left-2 font-Custom font-medium text-xs text-white transition-colors'>5</div>
-                </button>
+                
                 {/* notification button */}
-                <button className='relative'>
+                <button className='relative max-md:hidden'>
                   <Bell size={23} className='text-gray-600'/>
                   {/* this line of code depends if there are any notification */}
                   <div className='bg-red-500 rounded-full size-4 absolute -top-1.5 left-2 font-Custom font-normal text-xs text-white transition-colors'>2</div>
                 </button>
                 {/* store button */}
-                <button className='relative'>
+                <button className='relative max-md:hidden'>
                   <Store size={23} className='text-gray-600'/>
                   {/* this line of code depends if there are any properties the user has viewed 
                   and stored in the store so as to come and review anytime */}
                   <div className='bg-red-500 rounded-full size-4 absolute -top-1.5 left-2 font-Custom font-normal text-xs text-white transition-colors'>2</div>
                 </button>
-                <div className='flex gap-2 shrink-0 items-center justify-center'>
+                <div className='flex gap-2 shrink-0 items-center max-md:hidden justify-center'>
                     {/* user profile image or avatar */}
                     <div className='relative shrink-0'>
                       <img src={userProfile} alt="" srcset="" className='md:size-8 size-7 rounded-full'/>

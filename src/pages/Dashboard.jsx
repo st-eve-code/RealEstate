@@ -30,7 +30,7 @@ export default function Dashboard() {
       };
 
   return (
-    <div className="min-h-screen bg-gray-100/50 block md:flex">
+    <div className="min-h-screen bg-gray-100/30 block md:flex">
       <Sidebar 
         isCollapsed={isSidebarCollapsed} 
         onToggle={toggleSidebar}

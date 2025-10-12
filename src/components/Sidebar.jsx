@@ -5,7 +5,7 @@ import {Building, UserCircle, History, Bell, Coins, PieChart, Menu, ChevronFirst
 import logo from '../assets/logo.svg';
 import { useNavigate } from 'react-router-dom';
 
-function Sidebar({isCollapsed, onToggle,onSelect}) {
+function Sidebar({isCollapsed, onToggle, onSelect}) {
   // handle selected option
   const HandleSelection = (option) => {
     onSelect(option);
@@ -67,7 +67,7 @@ function Sidebar({isCollapsed, onToggle,onSelect}) {
   ]
 
   return (
-    <section className={`px-1 lg:px-3 pt-2 md:h-auto w-full md:border-r-2 border-gray-100/30  transition-all duration-300 ease-in-out ${!isCollapsed ? 'md:w-52 lg:w-64 ': 'md:w-24 '} ${!isOpen ? 'h-16 md:min-h-screen bg-white' : 'bg-white min-h-screen'}`}>
+    <section className={`px-1 lg:px-3 pt-2 md:h-auto w-full md:border-r border-gray-300/80  transition-all duration-300 ease-in-out ${!isCollapsed ? 'md:w-52 lg:w-64': 'md:w-24'} ${!isOpen ? 'h-16 md:min-h-screen bg-white relative' : 'bg-white min-h-screen relative'}`}>
       <nav className='flex justify-between items-center w-full gap-10 py-2 px-2 md:px-2'>
         {/* Logo - Always visible on mobile, conditionally on desktop */}
         <div className={`w-32 h-18 cursor-pointer ${isCollapsed ? 'max-md:block md:hidden' : 'block'}`}>
@@ -87,7 +87,7 @@ function Sidebar({isCollapsed, onToggle,onSelect}) {
 
       {/* this section of the code changes the state of the menu links, keeping the links visible only when the menu icon is clicked and vice-versa  */}
 
-      <main className={`w-full md:px-1 px-3 mx-auto ${!isOpen ? 'hidden md:block h-10' : 'block'}`}>
+      <main className={`w-full h-auto md:px-1 px-3 py-2 mx-auto ${!isOpen ? 'hidden md:block h-auto relative' : 'block relative'}`}>
         <div className='mx-auto w-full pt-2'>
           {
             MenuOptions.map((menu, index) => { 
@@ -102,7 +102,7 @@ function Sidebar({isCollapsed, onToggle,onSelect}) {
                       // navigate(menu.Link_path);
                       HandleSelection(menu.content);
                     }}
-                    className={`*:hover:text-blue-600 hover:animate-pulse duration-300 transition-all ease-in-out hover:bg-blue-400/10 hover:border-r-4 hover:border-blue-800/60 w-full ${isCollapsed ? 'md:p-5 p-2 flex items-center gap-4 h-14' : 'flex mx-auto items-center gap-4 p-2 h-14'}`}
+                    className={`*:hover:text-blue-600 hover:animate-pulse duration-300 transition-all ease-in-out hover:bg-blue-400/10 hover:border-r-4 hover:border-blue-800/60 w-full ${isCollapsed ? 'md:p-5 p-2 flex items-center gap-4 h-16' : 'flex mx-auto items-center gap-4 p-2 h-16'}`}
                   >
                     <Icons size={22} className={`${isCollapsed ? 'md:mx-auto text-gray-500' : 'text-gray-500'}`}/>
                     <p className={`${isCollapsed ? 'md:hidden font-bold font-Custom text-md text-gray-700': 'font-bold font-Custom text-md text-gray-700'}`}>
@@ -114,9 +114,9 @@ function Sidebar({isCollapsed, onToggle,onSelect}) {
             })
           }
         </div>
-      </main>
-      {/* section for other menus */}
-      <div className='bottom-0'>
+        {/* section for other menus */}
+      {/* change from this line and arrange the logic */}
+      <div className={`mx-auto ${!isOpen ? 'hidden md:block mt-56 mx-auto bottom-0 relative h-auto w-full ' : 'block relative'}`}>
         <button 
           type="button"
           onClick={(e) => {
@@ -125,14 +125,32 @@ function Sidebar({isCollapsed, onToggle,onSelect}) {
             // navigate(menu.Link_path);
             HandleSelection('settings');
           }}
-          className={`*:hover:text-blue-600 hover:animate-pulse duration-300 transition-all ease-in-out hover:bg-blue-400/10 hover:border-r-4 hover:border-blue-800/60 w-full ${isCollapsed ? 'md:p-5 p-2 flex items-center gap-4 h-14' : 'flex mx-auto items-center gap-4 p-2 h-14'}`}
+          className={` *:hover:text-blue-600 hover:animate-pulse duration-300 transition-all ease-in-out hover:bg-blue-400/10 hover:border-r-4 hover:border-blue-800/60 w-full ${isCollapsed ? ' p-2 flex items-center gap-4 h-16 ' : 'flex items-center gap-4 p-2 h-16'}`}
         >
           <Settings size={22} className={`${isCollapsed ? 'md:mx-auto text-gray-500' : 'text-gray-500'}`}/>
           <p className={`${isCollapsed ? 'md:hidden font-bold font-Custom text-md text-gray-700': 'font-bold font-Custom text-md text-gray-700'}`}>
             Settings
           </p>
         </button>
+        <button 
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen(false);
+            // navigate(menu.Link_path);
+            HandleSelection('logout');
+          }}
+          className={`*:hover:text-blue-600 hover:animate-pulse duration-300 transition-all ease-in-out hover:bg-blue-400/10 hover:border-r-4 hover:border-blue-800/60 w-full ${isCollapsed ? 'p-2 flex items-center gap-4 h-16' : 'flex mx-auto items-center gap-4 p-2 h-16'}`}
+        >
+          <LogOut size={22} className={`${isCollapsed ? 'md:mx-auto text-gray-500' : 'text-red-500/70'}`}/>
+          <p className={`${isCollapsed ? 'md:hidden font-bold font-Custom text-md text-gray-700': 'font-bold font-Custom text-md text-gray-700'}`}>
+            Logout
+          </p>
+        </button>
       </div>
+      </main>
+      
+      
     </section>
   )
 }

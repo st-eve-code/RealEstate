@@ -6,7 +6,7 @@ import Notification from '../components/Base_Contents/Notification';
 import Transaction from '../components/Base_Contents/Transaction';
 import Store from '../components/Base_Contents/Store';
 import Subscription from '../components/Base_Contents/Subscription';
-
+import Logout from './Base_Contents/Logout';
 function Contents({data}) {
     const renderContent = () => {
          switch(data) {
@@ -24,6 +24,8 @@ function Contents({data}) {
                     return <Notification/>;
                 case 'subscription':
                     return <Subscription/>;
+                case 'logout':
+                    return <Logout/>;
                 default:
                     return <Dashboard/>;
             };

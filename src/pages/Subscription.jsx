@@ -1,11 +1,14 @@
 import React , {useState} from 'react';
 import '../App.css';
 import { CheckCircle } from 'lucide-react';
-function Subscription_plan() {
+function Subscription_plan({myPlan, stepProcess, planAmount}) {
     const [SelectedPlan, setSelectedPlan] = useState(null);
 
     const getSelectedPlan = (option) => {
         setSelectedPlan(option);
+        myPlan(option);
+        stepProcess('step2')
+       
     };
     
     const plans = [
@@ -57,7 +60,7 @@ function Subscription_plan() {
             period: "",
             description: "Complete solution for extensive searches",
             features: [
-                "View 12 Properties",
+                "View 16 Properties",
                 "Premium Details",
                 "Dedicated Manager",
                 "HD Photos & Videos",
@@ -105,10 +108,11 @@ function Subscription_plan() {
                                         }
                                     )}
                                 </ul>
-                                <button onClick={()=>getSelectedPlan(data.name)} className={`w-full py-4 px-4 rounded-lg font-medium transition-all duration-300 mt-auto text-sm ${
-                                        data.name === "Starter"
-                                            ? 'bg-white text-blue-600 hover:bg-gray-100' 
-                                            : 'bg-gray-100 hover:bg-blue-600 text-gray-800 hover:text-white'
+                                <button onClick={()=>{getSelectedPlan(data.name);
+                                planAmount(data.price);}} className={`w-full py-4 px-4 rounded-lg font-medium transition-all duration-300 mt-auto text-sm ${
+                                data.name === "Starter"
+                                    ? 'bg-white text-blue-600 hover:bg-gray-100' 
+                                    : 'bg-gray-100 hover:bg-blue-600 text-gray-800 hover:text-white'
                                     }`}>
                                     Get Started
                                 </button>
