@@ -1,16 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Languages, ChevronDown, Plus, Eye, Coins, UserCircle, BookOpen, Heart, MapPin, Star, Bed } from 'lucide-react';
-import banner from  '../../assets/images/banner.jpg';
-import image from '../../assets/houses/5.jpg';
+import { Languages, ChevronDown, Plus, Eye, Coins, UserCircle, BookOpen } from 'lucide-react';
 import { Chart } from 'chart.js/auto';
 
-// Charts Component with proper sizing and different data sets
+// Placeholder images
+const banner = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=400&fit=crop";
+
+// Charts Component
 function Charts({ Graph, isSmall = false, dataType = 'sales' }) {
   const chartRef = useRef(null);
+  const chartInstance = useRef(null);
   
   useEffect(() => {
     const canvas = chartRef.current;
     if (!canvas) return;
+    
+    // Destroy existing chart before creating new one
+    if (chartInstance.current) {
+      chartInstance.current.destroy();
+    }
     
     const ctx = canvas.getContext('2d');
     
@@ -40,7 +47,7 @@ function Charts({ Graph, isSmall = false, dataType = 'sales' }) {
       propertyTypes: {
         labels: ['Apartments', 'Houses', 'Studios'],
         data: [35, 28, 15],
-        label: 'Property Types Searched'
+        label: 'Property Types'
       },
       users: {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -64,9 +71,10 @@ function Charts({ Graph, isSmall = false, dataType = 'sales' }) {
         datasets: [{
           label: currentData.label,
           data: currentData.data,
-          backgroundColor: colors,
-          borderColor: borderColors,
-          borderWidth: isSmall ? 1 : 2
+          backgroundColor: Graph === 'pie' ? colors : colors[0],
+          borderColor: Graph === 'pie' ? borderColors : borderColors[0],
+          borderWidth: isSmall ? 1 : 2,
+          tension: 0.4
         }]
       },
       options: {
@@ -75,10 +83,19 @@ function Charts({ Graph, isSmall = false, dataType = 'sales' }) {
         plugins: {
           legend: {
             display: !isSmall,
-            position: Graph === 'pie' ? 'bottom' : 'top'
+            position: Graph === 'pie' ? 'bottom' : 'top',
+            labels: {
+              padding: 10,
+              font: {
+                size: 11
+              }
+            }
           },
           tooltip: {
-            enabled: !isSmall
+            enabled: true,
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            padding: 10,
+            cornerRadius: 6
           }
         },
         scales: Graph === 'pie' ? {} : {
@@ -86,22 +103,37 @@ function Charts({ Graph, isSmall = false, dataType = 'sales' }) {
             beginAtZero: true,
             display: !isSmall,
             grid: {
-              display: !isSmall
+              display: !isSmall,
+              color: 'rgba(0, 0, 0, 0.05)'
+            },
+            ticks: {
+              font: {
+                size: 11
+              }
             }
           },
           x: {
             display: !isSmall,
             grid: {
               display: false
+            },
+            ticks: {
+              font: {
+                size: 11
+              }
             }
           }
         }
       }
     };
     
-    const chart = new Chart(ctx, config);
+    chartInstance.current = new Chart(ctx, config);
     
-    return () => chart.destroy();
+    return () => {
+      if (chartInstance.current) {
+        chartInstance.current.destroy();
+      }
+    };
   }, [Graph, isSmall, dataType]);
   
   return (
@@ -126,9 +158,10 @@ function Dashboard() {
       icon: Eye,
       title: 'Total Views',
       graph: 'bar',
-      detail: '10',
+      detail: '10K',
       season: 'last month',
-      rate: 0.8,
+      rate: 8.5,
+      isPositive: true,
       dataType: 'views'
     },
     {
@@ -138,6 +171,7 @@ function Dashboard() {
       detail: 'Basic',
       season: 'last month',
       rate: 2.5,
+      isPositive: true,
       dataType: 'sales'
     },
     {
@@ -146,7 +180,8 @@ function Dashboard() {
       graph: 'pie',
       detail: '1000+',
       season: 'last month',
-      rate: 0.8,
+      rate: 12.3,
+      isPositive: true,
       dataType: 'users'
     },
     {
@@ -156,112 +191,161 @@ function Dashboard() {
       detail: '300+',
       season: 'last month',
       rate: 3.2,
+      isPositive: true,
       dataType: 'rents'
     }
   ];
   
   return (
-    <div className="min-h-screen bg-gray-50 p-1 sm:p-4">
-      <section className="max-w-7xl mx-auto px-1">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
+        
         {/* Header */}
-        <div className="flex flex-col max-md:space-y-4 max-md:py-2 sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-          <h1 className="font-bold text-lg text-gray-600">Dashboard</h1>
-          <div className="flex justify-start sm:justify-center gap-2 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6">
+          <div>
+            <h1 className="font-bold text-xl sm:text-2xl text-gray-800">Dashboard</h1>
+            <p className="text-sm text-gray-500 mt-1">Welcome back! Here's what's happening today.</p>
+          </div>
+          
+          <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
+            {/* Language Selector */}
             <div className="relative">
               <button 
                 onClick={() => setDropdown(!isDropdown)} 
                 type="button" 
-                className="bg-white shadow rounded-lg flex justify-center gap-2 px-2 sm:px-3 py-2 items-center"
+                className="bg-white shadow-sm border border-gray-200 rounded-lg flex items-center gap-2 px-3 py-2 hover:bg-gray-50 transition-colors"
               >
-                <Languages size={15} className="text-blue-500"/>
-                <p className="font-medium text-xs sm:text-sm text-gray-600">{language}</p>
-                <ChevronDown size={15} className={`text-gray-600 transition-transform ${isDropdown ? '-rotate-90' : ''}`}/>
+                <Languages size={16} className="text-blue-600"/>
+                <span className="font-medium text-sm text-gray-700">{language}</span>
+                <ChevronDown size={16} className={`text-gray-500 transition-transform ${isDropdown ? 'rotate-180' : ''}`}/>
               </button>
+              
               {isDropdown && (
-                <div className="absolute z-10 w-16 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
-                  {options.map((option, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleSelect(option)}
-                      className="w-full px-4 py-2 text-left text-gray-700 hover:bg-blue-50 first:rounded-t-lg last:rounded-b-lg transition-colors"
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
+                <>
+                  <div 
+                    className="fixed inset-0 z-10" 
+                    onClick={() => setDropdown(false)}
+                  />
+                  <div className="absolute right-0 z-20 w-24 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                    {options.map((option, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleSelect(option)}
+                        className={`w-full px-4 py-2.5 text-sm text-left transition-colors ${
+                          language === option 
+                            ? 'bg-blue-50 text-blue-600 font-medium' 
+                            : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
-            <button type="button" className="bg-blue-600 rounded-lg flex justify-center gap-1 px-3 sm:px-4 py-2 items-center">
+            
+            {/* Add Property Button */}
+            <button 
+              type="button" 
+              className="bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center gap-2 px-4 py-2 shadow-sm hover:shadow-md transition-all"
+            >
               <Plus size={18} className="text-white"/>
-              <p className="font-medium text-xs sm:text-sm text-white">Add Property</p>
+              <span className="font-medium text-sm text-white">Add Property</span>
             </button>
           </div>
         </div>
         
-        {/* User Details Cards */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {userDetails.map((data, index) => {
             const Icon = data.icon;
             return (
-              <div key={index} className="p-3 sm:p-4 rounded-lg shadow-md bg-white">
-                <div className="flex justify-start items-center gap-2 mb-2 sm:mb-3">
-                  <Icon size={15} className="text-blue-600"/>
-                  <h1 className="font-medium text-gray-600 text-xs sm:text-sm">{data.title}</h1>
+              <div key={index} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="p-2 bg-blue-50 rounded-lg">
+                    <Icon size={18} className="text-blue-600"/>
+                  </div>
+                  <h2 className="font-semibold text-gray-700 text-sm">{data.title}</h2>
                 </div>
-                <div className="flex justify-between items-center gap-3 sm:gap-4 mb-2 sm:mb-3">
-                  <p className="font-bold text-gray-800 text-base sm:text-lg">{data.detail}</p>
-                  <div className="w-16 h-10 sm:w-20 sm:h-12">
+                
+                <div className="flex justify-between items-center gap-4 mb-3">
+                  <p className="font-bold text-gray-900 text-2xl">{data.detail}</p>
+                  <div className="w-20 h-12">
                     <Charts Graph={data.graph} isSmall={true} dataType={data.dataType}/>
                   </div>
                 </div>
+                
                 <div className="flex justify-between items-center">
-                  <button className={`${data.rate >= 1 ? 'text-green-400 bg-green-100' : 'text-red-400 bg-red-100'} px-2 py-1 font-medium text-xs rounded-lg`}>
-                    {data.rate}%
-                  </button>
-                  <p className="font-normal text-gray-400 text-xs">{data.season}</p>
+                  <span className={`${
+                    data.isPositive 
+                      ? 'text-green-600 bg-green-50' 
+                      : 'text-red-600 bg-red-50'
+                  } px-2.5 py-1 font-semibold text-xs rounded-md`}>
+                    {data.isPositive ? '+' : '-'}{data.rate}%
+                  </span>
+                  <p className="font-medium text-gray-400 text-xs">{data.season}</p>
                 </div>
               </div>
             );
           })}
-        </section>
-        {/* Advertisement Banner */}
-        <section className="p-3 sm:p-4 my-4 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-6" style={{backgroundImage: `url(${banner})`,backgroundPosition:'center',backgroundSize: 'cover',backgroundRepeat:'no-repeat'}}>
-          <div className="flex-1 w-full">
-            <p className="font-normal text-white text-xs sm:text-sm mb-1">
-              74 tenants have been submitted recently, please check it out!
-            </p>
-            <p className="font-normal text-white/50 text-xs">
-              Follow us for more new updates like this.
-            </p>
-          </div>
-          <button className="bg-white/20 font-medium text-white text-xs sm:text-sm backdrop-blur-md px-4 py-2 rounded-lg shrink-0 w-full sm:w-auto">
-            60% off
-          </button>
-        </section>
+        </div>
         
-        {/* Statistics Section */}
-        <main className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <div className="bg-white rounded-lg p-3 sm:p-4 md:col-span-7 lg:col-span-8">
-            <h1 className="font-bold text-gray-700 text-md mb-1 sm:mb-2">Recent Activities</h1>
-            <p className="font-medium text-gray-600 text-xs mb-3 sm:mb-4">
-              Take a look at the visual records of all your activities
-            </p>
-            <div className="w-full h-56 sm:h-64 md:h-80">
+        {/* Banner */}
+        <div className="relative rounded-xl overflow-hidden mb-6 shadow-sm">
+          <div 
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${banner})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 to-purple-900/90" />
+          <div className="relative p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex-1">
+              <h3 className="font-bold text-white text-lg sm:text-xl mb-2">
+                Special Offer! 🎉
+              </h3>
+              <p className="text-white/90 text-sm sm:text-base mb-1">
+                74 tenants have been submitted recently, check them out!
+              </p>
+              <p className="text-white/60 text-xs sm:text-sm">
+                Follow us for more updates like this.
+              </p>
+            </div>
+            <button className="bg-white/20 hover:bg-white/30 backdrop-blur-md font-semibold text-white text-sm px-6 py-3 rounded-lg transition-all shadow-lg">
+              60% Off
+            </button>
+          </div>
+        </div>
+        
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+          {/* Bar Chart */}
+          <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 lg:col-span-7">
+            <div className="mb-4">
+              <h2 className="font-bold text-gray-800 text-lg mb-1">Recent Activities</h2>
+              <p className="text-gray-500 text-sm">
+                Visual records of all your activities over time
+              </p>
+            </div>
+            <div className="w-full h-64 sm:h-72 lg:h-80">
               <Charts Graph="bar" isSmall={false} dataType="views"/>
             </div>
           </div>
           
-          <div className="bg-white rounded-lg p-3 sm:p-4 md:col-span-5 lg:col-span-4">
-            <h1 className="font-bold text-gray-700 text-md mb-1 sm:mb-2">Distribution</h1>
-            <p className="font-medium text-gray-600 text-xs mb-3 sm:mb-4">
-              Visual breakdown of property categories
-            </p>
-            <div className="w-full h-56 sm:h-64 md:h-80">
+          {/* Pie Chart */}
+          <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 lg:col-span-5">
+            <div className="mb-4">
+              <h2 className="font-bold text-gray-800 text-lg mb-1">Distribution</h2>
+              <p className="text-gray-500 text-sm">
+                Property categories breakdown
+              </p>
+            </div>
+            <div className="w-full h-64 sm:h-72 lg:h-80">
               <Charts Graph="pie" isSmall={false} dataType="propertyTypes"/>
             </div>
           </div>
-        </main>
-      </section>
+        </div>
+        
+      </div>
     </div>
   );
 }

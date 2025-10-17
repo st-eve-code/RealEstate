@@ -66,7 +66,7 @@ function MainContent({isSidebarCollapsed, data}) {
                     <div className='relative shrink-0'>
                       <img src={userProfile} alt="" srcset="" className='md:size-8 size-7 rounded-full'/>
                       {/* green light for if user is active */}
-                      <div className='bg-green-400 rounded-full size-2.5 absolute top-5 md:top-6 left-5 transition-colors'></div>
+                      <div className='bg-green-400 border-2 border-white rounded-full size-2.5 absolute top-5 md:top-6 left-5 transition-colors'></div>
                     </div>
                     {/* user name gotten after login */}
                     {/* change contents based on the selected link */}
