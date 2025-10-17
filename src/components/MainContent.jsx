@@ -19,7 +19,7 @@ function MainContent({isSidebarCollapsed, data}) {
         <div className='bg-white rounded-md px-1 py-2 block md:flex justify-between gap-10 max-md:space-y-5 items-center'>
           
           {/* form control for the different user search */}
-          <div className='ml-2'>
+          <div className='max-md:mx-auto px-2'>
             <form action="" className='relative'>
               <input type="search" name="search" id="search" placeholder='Search property, location or more' 
                className={`font-Custom font-medium text-sm text-gray-600/80 px-10 md:px-9 lg:px-16 py-3 rounded-lg  

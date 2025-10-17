@@ -1,7 +1,7 @@
 // Side bar component
 
 import React, {useState} from 'react';
-import {Building, UserCircle, History, Bell, Coins, PieChart, Menu, ChevronFirst, X, ChevronLast, Store , User, LogOut, Settings} from 'lucide-react';
+import {Building, UserCircle, History, Bell, Coins, PieChart, Menu, ChevronFirst, X, ChevronLast, Store , User, LogOut, Settings, Moon, HelpCircle} from 'lucide-react';
 import logo from '../assets/logo.svg';
 import { useNavigate } from 'react-router-dom';
 
@@ -123,13 +123,28 @@ function Sidebar({isCollapsed, onToggle, onSelect}) {
             e.stopPropagation();
             setOpen(false);
             // navigate(menu.Link_path);
-            HandleSelection('settings');
+            HandleSelection('darkmode');
           }}
           className={` *:hover:text-blue-600 hover:animate-pulse duration-300 transition-all ease-in-out hover:bg-blue-400/10 hover:border-r-4 hover:border-blue-800/60 w-full ${isCollapsed ? ' p-2 flex items-center gap-4 h-16 ' : 'flex items-center gap-4 p-2 h-16'}`}
         >
-          <Settings size={22} className={`${isCollapsed ? 'md:mx-auto text-gray-500' : 'text-gray-500'}`}/>
+          <Moon size={22} className={`${isCollapsed ? 'md:mx-auto text-gray-500' : 'text-gray-500'}`}/>
           <p className={`${isCollapsed ? 'md:hidden font-bold font-Custom text-md text-gray-700': 'font-bold font-Custom text-md text-gray-700'}`}>
-            Settings
+            Darkmode
+          </p>
+        </button>
+        <button 
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen(false);
+            // navigate(menu.Link_path);
+            HandleSelection('help');
+          }}
+          className={` *:hover:text-blue-600 hover:animate-pulse duration-300 transition-all ease-in-out hover:bg-blue-400/10 hover:border-r-4 hover:border-blue-800/60 w-full ${isCollapsed ? ' p-2 flex items-center gap-4 h-16 ' : 'flex items-center gap-4 p-2 h-16'}`}
+        >
+          <HelpCircle size={22} className={`${isCollapsed ? 'md:mx-auto text-gray-500' : 'text-gray-500'}`}/>
+          <p className={`${isCollapsed ? 'md:hidden font-bold font-Custom text-md text-gray-700': 'font-bold font-Custom text-md text-gray-700'}`}>
+            Help
           </p>
         </button>
         <button 

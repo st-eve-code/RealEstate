@@ -84,10 +84,10 @@ function Subscription_plan({myPlan, stepProcess, planAmount}) {
                                     : 'border border-gray-200 bg-white'
                             }`}>
                                 <div className={`mb-4 rounded-xl p-4 ${ data.name === "Starter" ? 'bg-blue-800/60':'bg-gray-100'}`}>
-                                    <h1 className={`font-Custom font-medium text-sm text-center ${ data.name === "Starter" ? 'text-white':'text-blue-600'}`}>
+                                    <h1 className={`font-Poppins font-medium text-sm text-center ${ data.name === "Starter" ? 'text-white':'text-blue-600'}`}>
                                         {data.name}
                                     </h1>
-                                    <p className={`text-xs font-Custom font-normal text-center ${ data.name === "Starter" ? 'text-white':'text-gray-600'}`}>
+                                    <p className={`text-xs font-Poppins font-normal text-center ${ data.name === "Starter" ? 'text-white':'text-gray-600'}`}>
                                         {data.description}
                                     </p>
                                     <h2 className={`font-Custom font-bold text-2xl pt-4 text-center ${ data.name === "Starter" ? 'text-white':'text-gray-800'}`}>
