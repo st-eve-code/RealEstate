@@ -10,7 +10,7 @@ import Testimonial from './components/ScrollTestimonials';
 import './App.css';
 import Payment from './pages/Subscription';
 import Contact_us from './pages/Contact_us';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/User/Dashboard';
 function App() {
   return (
     <Router>

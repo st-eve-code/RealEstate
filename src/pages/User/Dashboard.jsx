@@ -1,5 +1,5 @@
-import Sidebar from '../components/Sidebar';
-import MainContent from '../components/MainContent';
+import Sidebar from '../../components/Sidebar';
+import MainContent from '../../components/MainContent';
 import React, { useState , useEffect} from 'react';
 // Main Dashboard Component
 export default function Dashboard() {
