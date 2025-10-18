@@ -292,7 +292,7 @@ function Signup() {
             disabled={isLoading}
             className='justify-center border bg-white text-gray-800 font-Custom font-medium text-sm w-full h-11 rounded-lg shadow-md shadow-gray-300/40 mt-3 flex items-center text-center gap-2 mx-auto hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed'
           >
-            <img src={google} alt="Google logo" className='w-5 h-5' />
+            <img src={google} alt="Google logo" className='w-8 h-8' />
             Continue with Google
           </button>
 
