@@ -23,11 +23,8 @@ function Subscription() {
     <section className='px-2 pb-8'>
       {isStep === 'step1' && (
         <>
-          <h1 className='font-Custom font-bold text-lg text-gray-600'>Subscription Plans</h1>
-          <p className="font-normal font-Poppins text-sm text-gray-600">
-            We have a selection of very affordable subscription plans suitable for all users of all age and budgets, select one and let's get you started.
-          </p>
-          <div className='mt-10'>
+          
+          <div className='mt-0'>
             <Subscription_plan myPlan={setPlan} stepProcess={setIsStep} planAmount={setPlanAmount}/>
           </div>
         </>
@@ -37,10 +34,7 @@ function Subscription() {
       {isStep === 'step2' && (
         <div>
           {/* Step 2 payment methods */} 
-          <div>
-             <h1 className='font-Custom text-center font-bold text-lg text-gray-600'>Subscription Plans</h1>
-              <p className="font-normal text-center font-Poppins text-sm text-gray-600"> Select a payment method from the different available methods of payments below </p>
-          </div>
+          <h1 className='font-Custom font-bold text-lg text-gray-600'>Select Payment Method</h1>
           <div className='mt-8 p-2 max-w-[28rem] rounded-md shadow-md mx-auto'>
             <div className='flex items-center justify-between'>
               {
