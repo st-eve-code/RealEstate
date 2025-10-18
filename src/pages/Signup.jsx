@@ -79,7 +79,7 @@ function Signup() {
     return { strength: 100, label: 'Strong', color: 'bg-green-500' };
   };
 
-  // Form submission handler with API integration
+  // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
@@ -88,21 +88,35 @@ function Signup() {
     if (Object.keys(validationErrors).length === 0) {
       setIsLoading(true);
 
-      try {
-        // Replace with your actual API endpoint
-        const response = await fetch('/api/signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
-        });
+      // TODO: Implement API integration here
+      // Example:
+      // try {
+      //   const response = await fetch('/api/signup', {
+      //     method: 'POST',
+      //     headers: { 'Content-Type': 'application/json' },
+      //     body: JSON.stringify(formData)
+      //   });
+      //   
+      //   if (!response.ok) {
+      //     const errorData = await response.json();
+      //     throw new Error(errorData.message || 'Registration failed');
+      //   }
+      //   
+      //   const data = await response.json();
+      //   // Handle successful registration
+      // } catch (error) {
+      //   // Handle errors
+      //   Swal.fire({
+      //     title: 'Error!',
+      //     text: error.message || 'Something went wrong. Please try again.',
+      //     icon: 'error',
+      //     confirmButtonText: 'OK',
+      //     confirmButtonColor: '#ef4444',
+      //   });
+      // }
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Registration failed');
-        }
-
-        const data = await response.json();
-
+      // Demo: Simulate API call delay
+      setTimeout(() => {
         // Show success alert with confetti
         Swal.fire({
           title: '🎉 Congrats!',
@@ -119,22 +133,12 @@ function Signup() {
         }).then(() => {
           // Clear form data
           setFormData({ username: '', email: '', password: '' });
-          // Navigate to next page
+          // Navigate to clientdata (demo)
           navigate('/clientdata');
         });
 
-      } catch (error) {
-        // Handle errors
-        Swal.fire({
-          title: 'Error!',
-          text: error.message || 'Something went wrong. Please try again.',
-          icon: 'error',
-          confirmButtonText: 'OK',
-          confirmButtonColor: '#ef4444',
-        });
-      } finally {
         setIsLoading(false);
-      }
+      }, 1500);
     }
   };
 
