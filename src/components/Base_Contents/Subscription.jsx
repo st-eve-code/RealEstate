@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CheckCircle, Star } from 'lucide-react';
 
-function SubscriptionPlan({ 
+function Subscription({ 
   onPlanSelect = () => {}, 
   onStepChange = () => {}, 
   onAmountChange = () => {} 
@@ -205,4 +205,4 @@ function SubscriptionPlan({
   );
 }
 
-export default SubscriptionPlan;
+export default Subscription;

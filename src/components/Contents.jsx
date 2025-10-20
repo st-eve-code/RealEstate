@@ -1,12 +1,12 @@
 // In your Contents.jsx file:
 import React, { memo } from 'react';
-import Dashboard from './UserDashboard/Dashboard';
-import Property from './UserDashboard/Properties';
-import Profile from './UserDashboard/Profile';
-import Notification from './UserDashboard/Notification';
-import Transaction from './UserDashboard/Transaction';
-import Store from './UserDashboard/Store';
-import Subscription from './UserDashboard/Subscription';
+import Dashboard from './Base_Contents/Dashboard';
+import Property from './Base_Contents/Properties';
+import Profile from './Base_Contents/Profile';
+import Notification from './Base_Contents/Notification';
+import Transaction from './Base_Contents/Transaction';
+import Store from './Base_Contents/Store';
+import Subscription from './Base_Contents/Subscription';
 
 function Contents({ data = 'dashboard', isSidebarCollapsed = false }) {
   const renderContent = () => {

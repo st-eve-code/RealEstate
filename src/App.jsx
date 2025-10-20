@@ -8,7 +8,6 @@ import Reset_password from './pages/Reset_password';
 import Client_data from './pages/Client_data';
 import Testimonial from './components/ScrollTestimonials';
 import './App.css';
-import Payment from './pages/Subscription';
 import Contact_us from './pages/Contact_us';
 import Dashboard from './pages/User/Dashboard';
 function App() {
