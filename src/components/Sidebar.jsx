@@ -12,8 +12,8 @@ import {
   ChevronLast,
   Store,
   LogOut,
-  Moon,
-  HelpCircle
+  HelpCircle,
+  Settings
 } from 'lucide-react';
 
 // Mock logo - replace with your actual import
@@ -117,9 +117,9 @@ function Sidebar({ isCollapsed, onToggle, onSelect }) {
   // Bottom menu options
   const BottomMenuOptions = [
     {
-      menu_icon: Moon,
-      name: 'Dark Mode',
-      content: 'darkmode'
+      menu_icon: Settings,
+      name: 'Settings',
+      content: 'setting'
     },
     {
       menu_icon: HelpCircle,

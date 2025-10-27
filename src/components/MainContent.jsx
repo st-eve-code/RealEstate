@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import '../App.css';
 import userProfile from '../assets/images/tiger.jpg'
-import { Bell, ChevronDown, Eye, Heart, Languages, Plus, Search, Settings, Store, UserCircle } from 'lucide-react';
+import { Bell, ChevronDown, Eye, Heart, Languages, Plus, Search, Sun, Store, Moon } from 'lucide-react';
 import Contents from './Contents';
 
 function MainContent({isSidebarCollapsed, data}) {
@@ -44,8 +44,8 @@ function MainContent({isSidebarCollapsed, data}) {
               
               <div className='pt-2 flex md:gap-6 gap-8 px-3 items-center'>
                 {/* settings */}
-                <button className='relative max-md:hidden'>
-                  <Settings size={23} className='text-gray-600'/>
+                <button onClick={handleDarkMode} className='relative max-md:hidden'>
+                  {isDark ? <Sun size={23} className='text-gray-600'/> : <Moon size={23} className='text-gray-600'/>}
                 </button>
                 
                 {/* notification button */}

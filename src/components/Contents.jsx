@@ -1,12 +1,14 @@
 // In your Contents.jsx file:
 import React, { memo } from 'react';
-import Dashboard from './Base_Contents/Dashboard';
-import Property from './Base_Contents/Properties';
-import Profile from './Base_Contents/Profile';
-import Notification from './Base_Contents/Notification';
-import Transaction from './Base_Contents/Transaction';
-import Store from './Base_Contents/Store';
-import Subscription from './Base_Contents/Subscription';
+import Dashboard from './User_Dashboard/Dashboard';
+import Property from './User_Dashboard/Properties';
+import Profile from './User_Dashboard/Profile';
+import Notification from './User_Dashboard/Notification';
+import Transaction from './User_Dashboard/Transaction';
+import Store from './User_Dashboard/Store';
+import Subscription from './User_Dashboard/Subscription';
+import HelpSection from './User_Dashboard/Help';
+import Setting from './User_Dashboard/Setting';
 
 function Contents({ data = 'dashboard', isSidebarCollapsed = false }) {
   const renderContent = () => {
@@ -33,10 +35,10 @@ function Contents({ data = 'dashboard', isSidebarCollapsed = false }) {
         return <Subscription />;
       
       case 'help':
-        return <div className="p-6">Help content here</div>;
+        return <HelpSection />;
       
-      case 'darkmode':
-        return <div className="p-6">Dark mode settings here</div>;
+      case 'setting':
+        return <Setting />;
       
       // Don't render logout as content - it's handled by modal
       case 'logout':
