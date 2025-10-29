@@ -535,7 +535,7 @@ function PropertyDetails({ property, onBack, isFavorite, onToggleFavorite }) {
           
           {/* Section 1 - Larger section (8 columns) */}
           <div className="lg:col-span-8">
-            <div className="bg-gray-100/30 rounded-xl p-6 sm:p-8 min-h-[300px]">
+            <div className="bg-gray-100/30 rounded-xl p-2 sm:p-6 min-h-[300px]">
               <h2 className="text-xl font-bold text-gray-900 mb-4">About this property</h2>
               <p className="text-gray-700 leading-relaxed mb-6">
                 {property.shortDescription}
@@ -593,7 +593,7 @@ function PropertyDetails({ property, onBack, isFavorite, onToggleFavorite }) {
                 ))}
               </div>
               {/* Caretaker Contact Details */}
-              <div className="bg-white rounded-xl mt-10 p-6 shadow-lg border border-gray-200">
+              <div className="bg-white rounded-xl mt-10 p-2 md:p-4 shadow-lg border border-gray-200">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Caretaker Contact</h3>
                 <div className="space-y-3">
                   <div className="bg-gray-50 rounded-lg p-4">

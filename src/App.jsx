@@ -7,6 +7,7 @@ import OtpVerificationMethod from  './pages/ForgotPassword';
 import Reset_password from './pages/Reset_password';
 import Client_data from './pages/Client_data';
 import Testimonial from './components/ScrollTestimonials';
+import HostSpace from './pages/HostSpace';
 import './App.css';
 import Contact_us from './pages/Contact_us';
 import Dashboard from './pages/User/Dashboard';
@@ -22,6 +23,7 @@ function App() {
         <Route path="/resetpassword" element={<Reset_password/>} />
         <Route path="/dashboard" element={<Dashboard/>} />
         <Route path="/contact" element={<Contact_us/>}/>
+        <Route path="/hostspace" element={<HostSpace/>}/>
       </Routes>
     </Router>
   )
