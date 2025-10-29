@@ -4,7 +4,7 @@ import Questions from '../components/Questions';
 import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map, Facebook, Linkedin, Mail, AtSign } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Testimonial from '../components/ScrollTestimonials';
-import Properties from '../components/Properties';
+import List_products from '../components/Properties';
 import image1 from '../assets/images/mobile-money.jpg';
 import image2 from '../assets/images/mastercard.png';
 import image6 from '../assets/images/paypal.jpg'
@@ -208,18 +208,18 @@ function Home() {
           {/* different properties (apartments, studios, hostels). this comes from 
           the backend of the api containing the properties  */}
           <div className='mt-32'>
-             <h2 className='font-Custom font-semibold text-2xl text-center px-2 lg:text-2xl py-2 text-gray-800 flex justify-center items-center '>
-              We Help You To Make Better Deals
-             </h2>
-            <p className='font-medium font-Custom text-gray-500 text-sm flex justify-center items-center text-center px-3'>Rely on our seasoned professionals who posses in-depth knowledge of the real estate landscape.</p>
-            {/* search filter based on user clicks or selection */}
-            <Properties/>
-            <button onClick={()=> navigate('/dashboard')} className='block-animate bg-blue-600 text-white font-Custom font-medium text-sm rounded-full max-w-[10rem] px-5 py-2 my-5 flex justify-center items-center mx-auto'>
-              Load More
-            </button>
+             <h2 className='font-Custom font-semibold text-2xl text-center px-2 lg:text-2xl py-2 text-gray-800 flex justify-center items-center'>
+              Explore Our Property Collection
+            </h2>
+            <p className='font-medium font-Custom text-gray-500 text-sm flex justify-center items-center text-center px-3'>
+              From hostels to studios, our curated gallery showcases diverse living spaces backed by expert insight into the real estate landscape.
+            </p>
+            {/* Interactive filters to help users browse by property type */}
+            <List_products/>
+            
           </div>
           {/* services */}
-          <div className='mx-auto mt-32'>
+          <div className='mx-auto mt-24'>
             <span className='font-Custom font-semibold text-2xl text-center px-2 lg:text-2xl py-2 text-gray-800 flex justify-center items-center '>
               Our  <span className='text-blue-600 px-2'>Unique</span> Services !
             </span>
