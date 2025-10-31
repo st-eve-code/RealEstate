@@ -32,7 +32,7 @@ const supabaseClient = {
   })
 };
 
-export default function CaretakerPropertyForm() {
+export default function HostSpace() {
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
