@@ -16,7 +16,7 @@ function Footer() {
             name: 'About'
         },
         {
-            path: '/contact#faqs',
+            path: '/contact',
             name: 'Contact Us'
         },
         {

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import About_us from './About_us';
 import Questions from '../components/Questions';
 import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map, Facebook, Linkedin, Mail, AtSign } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -58,20 +59,7 @@ function Home() {
     };
   }, []);
 
-  const ScrollToAbout = () => {
-    aboutRef.current?.scrollIntoView({behavior: 'smooth'});
-  };
-  const location = useLocation();
-  useEffect(
-    ()=> {
-      if (location.hash){
-        setTimeout(() => {
-          const element = document.getElementById(location.hash.substring(1));
-          element?.scrollIntoView({behavior: 'smooth'});
-        }, 100);
-      }
-    }, [location.hash]
-  );
+  
 
   // team members
   const Member = [
@@ -138,7 +126,7 @@ function Home() {
   ]
   return (
     <section className='w-full mx-auto'>
-      <Navbar onAboutClick={ScrollToAbout}/>
+      <Navbar/>
         <div className='block-animate bg-white border px-1 py-1 my-4 border-gray-300  mx-auto w-[17.8rem] h-10 rounded-full flex items-center justify-between '>
           <button className='bg-blue-400 text-white font-Custom font-medium px-1 text-md w-20 flex items-center justify-center h-8 rounded-full'>New</button>
           <p className='h-9 font-Custom text-gray-400 font-normal text-sm  pt-2'>We've just released an update</p>

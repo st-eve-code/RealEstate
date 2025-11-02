@@ -3,7 +3,7 @@ import { Menu, X, ChevronDown, User, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../assets/logo.svg';
 import { Link } from 'react-router-dom';
-const Nav_bar = ({onAboutClick}) => {
+const Nav_bar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [currentLanguage, setCurrentLanguage] = useState('en');
@@ -69,7 +69,7 @@ const Nav_bar = ({onAboutClick}) => {
         <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg z-50">
             <div className="px-2 pt-2 pb-4 space-y-1">
                 <MobileNavItem href="/" text="Home" />
-                <MobileNavItem href="/#about-us" text="About" />
+                <MobileNavItem href="/about" text="About" />
                 
                 <MobileDropdown 
                     title="Properties"
@@ -268,7 +268,7 @@ const Nav_bar = ({onAboutClick}) => {
                         <Link to="/" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600">
                             Home
                         </Link>
-                        <Link to="/#about-us" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600 cursor-pointer">
+                        <Link to="/about" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600 cursor-pointer">
                             About us
                         </Link>
                         

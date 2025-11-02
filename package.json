@@ -14,6 +14,7 @@
     "@hookform/resolvers": "^5.2.1",
     "@ionic/react": "^8.7.3",
     "@reacticons/ionicons": "^7.1.0",
+    "@supabase/supabase-js": "^2.78.0",
     "@tanstack/react-query": "^5.85.9",
     "axios": "^1.11.0",
     "chart.js": "^4.5.0",

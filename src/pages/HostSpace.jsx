@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User, Home, DollarSign, Wrench, Camera, CheckCircle, AlertCircle } from 'lucide-react';
 
 // Supabase Configuration
@@ -33,6 +34,7 @@ const supabaseClient = {
 };
 
 export default function HostSpace() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -364,31 +366,10 @@ export default function HostSpace() {
       console.log('Successfully saved to Supabase:', data);
       setSubmitSuccess(true);
       
-      // Optional: Reset form after successful submission
+      // AUTOMATIC REDIRECT after 2 seconds
       setTimeout(() => {
-        setFormData({
-          caretakerName: '',
-          caretakerPhone: '',
-          caretakerEmail: '',
-          caretakerRole: '',
-          propertyType: '',
-          propertyName: '',
-          location: '',
-          price: '',
-          status: '',
-          beds: 1,
-          bathrooms: 1,
-          kitchens: 1,
-          amenities: [],
-          description: '',
-          images: [],
-          imageFiles: [],
-          videos: [],
-          videoFiles: [],
-        });
-        setStep(1);
-        setSubmitSuccess(false);
-      }, 3000);
+        navigate('/properties');
+      }, 2000);
       
     } catch (error) {
       console.error('Error saving to Supabase:', error);
@@ -491,7 +472,9 @@ export default function HostSpace() {
             <CheckCircle className="text-green-500 flex-shrink-0 mt-0.5 w-5 h-5" />
             <div className="flex-1 min-w-0">
               <h4 className="font-semibold text-green-800 mb-1 text-sm sm:text-base">Success!</h4>
-              <p className="text-xs sm:text-sm text-green-700">Property has been successfully submitted to the database.</p>
+              <p className="text-xs sm:text-sm text-green-700">
+                Property has been successfully submitted. Redirecting to properties page...
+              </p>
             </div>
           </div>
         )}
