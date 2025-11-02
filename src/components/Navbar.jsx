@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown, User, Globe } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Logo from '../assets/logo.svg';
-import { Link } from 'react-router-dom';
+
 const Nav_bar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
@@ -16,6 +16,7 @@ const Nav_bar = () => {
 
     //passing useNavigate to navigate for better accessibility
     const navigate = useNavigate();
+    
     // Close dropdowns when clicking anywhere
     useEffect(() => {
         const handleClickOutside = () => {
@@ -48,12 +49,6 @@ const Nav_bar = () => {
     };
 
     // Navigation data
-    const propertyTypes = [
-        { name: 'Hostels', link: '/properties/hostels' },
-        { name: 'Apartments', link: '/properties/apartments' },
-        { name: 'Studios', link: '/properties/studios' },
-    ];
-
     const servicesLinks = [
         { name: 'Cite Cleaning', link: '/services/management' },
         { name: 'Pickups', link: '/services/valuation' },
@@ -64,37 +59,6 @@ const Nav_bar = () => {
         { name: 'Sign Up', link: '/signup' },
     ];
 
-    // Mobile menu component
-    const MobileMenu = () => (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg z-50">
-            <div className="px-2 pt-2 pb-4 space-y-1">
-                <MobileNavItem href="/" text="Home" />
-                <MobileNavItem href="/about" text="About" />
-                
-                <MobileDropdown 
-                    title="Properties"
-                    items={propertyTypes}
-                    isOpen={activeDropdown === 'propertiesMobile'}
-                    toggle={(e) => toggleDropdown(e, 'propertiesMobile')}
-                />
-                
-                <MobileNavItem href="/contact" text="Contact Us" />
-                
-                
-                <MobileDropdown
-                    icon={<Globe size={16} className="mr-2" />}
-                    title={Languages.find(l => l.code === currentLanguage)?.name}
-                    items={Languages}
-                    isOpen={activeDropdown === 'languageMobile'}
-                    toggle={(e) => toggleDropdown(e, 'languageMobile')}
-                    isLanguage
-                />
-                
-                <AccountMobileDropdown />
-            </div>
-        </div>
-    );
-
     // Account dropdown for mobile
     const AccountMobileDropdown = () => {
         const [showServices, setShowServices] = useState(false);
@@ -103,7 +67,7 @@ const Nav_bar = () => {
             <div>
                 <button
                     onClick={(e) => toggleDropdown(e, 'accountMobile')}
-                    className="w-full flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    className="w-full flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                 >
                     <User className="mr-2" size={16} />
                     <span>Account</span>
@@ -116,14 +80,14 @@ const Nav_bar = () => {
                 {activeDropdown === 'accountMobile' && (
                     <div className="pl-6 py-2 space-y-1">
                         {accountLinks.map(link => (
-                            <a
+                            <Link
                                 key={link.name}
-                                href={link.link}
+                                to={link.link}
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 {link.name}
-                            </a>
+                            </Link>
                         ))}
                         
                         <button 
@@ -145,14 +109,14 @@ const Nav_bar = () => {
                         {showServices && (
                             <div className="pl-4 space-y-1">
                                 {servicesLinks.map(service => (
-                                    <a
+                                    <Link
                                         key={service.name}
-                                        href={service.link}
+                                        to={service.link}
                                         className="block px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
                                         onClick={(e) => e.stopPropagation()}
                                     >
                                         {service.name}
-                                    </a>
+                                    </Link>
                                 ))}
                             </div>
                         )}
@@ -162,55 +126,87 @@ const Nav_bar = () => {
         );
     };
 
-    // Reusable components
-    //mobile screen navigation links 
-    
-    const MobileNavItem = ({ href, text }) => (
-        <Link
-            to={href}
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
-            onClick={(e) => {
-                e.stopPropagation();
-                setIsMenuOpen(false);
-            }}
-        >
-            {text}
-        </Link>
-    );
-
-    const MobileDropdown = ({ icon, title, items, isOpen, toggle, isLanguage = false }) => (
-        <div>
-            <button
-                onClick={toggle}
-                className="w-full flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
-            >
-                {icon}
-                <span className={icon ? 'ml-2' : ''}>{title}</span>
-                <ChevronDown
-                    className={`ml-auto transition-transform ${isOpen ? 'transform rotate-180' : ''}`}
-                    size={16}
-                />
-            </button>
-            {isOpen && (
-                <div className="pl-6 py-2 space-y-1" onClick={(e) => e.stopPropagation()}>
-                    {items.map((item) => (
-                        <a
-                            key={item.name || item.code}
-                            href={isLanguage ? '#' : item.link}
-                            className={`block px-4 py-2 text-sm ${isLanguage && item.code === currentLanguage ? 'text-blue-600 font-medium' : 'text-gray-700'} hover:bg-blue-50 hover:text-blue-600`}
-                            onClick={(e) => {
-                                if (isLanguage) {
-                                    e.preventDefault();
-                                    handleLanguageChange(item.code);
-                                }
-                                setActiveDropdown(null);
-                            }}
-                        >
-                            {item.name}
-                        </a>
-                    ))}
+    // Mobile menu component
+    const MobileMenu = () => (
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg z-50">
+            <div className="px-2 pt-2 pb-4 space-y-1">
+                <Link
+                    to="/"
+                    className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsMenuOpen(false);
+                    }}
+                >
+                    Home
+                </Link>
+                
+                <Link
+                    to="/about"
+                    className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsMenuOpen(false);
+                    }}
+                >
+                    About
+                </Link>
+                
+                <Link
+                    to="/blog"
+                    className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsMenuOpen(false);
+                    }}
+                >
+                    Blog
+                </Link>
+                
+                <Link
+                    to="/contact"
+                    className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsMenuOpen(false);
+                    }}
+                >
+                    Contact Us
+                </Link>
+                
+                <div>
+                    <button
+                        onClick={(e) => toggleDropdown(e, 'languageMobile')}
+                        className="w-full flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    >
+                        <Globe size={16} className="mr-2" />
+                        <span>{Languages.find(l => l.code === currentLanguage)?.name}</span>
+                        <ChevronDown
+                            className={`ml-auto transition-transform ${activeDropdown === 'languageMobile' ? 'transform rotate-180' : ''}`}
+                            size={16}
+                        />
+                    </button>
+                    {activeDropdown === 'languageMobile' && (
+                        <div className="pl-6 py-2 space-y-1" onClick={(e) => e.stopPropagation()}>
+                            {Languages.map((item) => (
+                                <button
+                                    key={item.code}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleLanguageChange(item.code);
+                                        setActiveDropdown(null);
+                                    }}
+                                    className={`block w-full text-left px-4 py-2 text-sm ${item.code === currentLanguage ? 'text-blue-600 font-medium' : 'text-gray-700'} hover:bg-blue-50 hover:text-blue-600`}
+                                >
+                                    {item.name}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
-            )}
+                
+                <AccountMobileDropdown />
+            </div>
         </div>
     );
 
@@ -218,7 +214,7 @@ const Nav_bar = () => {
         <div className="relative">
             <button
                 onClick={(e) => toggleDropdown(e, dropdownKey)}
-                className="flex items-center px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600"
+                className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600"
             >
                 {icon}
                 <span className={icon ? 'ml-1' : ''}>
@@ -233,8 +229,8 @@ const Nav_bar = () => {
                             {item.isDivider ? (
                                 <div className="border-t border-gray-200 my-1"></div>
                             ) : (
-                                <a
-                                    href={isLanguage ? '#' : item.link}
+                                <Link
+                                    to={item.link}
                                     className={`block px-4 py-2 text-sm ${isLanguage && item.code === currentLanguage ? 'text-blue-600 font-medium' : 'text-gray-700'} hover:bg-blue-50 hover:text-blue-600`}
                                     onClick={(e) => {
                                         if (isLanguage) {
@@ -245,7 +241,7 @@ const Nav_bar = () => {
                                     }}
                                 >
                                     {item.name}
-                                </a>
+                                </Link>
                             )}
                         </React.Fragment>
                     ))}
@@ -265,22 +261,20 @@ const Nav_bar = () => {
                     
                     {/* Desktop navigation */}
                     <div className="hidden md:flex items-center space-x-4">
-                        <Link to="/" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600">
+                        <Link to="/" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
                             Home
                         </Link>
-                        <Link to="/about" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600 cursor-pointer">
+                        <Link to="/about" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 cursor-pointer">
                             About us
                         </Link>
                         
-                        <DesktopDropdown 
-                            title="Properties"
-                            items={propertyTypes} 
-                            dropdownKey="properties" 
-                        />
+                        <Link to="/blog" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+                            Blog
+                        </Link>
                         
-                        <a href="/contact" className="px-3 py-2 text-xs font-medium text-gray-700 hover:text-blue-600">
+                        <Link to="/contact" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
                             Contact Us
-                        </a>
+                        </Link>
                         
                         <DesktopDropdown
                             icon={<Globe size={16} />}

@@ -1,269 +1,266 @@
 import React from 'react';
+import Navbar from '../components/Navbar';
 import Footer from './Footer';
 import { 
   Building2, Home, Target, Users, Star, Award, 
   MapPin, Phone, Mail, ArrowRight,
   Linkedin, Twitter, Instagram, Sparkles,
   ChevronDown, Heart, Shield, Zap,
-  Eye, Search, CheckCircle, Hammer,
-  Clock, ShieldCheck, Building
+  Eye, Search, CheckCircle, UserCheck,
+  Clock, ShieldCheck, Building, DollarSign
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 const AboutPage = () => {
-  const navigate = useNavigate();
-
-  // Updated Team Members Array - 8 members with LinkedIn and Email only
+  // Updated Team Members Array - For RentSpot
   const teamMembers = [
     {
       id: 1,
-      name: 'Alexandre Dubois',
+      name: 'Jean-Paul Kameni',
       role: 'Founder & CEO',
       image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face',
-      bio: 'Visionary leader with 15+ years in construction innovation. Passionate about creating exceptional living spaces.',
+      bio: 'Visionary leader passionate about revolutionizing property rentals in Cameroon. 10+ years in real estate.',
       social: {
         linkedin: '#',
-        email: 'alexandre@carlingspaces.com'
+        email: 'jeanpaul@rentspot.cm'
       }
     },
     {
       id: 2,
-      name: 'Sophie Laurent',
-      role: 'Project Director',
+      name: 'Marie Nkeng',
+      role: 'Operations Director',
       image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=face',
-      bio: 'Expert in construction management and client relations. Ensures every project exceeds expectations.',
+      bio: 'Expert in platform operations and property verification. Ensures quality connections.',
       social: {
         linkedin: '#',
-        email: 'sophie@carlingspaces.com'
+        email: 'marie@rentspot.cm'
       }
     },
     {
       id: 3,
-      name: 'Marcus Johnson',
-      role: 'Lead Architect',
+      name: 'David Fon',
+      role: 'Technology Lead',
       image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face',
-      bio: 'Creative architect blending innovative design with practical construction solutions.',
+      bio: 'Tech innovator building seamless connections between property owners and tenants.',
       social: {
         linkedin: '#',
-        email: 'marcus@carlingspaces.com'
+        email: 'david@rentspot.cm'
       }
     },
     {
       id: 4,
-      name: 'Isabelle Chen',
-      role: 'Construction Manager',
+      name: 'Grace Mbah',
+      role: 'Customer Success Manager',
       image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face',
-      bio: 'Detail-oriented manager ensuring precision and quality in every construction phase.',
+      bio: 'Dedicated to ensuring both property owners and tenants have exceptional experiences.',
       social: {
         linkedin: '#',
-        email: 'isabelle@carlingspaces.com'
+        email: 'grace@rentspot.cm'
       }
     },
     {
       id: 5,
-      name: 'David Rodriguez',
-      role: 'Site Operations Head',
+      name: 'Robert Tansi',
+      role: 'Property Verification Lead',
       image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face',
-      bio: 'Expert in construction operations with 12+ years experience in residential and commercial projects.',
+      bio: 'Ensures all properties meet our quality standards. Expert in property assessment.',
       social: {
         linkedin: '#',
-        email: 'david@carlingspaces.com'
+        email: 'robert@rentspot.cm'
       }
     },
     {
       id: 6,
-      name: 'Emma Watson',
-      role: 'Design & Planning Specialist',
+      name: 'Stella Njoh',
+      role: 'Community Manager',
       image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face',
-      bio: 'Creative designer transforming concepts into buildable, beautiful architectural plans.',
+      bio: 'Building strong relationships between property owners and tenants across Cameroon.',
       social: {
         linkedin: '#',
-        email: 'emma@carlingspaces.com'
+        email: 'stella@rentspot.cm'
       }
     },
     {
       id: 7,
-      name: 'James Wilson',
-      role: 'Quality Control Manager',
+      name: 'Peter Ayuk',
+      role: 'Legal & Compliance Officer',
       image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face',
-      bio: 'Ensures every project meets the highest standards of construction quality and safety.',
+      bio: 'Ensures all transactions comply with Cameroonian property laws and regulations.',
       social: {
         linkedin: '#',
-        email: 'james@carlingspaces.com'
+        email: 'peter@rentspot.cm'
       }
     },
     {
       id: 8,
-      name: 'Lisa Thompson',
-      role: 'Client Relations Director',
+      name: 'Fatima Alhadji',
+      role: 'Marketing Director',
       image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face',
-      bio: 'Dedicated to providing exceptional client experiences throughout the construction journey.',
+      bio: 'Spreading the word about affordable, agent-free property rentals across Cameroon.',
       social: {
         linkedin: '#',
-        email: 'lisa@carlingspaces.com'
+        email: 'fatima@rentspot.cm'
       }
     }
   ];
 
-  // Stats Array - Updated for construction focus
+  // Stats Array - Updated for RentSpot
   const stats = [
     { 
       icon: <Building2 className="w-6 h-6" />, 
-      number: '500+', 
-      label: 'Projects Completed',
-      description: 'Successful construction projects'
+      number: '5,000+', 
+      label: 'Properties Listed',
+      description: 'Verified rental properties'
     },
     { 
       icon: <Users className="w-6 h-6" />, 
-      number: '8', 
-      label: 'Expert Team Members',
-      description: 'Dedicated professionals'
+      number: '2,500+', 
+      label: 'Happy Tenants',
+      description: 'Found their homes'
     },
     { 
-      icon: <Award className="w-6 h-6" />, 
-      number: '15+', 
-      label: 'Years Experience',
-      description: 'Industry expertise'
+      icon: <DollarSign className="w-6 h-6" />, 
+      number: '0%', 
+      label: 'Agent Fees',
+      description: 'Direct connections only'
     },
     { 
       icon: <ShieldCheck className="w-6 h-6" />, 
       number: '100%', 
-      label: 'Client Satisfaction',
-      description: 'Quality guaranteed'
+      label: 'Verified',
+      description: 'All properties checked'
     }
   ];
 
-  // Values Array - Updated for construction
+  // Values Array - Updated for RentSpot
   const values = [
     {
       icon: <Target className="w-6 h-6" />,
-      title: 'Precision Building',
-      description: 'Meticulous attention to detail in every construction project, ensuring quality and durability.',
-      features: ['Quality Materials', 'Expert Craftsmanship', 'Precision Engineering']
+      title: 'Direct Connections',
+      description: 'Connect property owners and tenants directly without any middlemen or unnecessary fees.',
+      features: ['No Agent Fees', 'Direct Communication', 'Transparent Pricing']
     },
     {
       icon: <Star className="w-6 h-6" />,
-      title: 'Quality Excellence',
-      description: 'Every project meets the highest standards of construction quality and safety regulations.',
-      features: ['Rigorous Inspections', 'Safety Compliance', 'Premium Finishes']
+      title: 'Verified Properties',
+      description: 'Every property is verified to ensure authenticity and quality for our users.',
+      features: ['Property Verification', 'Owner Authentication', 'Quality Standards']
     },
     {
       icon: <Clock className="w-6 h-6" />,
-      title: 'Timely Delivery',
-      description: 'We respect deadlines and ensure projects are completed on schedule without compromising quality.',
-      features: ['Project Planning', 'Efficient Execution', 'On-Time Completion']
+      title: 'Fast & Easy',
+      description: 'Find your perfect home or tenant quickly with our streamlined platform.',
+      features: ['Quick Search', 'Easy Booking', 'Instant Messaging']
     }
   ];
 
-  // Process Array - Updated for construction
+  // Process Array - Updated for RentSpot
   const processSteps = [
     {
       step: '01',
-      title: 'Consultation & Planning',
-      description: 'Understand your vision, requirements, and create detailed construction plans.',
-      icon: <Search className="w-6 h-6" />
+      title: 'Create Account',
+      description: 'Sign up for free as a property owner or tenant. Quick and simple process.',
+      icon: <UserCheck className="w-6 h-6" />
     },
     {
       step: '02',
-      title: 'Design & Development',
-      description: 'Transform concepts into architectural designs and prepare for construction.',
-      icon: <Eye className="w-6 h-6" />
+      title: 'Browse & Connect',
+      description: 'Search verified properties or list yours. Connect directly with owners/tenants.',
+      icon: <Search className="w-6 h-6" />
     },
     {
       step: '03',
-      title: 'Construction & Delivery',
-      description: 'Execute the project with expert craftsmanship and deliver your dream space.',
-      icon: <Hammer className="w-6 h-6" />
+      title: 'Seal the Deal',
+      description: 'Meet in person, inspect property, and complete rental agreement offline.',
+      icon: <CheckCircle className="w-6 h-6" />
     }
   ];
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Sophisticated Hero Section with Refined Orange-Blue Scheme */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+      {/* Navbar section */}
+      <Navbar />
+      {/* Hero Section with Property Background */}
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         
-        {/* Subtle Orange Accent Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-amber-600/5"></div>
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img 
+            src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=1920&h=1080&fit=crop" 
+            alt="Modern apartments"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/90 via-slate-900/85 to-blue-900/90"></div>
+        </div>
         
-        {/* Geometric Construction Patterns */}
-        <div className="absolute inset-0 opacity-[0.02]">
-          <div className="absolute top-20 left-20 w-40 h-40 border-2 border-orange-400 rounded-lg rotate-45"></div>
+        {/* Subtle Patterns */}
+        <div className="absolute inset-0 opacity-[0.03]">
+          <div className="absolute top-20 left-20 w-40 h-40 border-2 border-blue-400 rounded-lg rotate-45"></div>
           <div className="absolute bottom-40 right-32 w-32 h-32 border-2 border-blue-400 rounded-full"></div>
-          <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-orange-500 rounded-lg rotate-12"></div>
+          <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-blue-500 rounded-lg rotate-12"></div>
           <div className="absolute bottom-1/4 left-1/3 w-28 h-28 border-2 border-blue-300 rotate-45"></div>
         </div>
 
-        {/* Construction Icons Subtle */}
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div className="absolute top-1/4 left-1/4 text-6xl">🏗️</div>
-          <div className="absolute top-1/3 right-1/4 text-5xl">🔨</div>
-          <div className="absolute bottom-1/4 left-1/3 text-4xl">🏠</div>
-          <div className="absolute bottom-1/3 right-1/3 text-6xl">⚡</div>
-        </div>
-
         <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
-          {/* Elegant Badge */}
+          {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3 mb-8">
-            <Sparkles className="w-5 h-5 text-amber-300" />
-            <span className="text-sm font-semibold text-white">Building Excellence Since 2010</span>
+            <Sparkles className="w-5 h-5 text-blue-300" />
+            <span className="text-sm font-semibold text-white">Connecting Property Owners & Tenants Since 2020</span>
           </div>
 
-          {/* Clean Typography */}
+          {/* Main Heading */}
           <div className="mb-12">
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              Carling Spaces,
-              <span className="block bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">
-                Singing Futures
+              Welcome to
+              <span className="block bg-gradient-to-r from-blue-300 to-cyan-400 bg-clip-text text-transparent">
+                RentSpot
               </span>
             </h1>
             
             <p className="text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed mb-8 font-light">
-              <span className="font-semibold text-amber-200">Built on Experience, Driven by Quality.</span>{' '}
-              Our team of 8 experts transforms your vision into exceptional living spaces that stand the test of time.
+              <span className="font-semibold text-blue-200">No Agents. No Commissions. Direct Connections.</span>{' '}
+              We connect property owners directly with tenants, eliminating unnecessary fees and creating transparent, 
+              affordable rental solutions across Cameroon.
             </p>
           </div>
 
-          {/* Clean CTA Buttons */}
+          {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <button 
-              onClick={() => navigate('/projects')}
-              className="group bg-gradient-to-r from-amber-500 to-orange-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-amber-600 hover:to-orange-600 transition-all duration-300 flex items-center gap-3 shadow-lg transform hover:scale-105"
+              className="group bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 flex items-center gap-3 shadow-lg transform hover:scale-105"
             >
-              <span>View Our Projects</span>
+              <span>Browse Properties</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             
             <button 
-              onClick={() => navigate('/contact')}
-              className="border-2 border-amber-400 text-amber-400 px-8 py-4 rounded-xl font-semibold hover:bg-amber-400 hover:text-slate-900 transition-all duration-300 backdrop-blur-sm"
+              className="border-2 border-blue-400 text-blue-300 px-8 py-4 rounded-xl font-semibold hover:bg-blue-400 hover:text-slate-900 transition-all duration-300 backdrop-blur-sm"
             >
-              Start Your Project
+              List Your Property
             </button>
           </div>
 
-          {/* Simple Scroll Indicator */}
+          {/* Scroll Indicator */}
           <div className="animate-bounce">
-            <ChevronDown className="w-8 h-8 text-amber-300/80 mx-auto" />
+            <ChevronDown className="w-8 h-8 text-blue-300/80 mx-auto" />
           </div>
         </div>
 
         {/* Floating Elements */}
         <div className="absolute bottom-10 left-10 animate-float">
-          <div className="w-4 h-4 bg-amber-400 rounded-full opacity-60"></div>
+          <div className="w-4 h-4 bg-blue-400 rounded-full opacity-60"></div>
         </div>
         <div className="absolute top-20 right-20 animate-float delay-1000">
-          <div className="w-3 h-3 bg-blue-400 rounded-full opacity-60"></div>
+          <div className="w-3 h-3 bg-cyan-400 rounded-full opacity-60"></div>
         </div>
       </section>
 
-      {/* Enhanced Stats Section */}
+      {/* Stats Section */}
       <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">Built on Excellence</h2>
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">RentSpot by the Numbers</h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              With over 15 years of combined experience, our 8-member team delivers exceptional 
-              construction results that exceed expectations.
+              Helping thousands of Cameroonians find their perfect homes without agent fees.
             </p>
           </div>
 
@@ -271,9 +268,9 @@ const AboutPage = () => {
             {stats.map((stat, index) => (
               <div 
                 key={index}
-                className="text-center p-8 rounded-2xl bg-gradient-to-br from-slate-50 to-white hover:from-amber-50 hover:to-white hover:shadow-xl transition-all duration-300 group border border-slate-100"
+                className="text-center p-8 rounded-2xl bg-gradient-to-br from-slate-50 to-white hover:from-blue-50 hover:to-white hover:shadow-xl transition-all duration-300 group border border-slate-100"
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center text-amber-600 mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl flex items-center justify-center text-blue-600 mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                   {stat.icon}
                 </div>
                 <div className="text-3xl font-bold text-slate-900 mb-2">{stat.number}</div>
@@ -285,40 +282,41 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Enhanced Mission Section */}
+      {/* Mission Section */}
       <section className="py-20 bg-gradient-to-br from-slate-50 to-blue-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <div className="text-amber-600 font-semibold mb-4 uppercase tracking-wide text-sm">Our Mission</div>
+              <div className="text-blue-600 font-semibold mb-4 uppercase tracking-wide text-sm">Our Mission</div>
               <h2 className="text-4xl font-bold text-slate-900 mb-6 leading-tight">
-                Building Dreams,
-                <span className="block text-amber-600">Creating Legacies</span>
+                Eliminating Middlemen,
+                <span className="block text-blue-600">Empowering Connections</span>
               </h2>
               <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                At Carling Spaces, we believe every construction project is an opportunity to create 
-                something extraordinary. Our mission is to transform your vision into reality with 
-                unparalleled craftsmanship, innovative solutions, and unwavering commitment to quality.
+                At RentSpot, we believe finding a home shouldn't cost you extra fees. Our mission is to 
+                connect property owners directly with tenants, creating a transparent, affordable, and 
+                secure platform where both parties can meet, negotiate, and complete rental agreements 
+                without any intermediaries.
               </p>
               
               <div className="space-y-4">
-                <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-amber-100">
+                <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-blue-100">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600 flex-shrink-0">
+                    <DollarSign className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 mb-2">No Agent Fees</h3>
+                    <p className="text-slate-600 text-sm">Save money by connecting directly with property owners</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-blue-100">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 flex-shrink-0">
                     <Shield className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-slate-900 mb-2">Quality Guarantee</h3>
-                    <p className="text-slate-600 text-sm">Every project backed by our comprehensive quality assurance</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-amber-100">
-                  <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 flex-shrink-0">
-                    <Zap className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-slate-900 mb-2">Innovative Solutions</h3>
-                    <p className="text-slate-600 text-sm">Cutting-edge construction techniques and sustainable practices</p>
+                    <h3 className="font-semibold text-slate-900 mb-2">Secure Offline Payments</h3>
+                    <p className="text-slate-600 text-sm">All payments handled face-to-face for maximum security</p>
                   </div>
                 </div>
               </div>
@@ -328,25 +326,25 @@ const AboutPage = () => {
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-6">
                   <img 
-                    src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=500&h=400&fit=crop" 
-                    alt="Modern construction"
+                    src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500&h=400&fit=crop" 
+                    alt="Modern home"
                     className="rounded-xl shadow-lg h-48 w-full object-cover border-2 border-white"
                   />
                   <img 
-                    src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500&h=300&fit=crop" 
-                    alt="Architectural design"
+                    src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&h=300&fit=crop" 
+                    alt="Apartment interior"
                     className="rounded-xl shadow-lg h-40 w-full object-cover border-2 border-white"
                   />
                 </div>
                 <div className="space-y-6 pt-12">
                   <img 
-                    src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&h=300&fit=crop" 
-                    alt="Luxury home"
+                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&h=300&fit=crop" 
+                    alt="Living room"
                     className="rounded-xl shadow-lg h-40 w-full object-cover border-2 border-white"
                   />
                   <img 
-                    src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=500&h=400&fit=crop" 
-                    alt="Construction site"
+                    src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=500&h=400&fit=crop" 
+                    alt="Property view"
                     className="rounded-xl shadow-lg h-48 w-full object-cover border-2 border-white"
                   />
                 </div>
@@ -356,23 +354,22 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Enhanced Team Section with 8 Members */}
+      {/* Team Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <div className="text-amber-600 font-semibold mb-4 uppercase tracking-wide text-sm">Our Expert Team</div>
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">Meet Our 8 Construction Experts</h2>
+            <div className="text-blue-600 font-semibold mb-4 uppercase tracking-wide text-sm">Our Team</div>
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">Meet the RentSpot Team</h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              A dedicated team of construction professionals, architects, and project managers 
-              committed to excellence in every project.
+              A dedicated team of professionals working to revolutionize property rentals in Cameroon.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member) => (
-              <div key={member.id} className="group text-center bg-gradient-to-b from-white to-slate-50 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 border border-slate-100 hover:border-amber-200">
+              <div key={member.id} className="group text-center bg-gradient-to-b from-white to-slate-50 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 border border-slate-100 hover:border-blue-200">
                 <div className="relative mb-6">
-                  <div className="w-32 h-32 mx-auto rounded-2xl overflow-hidden shadow-lg border-4 border-white group-hover:border-amber-200 transition-colors duration-300">
+                  <div className="w-32 h-32 mx-auto rounded-2xl overflow-hidden shadow-lg border-4 border-white group-hover:border-blue-200 transition-colors duration-300">
                     <img
                       src={member.image}
                       alt={member.name}
@@ -382,7 +379,7 @@ const AboutPage = () => {
                 </div>
                 
                 <h3 className="text-xl font-bold text-slate-900 mb-1">{member.name}</h3>
-                <p className="text-amber-600 font-semibold mb-3">{member.role}</p>
+                <p className="text-blue-600 font-semibold mb-3">{member.role}</p>
                 <p className="text-slate-600 text-sm mb-4 leading-relaxed">{member.bio}</p>
                 
                 <div className="flex justify-center space-x-4">
@@ -395,7 +392,7 @@ const AboutPage = () => {
                   </a>
                   <a 
                     href={`mailto:${member.social.email}`}
-                    className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600 hover:bg-amber-600 hover:text-white transition-all duration-300 transform hover:scale-110"
+                    className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600 hover:bg-red-600 hover:text-white transition-all duration-300 transform hover:scale-110"
                     title="Email"
                   >
                     <Mail className="w-4 h-4" />
@@ -407,26 +404,49 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Enhanced CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-slate-900 to-blue-900 text-white">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold mb-6">Ready to Build Your Vision?</h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join hundreds of satisfied clients who trusted Carling Spaces to bring their dreams to life. 
-            Your perfect space is just a conversation away.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button onClick={() => navigate('/contact')} className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-amber-600 hover:to-orange-600 transition-all duration-300 shadow-lg transform hover:scale-105">
-              Start Your Project
-            </button>
-            <button onClick={() => navigate('/about')} className="border-2 border-amber-400 text-amber-400 px-8 py-4 rounded-xl font-semibold hover:bg-amber-400 hover:text-slate-900 transition-all duration-300">
-              Meet Our Full Team
-            </button>
+      {/* How It Works Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-slate-50">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">How RentSpot Works</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Simple, transparent, and direct. No agents, no commissions.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {processSteps.map((step, index) => (
+              <div key={index} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-slate-100">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl flex items-center justify-center text-blue-600 mb-6">
+                  {step.icon}
+                </div>
+                <div className="text-4xl font-bold text-blue-600 mb-4">{step.step}</div>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">{step.title}</h3>
+                <p className="text-slate-600 leading-relaxed">{step.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Footer Section */}
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-blue-900 to-cyan-900 text-white">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-4xl font-bold mb-6">Ready to Find Your Perfect Home?</h2>
+          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+            Join thousands of property owners and tenants who are saving money by connecting directly on RentSpot. 
+            Your dream home is just a click away—no agents, no fees!
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-white text-blue-900 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 shadow-lg transform hover:scale-105">
+              Get Started Now
+            </button>
+            <button className="border-2 border-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-blue-900 transition-all duration-300">
+              Learn More
+            </button>
+          </div>
+        </div>
+      </section>
       <Footer/>
     </div>
   );
