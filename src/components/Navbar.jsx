@@ -50,8 +50,9 @@ const Nav_bar = () => {
 
     // Navigation data
     const servicesLinks = [
-        { name: 'Cite Cleaning', link: '/services/management' },
-        { name: 'Pickups', link: '/services/valuation' },
+        { name: 'Cite Cleaning', link: '/services/cite-cleaning' },
+        { name: 'Pickups / Deliveries', link: '/services/pickups-deliveries' },
+        { name: 'Laundry Services', link: '/services/laundry' },
     ];
 
     const accountLinks = [

@@ -5,6 +5,7 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import AboutPage from './pages/About_us';
 import OtpVerificationMethod from './pages/ForgotPassword';
+import Blog from './pages/Blog/Blog';
 import Reset_password from './pages/Reset_password';
 import Client_data from './pages/Client_data';
 import HostSpace from './pages/HostSpace';
@@ -19,6 +20,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/about" element={<AboutPage/>} />
+        <Route path='/blog' element={<Blog/>} />
         <Route path="/signup" element={<Signup/>} />
         <Route path="/clientdata" element={<Client_data/>}/>
         <Route path="/login" element={<Login/>} />

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { use } from 'react';
 import Navbar from '../components/Navbar';
+import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import { 
   Building2, Home, Target, Users, Star, Award, 
@@ -175,6 +176,7 @@ const AboutPage = () => {
     }
   ];
 
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar section */}
@@ -225,17 +227,17 @@ const AboutPage = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <button 
+            <button onClick={()=>navigate('/signup')}
               className="group bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 flex items-center gap-3 shadow-lg transform hover:scale-105"
             >
-              <span>Browse Properties</span>
+              <span>Start Browsing</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             
-            <button 
+            <button onClick={()=>navigate('/contact')}
               className="border-2 border-blue-400 text-blue-300 px-8 py-4 rounded-xl font-semibold hover:bg-blue-400 hover:text-slate-900 transition-all duration-300 backdrop-blur-sm"
             >
-              List Your Property
+              Support Us
             </button>
           </div>
 
@@ -438,10 +440,10 @@ const AboutPage = () => {
             Your dream home is just a click away—no agents, no fees!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-blue-900 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 shadow-lg transform hover:scale-105">
+            <button onClick={()=>navigate('/signup')} className="bg-white text-blue-900 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 shadow-lg transform hover:scale-105">
               Get Started Now
             </button>
-            <button className="border-2 border-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-blue-900 transition-all duration-300">
+            <button onClick={()=>navigate('/contact')} className="border-2 border-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-blue-900 transition-all duration-300">
               Learn More
             </button>
           </div>
