@@ -13,7 +13,7 @@ import Contact_us from './pages/Contact_us';
 import Dashboard from './pages/User/Dashboard';
 import PropertiesTable from './components/PropertiesTable'; // Simple table component
 import './App.css';
-import Dashboard from './components/Caretaker_Dashboard/Dashboard'
+import CaretakerDashboard from './components/Caretaker_Dashboard/Dashboard';
 
 function App() {
   return (
@@ -28,6 +28,7 @@ function App() {
         <Route path="/otpmethod" element={<OtpVerificationMethod/>} />
         <Route path="/resetpassword" element={<Reset_password/>} />
         <Route path="/dashboard" element={<Dashboard/>} />
+        <Route path="/caretaker-dashboard" element={<CaretakerDashboard/>} />
         <Route path="/contact" element={<Contact_us/>}/>
         <Route path="/hostspace" element={<HostSpace/>}/>
         {/* Single simple properties route */}
