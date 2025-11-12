@@ -13,6 +13,7 @@ import Contact_us from './pages/Contact_us';
 import Dashboard from './pages/User/Dashboard';
 import PropertiesTable from './components/PropertiesTable'; // Simple table component
 import './App.css';
+import Dashboard from './components/Caretaker_Dashboard/Dashboard'
 
 function App() {
   return (
