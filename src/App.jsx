@@ -11,6 +11,7 @@ import Client_data from './pages/Client_data';
 import HostSpace from './pages/HostSpace';
 import Contact_us from './pages/Contact_us';
 import Dashboard from './pages/User/Dashboard';
+import Admin from './pages/Admin/Admin';
 import PropertiesTable from './components/PropertiesTable'; // Simple table component
 import './App.css';
 import CaretakerDashboard from './components/Caretaker_Dashboard/Dashboard';
@@ -33,6 +34,7 @@ function App() {
         <Route path="/hostspace" element={<HostSpace/>}/>
         {/* Single simple properties route */}
         <Route path="/properties" element={<PropertiesTable/>}/>
+        <Route path="/admin" element={<Admin/>}/>
       </Routes>
     </Router>
   )

@@ -96,7 +96,7 @@ function Footer() {
 
     const navigate = useNavigate();
   return (
-    <section className='bg-blue-100/40 backdrop-blur-sm mt-[5rem]'>
+    <section className='bg-white backdrop-blur-sm mt-[5rem]'>
         <div className='flex flex-wrap justify-between items-start m-8 p-[1rem]'>
             <div className='p-3 max-w-[20rem]'> {/* links to all social medias */}
                 <img src={logo} onClick={()=>navigate('/')} alt="" className='w-[8rem] cursor-pointer'/>
