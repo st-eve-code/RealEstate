@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { Account } from '../Lib/supabaseClient';
 import { 
   Search, 
   Filter, 
@@ -30,7 +30,7 @@ const PropertiesTable = () => {
 
   // Real-time updates
   useEffect(() => {
-    const subscription = supabase
+    const subscription = Account
       .channel('properties-changes')
       .on(
         'postgres_changes',
@@ -53,7 +53,7 @@ const PropertiesTable = () => {
   const fetchProperties = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await Account
         .from('properties')
         .select('*')
         .order('created_at', { ascending: false });
