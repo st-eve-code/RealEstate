@@ -28,13 +28,13 @@ function App() {
         <Route path="/login" element={<Login/>} />
         <Route path="/otpmethod" element={<OtpVerificationMethod/>} />
         <Route path="/resetpassword" element={<Reset_password/>} />
-        <Route path="/dashboard" element={<Dashboard/>} />
+        <Route path="/dashboard/*" element={<Dashboard/>} />
         <Route path="/caretaker-dashboard" element={<CaretakerDashboard/>} />
         <Route path="/contact" element={<Contact_us/>}/>
         <Route path="/hostspace" element={<HostSpace/>}/>
         {/* Single simple properties route */}
         <Route path="/properties" element={<PropertiesTable/>}/>
-        <Route path="/admin" element={<Admin/>}/>
+        <Route path="/admin/*" element={<Admin/>}/>
       </Routes>
     </Router>
   )

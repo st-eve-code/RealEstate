@@ -3,9 +3,8 @@ import React, { useState } from 'react';
 import '../App.css';
 import userProfile from '../assets/images/tiger.jpg'
 import { Bell, ChevronDown, Eye, Heart, Languages, Plus, Search, Sun, Store, Moon } from 'lucide-react';
-import Contents from './Contents';
 
-function MainContent({isSidebarCollapsed, data}) {
+function MainContent({isSidebarCollapsed, children}) {
   // initialize dark mode state
   const [isDark, setDarkMode] = useState(false);
 
@@ -78,7 +77,7 @@ function MainContent({isSidebarCollapsed, data}) {
         </div>
         {/* section for the different links */}
         <div className='bg-white rounded-md py-2 pb-10 lg:mt-1 px-2  h-auto'>
-            <Contents data={data}/>
+            {children}
         </div>
     </section>
   )

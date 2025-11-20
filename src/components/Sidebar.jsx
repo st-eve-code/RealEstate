@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Building,
   UserCircle,
@@ -42,32 +43,31 @@ function Logout({ isOpen, onClose, onConfirm }) {
   );
 }
 
-function Sidebar({ isCollapsed, onToggle, onSelect }) {
+function Sidebar({ isCollapsed, onToggle }) {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isOpen, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogoutConfirm = () => {
     // Clear authentication tokens/session
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    
+
     // Close modal
     setShowLogoutModal(false);
-    
-    // Navigate to login (you'll need to use your navigate function here)
-    console.log('Navigating to login...');
-    // navigate('/login');
+
+    // Navigate to login
+    navigate('/login');
   };
 
   // Handle selected option
   const HandleSelection = (option) => {
-    onSelect(option);
+    navigate(option === 'dashboard' ? '/dashboard' : `/dashboard/${option}`, { replace: true });
     setOpen(false); // Close mobile menu after selection
   };
 
   const handleLogoClick = () => {
-    console.log('Navigate to home');
-    // navigate('/');
+    navigate('/');
   };
 
   // Toggle sidebar collapse for desktop
