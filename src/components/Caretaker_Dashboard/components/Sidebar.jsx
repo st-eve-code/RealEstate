@@ -1,5 +1,7 @@
 import React from 'react'
 import {HomeIcon, BuildingOfficeIcon, UserCircleIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon} from '@reacticons/ionicons';
+import { Link } from 'react-router-dom';
+import PropertyPage from '@/pages/Caretaker/PropertyPage';
 
 const NavItem = ({children, active}) => (
   <button className={`flex items-center gap-3 px-4 py-3 rounded-lg w-full text-left ${active ? 'bg-white shadow' : 'text-gray-600 hover:bg-white/50'}`}>
@@ -21,7 +23,7 @@ export default function Sidebar(){
 
       <nav className="space-y-2">
         <NavItem active>Dashboard</NavItem>
-        <NavItem>Properties</NavItem>
+        <Link to={PropertyPage}><NavItem>Properties</NavItem></Link>
         <NavItem>My Profile</NavItem>
       </nav>
 
