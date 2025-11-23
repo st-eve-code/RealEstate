@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// import { Account } from '../Lib/supabaseClient';
+import { Account } from '../Lib/supabaseClient';
 import { 
   Search, 
   Filter, 
@@ -388,4 +388,4 @@ const PropertiesTable = () => {
   );
 };
 
-export default PropertiesTable;
+// export default PropertiesTable;

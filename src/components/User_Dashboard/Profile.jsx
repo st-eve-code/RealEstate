@@ -1,14 +1,21 @@
+// import { useAuth } from '@/lib/auth-context';
 import { Edit3, Save, Trash2, Upload, Camera, Eye, EyeOff } from 'lucide-react';
 import React, { useState } from 'react';
+// import { User } from '@/lib/types';
+import Loader from '../ado/loader';
 
-function Profile() {
+
+function Profile({user}) {
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  // const {user} = useAuth();
+  // const user = param.user;
   const [formData, setFormData] = useState({
-    username: 'Natasha Williams',
-    email: 'Natasha@gmail.com',
-    password: 'rentspotiscool',
-    phone: '+237-680524109'
+    username: user?.fullName || 'John Doe',
+    email: user?.email || 'user@mail.com',
+    password: '*********',
+    phone: user?.phoneNumber || '',
+    role: user?.role.role || 'user'
   });
 
   // Placeholder images - replace with actual user images
@@ -38,7 +45,7 @@ function Profile() {
     },
     {
       info: 'User Role',
-      detail: 'Renter'
+      detail: formData.role
     },
   ];
 
@@ -61,6 +68,7 @@ function Profile() {
       // Add your delete logic here
     }
   };
+
 
   return (
     <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

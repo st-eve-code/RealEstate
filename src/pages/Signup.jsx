@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../App.css';
-import logo from '../assets/logo.svg';
-import google from '../assets/images/google.png';
+import logo from '@/assets/logo.svg';
+import google from '@/assets/images/google.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
+import { auth, db } from '@/lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { useAuth } from '@/lib/auth-context';
+import Loader from '@/components/ado/loader';
+
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -12,12 +18,15 @@ function Signup() {
     email: '',
     password: '',
   });
-
+  
+  
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [shake, setShake] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const {loadingUser, firebaseUser} = useAuth();
+
 
   // Handle form input change
   const handleChange = (e) => {
@@ -25,6 +34,42 @@ function Signup() {
     // Clear error for the field being edited
     if (errors[e.target.name]) {
       setErrors({ ...errors, [e.target.name]: '' });
+    }
+  };
+
+  const signUpGoogle = async () => {
+    setIsLoading(true);
+    const provider = new GoogleAuthProvider();
+    try {
+      const userCredential = await signInWithPopup(auth, provider);
+      // You may add extra signup logic here, e.g., storing user type etc
+      const userdata = userCredential.user;
+      if(!userdata.email) throw "Email not found";
+      const name = userdata.displayName || `user-${Math.floor(Math.random()*1000 + 1)}-${Date.now()}`;
+      
+      const user = {
+        uid: userdata.uid,
+        fullName: name,
+        displayName: name,
+        email: userdata.email,
+        role: {role: 'user'},
+        createdAt: new Date(),
+        lastLogin: new Date(),
+
+        fA2: false,
+        inAppNotification: [],
+        emailSubscription: [],
+        survey: []
+      }
+      
+      await setDoc(doc(db, "users", userdata.uid), user);
+      
+      navigate("/clientdata");
+    } catch (error) {
+      console.error(error.code, error);
+      // Optionally show a toast or error message
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -88,35 +133,34 @@ function Signup() {
     if (Object.keys(validationErrors).length === 0) {
       setIsLoading(true);
 
-      // TODO: Implement API integration here
-      // Example:
-      // try {
-      //   const response = await fetch('/api/signup', {
-      //     method: 'POST',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify(formData)
-      //   });
-      //   
-      //   if (!response.ok) {
-      //     const errorData = await response.json();
-      //     throw new Error(errorData.message || 'Registration failed');
-      //   }
-      //   
-      //   const data = await response.json();
-      //   // Handle successful registration
-      // } catch (error) {
-      //   // Handle errors
-      //   Swal.fire({
-      //     title: 'Error!',
-      //     text: error.message || 'Something went wrong. Please try again.',
-      //     icon: 'error',
-      //     confirmButtonText: 'OK',
-      //     confirmButtonColor: '#ef4444',
-      //   });
-      // }
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      const userdata = userCredential.user;
+      if(!userdata.email) throw "Email not found";
+      const name = formData.username || userdata.displayName || `user-${Math.floor(Math.random()*1000 + 1)}-${Date.now()}`; // 
+      
+      await updateProfile(userCredential.user, {
+        displayName: name
+      })
+        
+      const user = {
+        uid: userdata.uid,
+        fullName: name,
+        displayName: name,
+        email: userdata.email,
+        role: {role: 'user'},
+        createdAt: new Date(),
+        lastLogin: new Date(),
 
-      // Demo: Simulate API call delay
-      setTimeout(() => {
+        fA2: false,
+        emailSubscription: [],
+        inAppNotification: [],
+        survey: []
+      }
+      await setDoc(doc(db, "users", userdata.uid), user);
+      setIsLoading(false)
+      navigate('/clientdata');
+
+      /* setTimeout(() => {
         // Show success alert with confetti
         Swal.fire({
           title: '🎉 Congrats!',
@@ -138,7 +182,7 @@ function Signup() {
         });
 
         setIsLoading(false);
-      }, 1500);
+      }, 1500); */
     }
   };
 
@@ -148,6 +192,19 @@ function Signup() {
     setShake(true);
     setTimeout(() => setShake(false), 300);
   };
+
+  useEffect(() => {
+    if(loadingUser) return;
+    if(firebaseUser) return navigate('/dashboard');
+  }, [loadingUser, firebaseUser, navigate])
+
+  if (loadingUser) {
+    return (
+      <div className='absolute top-0 left-0 w-screen h-screen'>
+        <Loader style='stack' />
+      </div>
+    )
+  }
 
   const passwordStrength = getPasswordStrength();
 
@@ -168,7 +225,7 @@ function Signup() {
           {/* Username */}
           <div className='mb-4'>
             <label htmlFor="username" className='font-Custom font-semibold text-gray-800 text-sm block mb-2'>
-              Username
+              Full name
             </label>
             <input
               type="text"
@@ -288,6 +345,7 @@ function Signup() {
 
           {/* Google Button */}
           <button
+            onClick={signUpGoogle}
             type="button"
             disabled={isLoading}
             className='justify-center border bg-white text-gray-800 font-Custom font-medium text-sm w-full h-11 rounded-lg shadow-md shadow-gray-300/40 mt-3 flex items-center text-center gap-2 mx-auto hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed'

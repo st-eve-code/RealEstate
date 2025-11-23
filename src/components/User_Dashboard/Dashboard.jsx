@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Languages, ChevronDown, Plus, Eye, Coins, UserCircle, BookOpen } from 'lucide-react';
 import { Chart } from 'chart.js/auto';
+import { useAuth } from '@/lib/auth-context';
 
 // Placeholder images
 const banner = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=400&fit=crop";
@@ -145,6 +146,7 @@ function Charts({ Graph, isSmall = false, dataType = 'sales' }) {
 function Dashboard() {
   const [language, setLanguage] = useState('EN');
   const [isDropdown, setDropdown] = useState(false);
+  const {user} = useAuth();
   
   const handleSelect = (option) => {
     setLanguage(option);
