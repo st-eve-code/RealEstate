@@ -1,8 +1,8 @@
-import Sidebar from './Sidebar';
-import Header from './Header';
-import PropertyOverview from './PropertyOverview';
-import OwnerDetails from './OwnerDetails';
-import EditPropertyDetails from './EditPropertyDetails';
+import Sidebar from '@/components/Caretaker_Dashboard/PropertyPage/Sidebar';
+import Header from '@/components/Caretaker_Dashboard/PropertyPage/Header';
+import PropertyOverview from '@/components/Caretaker_Dashboard/PropertyPage/PropertyOverview';
+import OwnerDetails from '@/components/Caretaker_Dashboard/PropertyPage/OwnerDetails';
+import EditPropertyDetails from '@/components/Caretaker_Dashboard/PropertyPage/EditPropertyDetails';
 
 const PropertyPage = () => {
   return (

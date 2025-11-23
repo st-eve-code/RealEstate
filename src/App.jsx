@@ -14,7 +14,7 @@ import Dashboard from './pages/User/Dashboard';
 import Admin from './pages/Admin/Admin';
 import PropertiesTable from './components/PropertiesTable'; // Simple table component
 import './App.css';
-import CaretakerDashboard from './components/Caretaker_Dashboard/Dashboard';
+import CaretakerDashboard from './pages/Caretaker/Dashboard';
 
 function App() {
   return (
@@ -29,7 +29,7 @@ function App() {
         <Route path="/otpmethod" element={<OtpVerificationMethod/>} />
         <Route path="/resetpassword" element={<Reset_password/>} />
         <Route path="/dashboard/*" element={<Dashboard/>} />
-        <Route path="/caretaker-dashboard" element={<CaretakerDashboard/>} />
+        <Route path="/caretaker-dashboard/*" element={<CaretakerDashboard/>} />
         <Route path="/contact" element={<Contact_us/>}/>
         <Route path="/hostspace" element={<HostSpace/>}/>
         {/* Single simple properties route */}

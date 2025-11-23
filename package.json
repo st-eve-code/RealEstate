@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@googlemaps/react-wrapper": "^1.2.0",
+    "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.2.1",
     "@ionic/react": "^8.7.3",
     "@reacticons/ionicons": "^7.1.0",
