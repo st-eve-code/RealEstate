@@ -1,0 +1,26 @@
+The "My Profile" page design consists of the following components:
+
+### List of Components:
+1. **Sidebar**
+   - Logo and navigation links (Dashboard, Properties, My Profile)
+   - Settings and Logout buttons
+
+2. **Header**
+   - Search bar
+   - Notification icon
+   - Language selector
+   - User profile with avatar and name
+
+3. **Property Overview**
+   - Images grid
+   - Property details (name, description, location, price, features, rating)
+
+4. **Owner Details**
+   - Owner info (name, location, email, phone)
+   - Edit information form with inputs and Save button
+
+5. **Edit Property Details**
+   - File upload area
+   - List of uploaded files
+   - Edit details form (property name, price) and Save button
+   

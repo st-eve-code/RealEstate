@@ -27,7 +27,7 @@ export default function Sidebar(){
 
       <div className="mt-8">
         <button className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm bg-white shadow">
-          <svg className="w-4 h-4 text-gray-600" viewBox="0 0 24 24" fill="none"><path d="M12 2v20" stroke="currentColor" /></svg>
+          <Cog6ToothIcon />
           Settings
         </button>
 
