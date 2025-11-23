@@ -1,0 +1,21 @@
+@keyframes randomAnimation {
+    0% {
+      transform: var(--initial-transform);
+      color: var(--initial-color);
+    }
+    50% {
+      transform: translate(var(--random-x), var(--random-y)) scale(var(--random-scale));
+      color: var(--random-color);
+    }
+    100% {
+      transform: var(--initial-transform);
+      color: var(--initial-color);
+    }
+  }
+  
+  .animate-random {
+    animation-name: randomAnimation;
+    animation-duration: var(--animation-duration);
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+  }

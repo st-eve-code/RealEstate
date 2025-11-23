@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../App.css';
 import logo from '../assets/logo.svg';
 import google from '../assets/images/google.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import Swal from 'sweetalert2';
+import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { createUser, userExists } from '@/lib/internal-firebase';
+import { useAuth } from '@/lib/auth-context';
 
 function Login() {
   // State
@@ -18,6 +22,7 @@ function Login() {
   const [shake, setShake] = useState(false);
 
   const navigate = useNavigate();
+  const {loadingUser, firebaseUser} = useAuth();
 
   // Handle input change with real-time error clearing
   const handleChange = (e) => {
@@ -58,6 +63,41 @@ function Login() {
     setTimeout(() => setShake(false), 300);
   };
 
+  const googleSignIn = async () => {
+    setLoading(true);
+    const provider = new GoogleAuthProvider();
+    try {
+      
+      const userCredential = await signInWithPopup(auth, provider);
+      const existingUser = await userExists({email: userCredential.user.email||''});
+      if(!existingUser) {
+        const name = userCredential.user.displayName || `user-${Math.floor(Math.random()*1000 + 1)}-${Date.now()}`;
+
+        const user = {
+          uid: userCredential.user.uid,
+          email: userCredential.user.email||'',
+          fullName: name,
+          displayName: name,
+          role: {role: "user"},
+          createdAt: new Date(),
+          lastLogin: new Date(),
+        }
+        await createUser(user);
+        console.log("User created successfully", userCredential);
+        
+      }
+      // additional handling here
+      // @todo check if user did clientsurvey(if a client) before redirecting to destination
+      navigate("/dashboard");
+
+    } catch (error) {
+      console.error(error);
+      // Optionally show a toast or error message here
+    } finally {
+      setLoading(false);
+    }
+  }
+
   // Handle login submission
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -70,34 +110,29 @@ function Login() {
 
     setLoading(true);
 
-    // TODO: Implement actual API integration here
-    // Example:
-    // try {
-    //   const response = await fetch('/api/login', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(formData)
-    //   });
-    //   
-    //   if (!response.ok) {
-    //     const errorData = await response.json();
-    //     throw new Error(errorData.message || 'Login failed');
-    //   }
-    //   
-    //   const data = await response.json();
-    //   // Store auth token, etc.
-    // } catch (error) {
-    //   Swal.fire({
-    //     title: 'Login Failed',
-    //     text: error.message || 'Something went wrong. Please try again.',
-    //     icon: 'error',
-    //     confirmButtonText: 'Okay',
-    //     confirmButtonColor: '#ef4444',
-    //   });
-    // }
+    try {
+      await signInWithEmailAndPassword(auth, formData.email, formData.password)
+      // any additional function here
+      navigate("/dashboard")
+    } catch (error) {
+      console.error("Error Signing ",error)
+      Swal.fire({
+        title: 'Error Signing in!',
+        text: `error code: ${error.code || error.message}`,
+        icon: 'error',
+        confirmButtonColor: '#2563EB',
+        confirmButtonText: 'Try again',
+      })
+      // additional handling here
+      if(error.code && error.code=="auth/invalid-credential"){
+        // @todo track the ip, number of trials, and maybe lock the account for verification
+      }
+    } finally {
+      setLoading(false)
+    }
 
     // Demo: Simulate API call delay
-    setTimeout(() => {
+    /* setTimeout(() => {
       // Show success alert
       Swal.fire({
         title: 'Login Successful!',
@@ -113,8 +148,21 @@ function Login() {
       });
 
       setLoading(false);
-    }, 1500);
+    }, 1500); */
   };
+
+  useEffect(()=>{
+    if(loadingUser) return;
+    if(firebaseUser) return navigate('/dashboard');
+  }, [loadingUser, firebaseUser, navigate])
+
+  if (loadingUser) {
+    return (
+      <div className='absolute top-0 left-0 w-screen h-screen'>
+        <Loader style='stack' />
+      </div>
+    )
+  }
 
   return (
     <section className='flex justify-center items-center min-h-screen mx-auto xl:h-[40rem] bg-gray-50'>
@@ -216,6 +264,7 @@ function Login() {
 
           {/* Continue with Google */}
           <button
+            onClick={googleSignIn}
             type="button"
             disabled={loading}
             className='justify-center border bg-white text-gray-800 font-Custom font-medium text-sm w-full h-11 rounded-lg shadow-md shadow-gray-300/40 mt-3 flex items-center text-center gap-2 mx-auto hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed'
