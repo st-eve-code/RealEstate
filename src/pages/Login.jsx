@@ -124,7 +124,7 @@ function Login() {
         confirmButtonText: 'Try again',
       })
       // additional handling here
-      if(error.code && error.code=="auth/invalid-credential"){
+      if(error.code && error.code=="auth/invalid-credential") {
         // @todo track the ip, number of trials, and maybe lock the account for verification
       }
     } finally {
