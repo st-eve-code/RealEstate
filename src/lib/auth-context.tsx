@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const name = firebaseUser.displayName || `user-${Math.floor(Math.random()*1000 + 1)}-${Date.now()}`;
           const userType = Cookies.get("userType") || "tenant";
   
-          const user: Omit<User, 'id'> = {
+          const user = {
             uid: firebaseUser.uid,
             email: firebaseUser.email || '',
             fullName: name,
@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const name = firebaseUser.displayName || `user-${Math.floor(Math.random()*1000 + 1)}-${Date.now()}`;
             const userType = Cookies.get("userType") || "tenant";
   
-            const user : User = {
+            const user = {
               uid: firebaseUser.uid,
               email: firebaseUser.email || '',
               fullName: name,

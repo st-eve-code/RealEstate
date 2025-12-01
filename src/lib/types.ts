@@ -3,7 +3,7 @@ import { LucideIcon } from 'lucide-react';
 
 export type AccountRole = "user" | "landlord" | "admin" | "ceo"
 
-export type RentingType = 'house' | 'apartment' | 'room' | 'hostel';
+export type RentingType = 'hostel' | 'apartment' | 'room' | 'hotel' | 'studio' | 'house';
 
 export type VerificationStatus = "pending" | "verified" | "rejected"
 

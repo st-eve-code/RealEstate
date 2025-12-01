@@ -1,8 +1,12 @@
 "use client"
 
-import { doc, getDoc, query, collection, getDocs, where, setDoc, orderBy, startAfter, limit, DocumentData } from "firebase/firestore"
+import { doc, getDoc, query, collection, getDocs, orderBy, startAfter, limit, DocumentData, QueryDocumentSnapshot, OrderByDirection,
+  where, setDoc, updateDoc, deleteDoc, Query
+} from "firebase/firestore"
+
 import { db } from "@/lib/firebase"
-import type { HandlerParams, HandlerResult, User } from "./types"
+import type { HandlerParams, HandlerResult, FirestoreResult, FirestoreSingleResult, FirestoreListResult, FirestoreConstraint } from "./types"
+// import { Query } from "@tanstack/react-query"
 
 export const userExists = async ({uid, email}: {uid?: string, email?:string}) => {
     if(!uid && !email) throw "invalid search param";
@@ -29,82 +33,148 @@ export const userExists = async ({uid, email}: {uid?: string, email?:string}) =>
 }
 
 
-export const createUser = (user: Omit<User, 'id'>) => {
+export const createUser = (user: any) => {
     return setDoc(doc(db, "users", user.uid), user);
 }
 
 export default async function handler<T = DocumentData>({ 
   pageSize = 10, 
-  lastCreatedAt, 
+  lastVisibleDocData, // We now pass back the raw data points of the last doc
   regex, 
-  table = "users" 
+  table = "users",
+  sortConfig // New dynamic sort parameter
 }: HandlerParams): Promise<HandlerResult<T>> {
 
   try {
-    // Build Firestore query
-    let q = query(collection(db, table), orderBy("createdAt"), limit(Number(pageSize)));
+    let q = collection(db, table) as any; // Cast for dynamic query building
 
-    if (lastCreatedAt) {
-      q = query(collection(db, table), orderBy("createdAt"), startAfter(lastCreatedAt), limit(Number(pageSize)));
+    // --- 1. Build the OrderBy clauses ---
+    sortConfig.forEach(sort => {
+      q = query(q, orderBy(sort.field, sort.direction));
+    });
+    
+    // Crucial: Add __name__ (document ID) as the final sort order for unique cursors
+    q = query(q, orderBy("__name__", sortConfig[0]?.direction || 'asc'));
+
+
+    // --- 2. Build the StartAfter cursor (if provided) ---
+    if (lastVisibleDocData) {
+      // We need to provide the exact values that match our orderBy clauses
+      const cursorValues = sortConfig.map(sort => lastVisibleDocData[sort.field]);
+      
+      // Add the last document ID to the cursor values
+      cursorValues.push(lastVisibleDocData.id); 
+
+      q = query(q, startAfter(...cursorValues));
     }
+    
+    // --- 3. Add the Limit ---
+    q = query(q, limit(Number(pageSize)));
 
+
+    // --- 4. Execute the query and filter ---
     const snapshot = await getDocs(q);
     const docs = snapshot.docs;
 
-    // Apply regex filtering (on the current page's data)
     const pattern = regex ? new RegExp(regex, "i") : null;
     const filtered = pattern
-      ? docs.filter(doc => pattern.test(doc.data().name || doc.data().fullName)) // Check potential 'name' fields
+      ? docs.filter(doc => pattern.test((doc.data() as any).name || (doc.data() as any).fullName))
       : docs;
 
-    // Prepare next page cursor (using the last doc of the raw fetch, not filtered)
-    const lastVisible = docs.length > 0 ? docs[docs.length - 1].data().createdAt?.toDate() : null;
+    // Prepare next page cursor data (send back the necessary data points)
+    const lastDoc = docs.length > 0 ? docs[docs.length - 1] : null;
+    // The cursor object for the next fetch
+    const nextCursorData = lastDoc ? { ...lastDoc.data() as any, id: lastDoc.id } : null;
 
     return {
-      results: filtered.map(doc => ({ id: doc.id, ...doc.data() } as T)),
-      nextCursor: lastVisible,
+      results: filtered.map(doc => ({ id: doc.id, ...(doc.data() as any) } as T)),
+      // We return the object needed to reconstruct the *next* startAfter call
+      nextCursor: nextCursorData, 
     };
   } catch (error: any) {
     console.error("Firestore handler error:", error);
-    return { error: error?.message || 'An unknown error occurred' };
+    return {
+      results: [],
+      nextCursor: null,
+      error: error?.message || 'An unknown error occurred'
+    };
   }
 }
 
-export async function handler2({ pageSize = 10, lastCreatedAt, regex, table = "users" }:{
-  pageSize?: number,
-  lastCreatedAt: any,
-  regex:string,
-  table: string,
-  
-}) {
-  // const { pageSize = 10, lastCreatedAt, regex } = req;
+export function applyConstraintsToCollection(q: Query<DocumentData>, constraints: FirestoreConstraint[]): Query<DocumentData> {
+  constraints.forEach(c => {
+      q = query(q, where(c.field, c.operator, c.value));
+  });
+  return q;
+}
 
+
+/**
+ * i) Selects a single document from a collection using its unique document ID.
+ * @param collectionPath The name of the Firestore collection (e.g., 'users', 'units').
+ * @param docId The unique ID of the document to retrieve.
+ */
+export async function selectDocumentById<T extends DocumentData>(
+  collectionPath: string,
+  docId: string
+): Promise<FirestoreSingleResult<T>> {
   try {
-    // Build Firestore query
-    let q = query(collection(db, table), orderBy("createdAt"), limit(Number(pageSize)));
+    const docRef = doc(db, collectionPath, docId);
+    const docSnap = await getDoc(docRef);
 
-    if (lastCreatedAt) {
-      const lastDate = new Date(lastCreatedAt);
-      q = query(collection(db, table), orderBy("createdAt"), startAfter(lastDate), limit(Number(pageSize)));
+    if (docSnap.exists()) {
+      // Add the ID to the data object for consistency
+      const data = { ...docSnap.data() } as T;
+      return { data, success: true };
+    } else {
+      return { data: null, success: false, message: 'No such document exists.' };
     }
+  } catch (error) {
+    console.error(`Error selecting document ${docId} in ${collectionPath}:`, error);
+    return { data: null, success: false, message: 'Failed to retrieve document by ID.', error };
+  }
+}
 
-    const snapshot = await getDocs(q);
-    const docs = snapshot.docs;
 
-    // Apply regex filtering
-    const pattern = regex ? new RegExp(regex, "i") : null;
-    const filtered = pattern
-      ? docs.filter(doc => pattern.test(doc.data().name))
-      : docs;
+/**
+ * i) Updates a document in a specific collection using its unique document ID.
+ * @param collectionPath The name of the Firestore collection (e.g., 'users', 'units').
+ * @param docId The unique ID of the document to update.
+ * @param data The partial data object to merge into the existing document.
+ */
+export async function updateDocumentById(
+  collectionPath: string,
+  docId: string,
+  data: Partial<DocumentData>
+): Promise<FirestoreResult> {
+  try {
+    const docRef = doc(db, collectionPath, docId);
+    // console.log('step1 done = ', docRef, "=", ...arguments)
+    // updateDoc merges the new data with existing data
+    await updateDoc(docRef, data);
+    return { success: true, message: `Document ${docId} successfully updated.` };
+  } catch (error) {
+    console.error(`Error updating document ${docId} in ${collectionPath}:`, error);
+    return { success: false, message: 'Failed to update document by ID.', error };
+  }
+}
 
-    // Prepare next page cursor
-    const lastVisible = docs.length > 0 ? docs[docs.length - 1].data().createdAt.toDate() : null;
 
-    return {
-      results: filtered.map(doc => ({ id: doc.id, ...doc.data() })),
-      nextCursor: lastVisible,
-    };
-  } catch (error: any) {
-    return { error: error?.message||'' };
+/**
+ * i) Deletes a single document from a specific collection using its unique document ID.
+ * @param collectionPath The name of the Firestore collection (e.g., 'users', 'units').
+ * @param docId The unique ID of the document to delete.
+ */
+export async function deleteDocumentById(
+  collectionPath: string,
+  docId: string
+): Promise<FirestoreResult> {
+  try {
+    const docRef = doc(db, collectionPath, docId);
+    await deleteDoc(docRef);
+    return { success: true, message: `Document ${docId} successfully deleted.` };
+  } catch (error) {
+    console.error(`Error deleting document ${docId} in ${collectionPath}:`, error);
+    return { success: false, message: 'Failed to delete document by ID.', error };
   }
 }

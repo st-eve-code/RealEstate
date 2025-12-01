@@ -3,17 +3,22 @@ import { Edit3, Save, Trash2, Upload, Camera, Eye, EyeOff } from 'lucide-react';
 import React, { useState } from 'react';
 // import { User } from '@/lib/types';
 import Loader from '../ado/loader';
+import { useAuth } from '@/lib/auth-context';
+import { updatePassword, updateProfile } from 'firebase/auth';
+import { updateDocumentById } from '@/lib/internal-firebase';
 
 
 function Profile({user}) {
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [editPass, setEditPass] = useState(false);
+  const { firebaseUser } = useAuth();
   // const {user} = useAuth();
   // const user = param.user;
   const [formData, setFormData] = useState({
     username: user?.fullName || 'John Doe',
     email: user?.email || 'user@mail.com',
-    password: '*********',
+    password: 'password',
     phone: user?.phoneNumber || '',
     role: user?.role.role || 'user'
   });
@@ -37,7 +42,7 @@ function Profile({user}) {
     },
     {
       info: 'Password',
-      detail: '••••••••••••'
+      detail: ('••••••••••••')
     },
     {
       info: 'Phone Number',
@@ -50,6 +55,9 @@ function Profile({user}) {
   ];
 
   const handleInputChange = (e) => {
+    if(e.target.name=='password'){
+      setEditPass(true);
+    }
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -57,8 +65,22 @@ function Profile({user}) {
   };
 
   const handleSave = () => {
-    console.log('Saving profile changes:', formData);
-    setIsEditing(false);
+    try{
+      console.log('Saving profile changes:', formData);
+      const updateData = {
+        displayName: formData.username,
+        email: formData.email,
+        phoneNumber: formData.phone
+      };
+      if(editPass) updatePassword(firebaseUser, formData.password);
+      updateProfile(updateData);
+      const res = updateDocumentById('users', updateData)
+  
+      setIsEditing(false);
+
+    }catch(e) {
+
+    }
     // Add your save logic here
   };
 
@@ -182,6 +204,7 @@ function Profile({user}) {
                   type="email"
                   name="email"
                   id="email"
+                  readOnly
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="Enter new email"
