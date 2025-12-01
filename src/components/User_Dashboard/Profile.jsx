@@ -6,8 +6,13 @@ import Loader from '../ado/loader';
 import { useAuth } from '@/lib/auth-context';
 import { updatePassword, updateProfile } from 'firebase/auth';
 import { updateDocumentById } from '@/lib/internal-firebase';
+import Swal from 'sweetalert2';
 
-
+/**
+ * 
+ * @param {{user: User}} param0 
+ * @returns 
+ */
 function Profile({user}) {
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -25,7 +30,7 @@ function Profile({user}) {
 
   // Placeholder images - replace with actual user images
   const coverImage = "https://images.unsplash.com/photo-1557683316-973673baf926?w=1200&h=400&fit=crop";
-  const profileImage = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop";
+  const profileImage = user.imageUrl||"https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop";
 
   const userDetails = [
     {
@@ -64,7 +69,8 @@ function Profile({user}) {
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if(!firebaseUser || firebaseUser.uid != user.uid) return;
     try{
       console.log('Saving profile changes:', formData);
       const updateData = {
@@ -73,13 +79,24 @@ function Profile({user}) {
         phoneNumber: formData.phone
       };
       if(editPass) updatePassword(firebaseUser, formData.password);
-      updateProfile(updateData);
-      const res = updateDocumentById('users', updateData)
-  
+      updateProfile(firebaseUser, updateData);
+      const res = await updateDocumentById('users', updateData)
+      if(!res.success) {
+        updateProfile({displayName:user.fullName, email: user.email, phoneNumber: user.phoneNumber});
+        return Swal.fire({
+          title: 'Error',
+          text: res.message,
+          icon: 'error'
+        });
+      }
       setIsEditing(false);
 
     }catch(e) {
-
+      Swal.fire({
+        title: 'Error',
+        text: e.message || e,
+        icon: 'error'
+      });
     }
     // Add your save logic here
   };
