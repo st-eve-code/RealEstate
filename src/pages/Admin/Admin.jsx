@@ -13,7 +13,7 @@ import Settings from './Components/Settings';
 
 function Admin() {
   return (
-    <section className="admin-section bg-gray-100 min-h-screen flex flex-col md:flex-row justify-start gap-3">
+    <section className="admin-section bg-gray-100 min-h-screen flex flex-col md:flex-row justify-start gap-2">
       <Sidebar />
       <Routes>
         <Route index element={<Main />} />
