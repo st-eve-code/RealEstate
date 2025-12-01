@@ -21,9 +21,9 @@ function Profile({user}) {
   // const {user} = useAuth();
   // const user = param.user;
   const [formData, setFormData] = useState({
-    username: user?.fullName || 'John Doe',
+    username: user?.displayName || 'John Doe',
     email: user?.email || 'user@mail.com',
-    password: 'password',
+    password: '',
     phone: user?.phoneNumber || '',
     role: user?.role.role || 'user'
   });
@@ -76,13 +76,21 @@ function Profile({user}) {
       const updateData = {
         displayName: formData.username,
         email: formData.email,
-        phoneNumber: formData.phone
+        phoneNumber: formData.phone,
       };
-      if(editPass) updatePassword(firebaseUser, formData.password);
+      if(formData.password.trim().length && formData.password.trim().length<6) {
+        setEditPass(false);
+        Swal.fire({
+          title: "Password Security",
+          text: "Password not Updated, Your Password should be stronger",
+          icon: "warning"
+        })
+      }
+      if(editPass && formData.password.trim().length) updatePassword(firebaseUser, formData.password);
       updateProfile(firebaseUser, updateData);
-      const res = await updateDocumentById('users', updateData)
+      const res = await updateDocumentById('users', user.uid, updateData)
       if(!res.success) {
-        updateProfile({displayName:user.fullName, email: user.email, phoneNumber: user.phoneNumber});
+        updateProfile({displayName:user.displayName, email: user.email, phoneNumber: user.phoneNumber});
         return Swal.fire({
           title: 'Error',
           text: res.message,

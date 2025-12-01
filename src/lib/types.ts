@@ -97,8 +97,8 @@ export interface AdminRole{
  */
 export interface User {
     uid: string,
-    fullName: string,
-    displayName?: string,
+    fullName?: string,
+    displayName: string,
     email: string,
     role: UserRole | LandLordRole | AdminRole,
     lastLogin: Timestamp,
