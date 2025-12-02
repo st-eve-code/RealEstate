@@ -35,9 +35,7 @@ const menuItems = [
 ];
 
 
-function Sidebar() {
-  // State for sidebar collapse on desktop
-  const [isCollapsed, setIsCollapsed] = useState(false);
+function Sidebar({ isCollapsed, setIsCollapsed }) {
   // State for mobile menu overlay
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -59,7 +57,7 @@ function Sidebar() {
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
-      <aside className={`bg-white min-h-screen p-4 shadow-lg w-64 transition-all duration-300 fixed md:static top-0 md:top-0 left-0 z-50 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 ${isCollapsed ? 'md:w-20' : 'md:w-64'}`}>
+      <aside className={`bg-white min-h-screen p-4 shadow-lg w-64 transition-all duration-300 fixed top-0 left-0 z-50 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 ${isCollapsed ? 'md:w-20' : 'md:w-64'}`}>
         <button
           className="md:hidden absolute top-4 right-4 text-gray-600"
           onClick={() => setIsMobileMenuOpen(false)}
