@@ -1,32 +1,35 @@
-import { Subscription } from "@/lib/(ado)/types";
+import { Subscription } from "@/lib/types";
 
-const subscription: Omit<Subscription, 'state'>[] = [
+const subscription: Subscription[] = [
     {
-        id: 'tenantdailyUse',
-        name: 'Daily Access',
-        plan: 'daily',
+        id: 'basicUse',
+        name: 'Basic',
+        description: 'Perfect for individuals looking for a few properties',
+        plan: 'monthly',
         amount: 1000,
         accType: "tenant",
         type: 'subscription',
-        limit: 5,
         features: [
-            "Direct Messaging with Landlord",
-            "Reminder on ",
-            "Rental application tracking"
+            "View 4 Properties",
+            "Basic Details",
+            "Email Support",
+            "Standard Photos",
+            "Standard live maps"
         ],
         tax: 0.25,
         constraints: {
             duration: 24 * 60 * 60 * 1000, // 24hours
+            viewLimits: 4
         }
     },
     {
-        id: 'tenant1moisUse',
-        name: "Monthly",
+        id: 'basic2Use',
+        name: "Starter",
         plan: 'monthly',
         amount: 5000,
         accType: "tenant",
         type: 'subscription',
-        limit: 20,
+        description: "20",
         constraints: {
             duration: 30 * 24 * 60 * 60 * 1000, // 30 days
         }
@@ -38,7 +41,7 @@ const subscription: Omit<Subscription, 'state'>[] = [
         amount: 12000,
         accType: "tenant",
         type: 'subscription',
-        limit: 60,
+        description: "60",
         constraints: {
             duration: 3 * 30 * 24 * 60 * 60 * 1000, // 3months
         }
@@ -50,7 +53,7 @@ const subscription: Omit<Subscription, 'state'>[] = [
         amount: 20000,
         accType: "tenant",
         type: 'subscription',
-        limit: 120,
+        description: "120",
         constraints: {
             duration: 6 * 30 * 24 * 60 * 60 * 1000, // 6months
         },

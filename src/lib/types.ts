@@ -3,7 +3,7 @@ import { LucideIcon } from 'lucide-react';
 
 export type AccountRole = "user" | "landlord" | "admin" | "ceo"
 
-export type RentingType = 'hostel' | 'apartment' | 'room' | 'hotel' | 'studio' | 'house';
+export type RentingType = 'hostel' | 'apartment' | 'studio';
 
 export type VerificationStatus = "pending" | "verified" | "rejected"
 
@@ -44,11 +44,11 @@ export interface Payment{
 export interface Subscription {
     id: string,
     name: string,
+    description: string,
     plan: SubscriptionPlan,
     amount: number,
     accType?: "tenant"|"landlord",
     type: 'subscription',
-    limit: number,
     features?: string[]
     tax?: number // 0.25 = 25%, 0.1 = 10%
     constraints: {
@@ -131,22 +131,11 @@ export interface Plan {
     features: string[];
 }
 
-export interface GeoLoacate{
+export interface GeoLocate{
     lat: number,
     lon: number
 }
 
-export interface Building {
-    id: string,
-    landlordId: string,
-    name: string,
-    address: string,
-    imageUrls: string[],
-    map?: GeoLoacate,
-    isVerified: VerificationStatus,
-    vTrials?: number,
-    priceRange?: number[]
-}
 
 /**
  * Unit properties
@@ -235,7 +224,7 @@ export interface Activity {
     description: string,
     createdAt: Timestamp,
     location: {
-        geo?: GeoLoacate,
+        geo?: GeoLocate,
         ip?: string
     },
     type: 'login-attempt' | 'login' | 'search' | 'support' | 'feedback',
