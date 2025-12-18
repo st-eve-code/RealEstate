@@ -1,4 +1,3 @@
-// import { useAuth } from '@/lib/auth-context';
 import { Edit3, Save, Trash2, Upload, Camera, Eye, EyeOff } from 'lucide-react';
 import React, { useState } from 'react';
 // import { User } from '@/lib/types';
