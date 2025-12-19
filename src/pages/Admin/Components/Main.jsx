@@ -4,6 +4,10 @@ import React, { useState } from 'react';
 import Charts from '../../../components/Chart';
 
 function Main({ isSidebarCollapsed }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+
   // Mock data - in real app, this would come from API
   const [stats] = useState({
     totalUsers: 1247,
@@ -22,6 +26,25 @@ function Main({ isSidebarCollapsed }) {
     responseTime: '245ms',
     activeSessions: 89
   });
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) return;
+
+    setIsSearching(true);
+    try {
+      // In a real app, you'd search across users and properties collections
+      // For now, we'll show a message
+      setTimeout(() => {
+        setSearchResults([]);
+        setIsSearching(false);
+        alert(`Search functionality would search for: "${searchTerm}" across users and properties`);
+      }, 500);
+    } catch (error) {
+      console.error('Search error:', error);
+      setIsSearching(false);
+    }
+  };
 
   const [detailedActivities] = useState([
     {
@@ -87,7 +110,7 @@ function Main({ isSidebarCollapsed }) {
 
           <div className='flex items-center gap-4'>
             {/* Search Section */}
-            <div className='relative'>
+            <form onSubmit={handleSearch} className='relative'>
               <div className='flex items-center bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors'>
                 <Search className='ml-3 text-gray-400' size={18}/>
                 <input
@@ -95,13 +118,19 @@ function Main({ isSidebarCollapsed }) {
                   name="search"
                   id="search"
                   placeholder='Search users, properties...'
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="bg-transparent pl-2 pr-4 py-2 font-Poppins font-medium text-sm text-gray-700 outline-none w-64 lg:w-80"
                 />
-                <button type='submit' className='bg-blue-600 hover:bg-blue-700 text-white font-Poppins font-medium text-sm px-4 py-2 rounded-r-lg transition-colors'>
-                  Search
+                <button 
+                  type='submit' 
+                  disabled={isSearching}
+                  className='bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-Poppins font-medium text-sm px-4 py-2 rounded-r-lg transition-colors'
+                >
+                  {isSearching ? 'Searching...' : 'Search'}
                 </button>
               </div>
-            </div>
+            </form>
 
             {/* Notifications and Avatar */}
             <div className='flex items-center gap-3'>
