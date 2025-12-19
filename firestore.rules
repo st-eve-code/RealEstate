@@ -2,54 +2,9 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-  	function isAuthenticated() {
-      return request.auth != null;
-    }
 
-    function isTenant() {
-      return isAuthenticated() &&
-      	get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role.role == "user";
-    }
-    
-    function isLandLord() {
-      return isAuthenticated() &&
-      	get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role.role == "landlord";
-    }
-    
-    function isOwner(userId) {
-      return isAuthenticated() &&
-             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-             request.auth.uid == userId;
-    }
-
-    function isAdmin() {
-      return false
-    }
-    
-    // Users collection
-    match /users/{userId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && request.auth.uid == userId || isAdmin();
-      allow update: if isOwner(userId) || isAdmin();
-      allow delete: if isAdmin();
-    }
-    
-    match /users/{userId}/Payments/{paymentId} {
-      allow read: if isOwner(userId) || isAdmin();
-      allow create: if isAuthenticated() && request.auth.uid == userId;
-      allow update: if isOwner(userId) || isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    match /users/{userId}/PaymentMethods/{paymentId} {
-      allow read: if isOwner(userId) || isAdmin();
-      allow create: if isAuthenticated() && request.auth.uid == userId;
-      allow update: if isOwner(userId) || isAdmin();
-      allow delete: if isOwner(userId);
-    }
-    
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write: if true;
     }
   }
 }

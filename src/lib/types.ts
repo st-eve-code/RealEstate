@@ -78,7 +78,7 @@ export interface Subscription {
 export interface Transaction {
     id: string,
     uid: string,
-    subscription: Subscription | Payment,
+    subscription: Subscription,
     payment: PaymentMOMO | PaymentCard,
     paid: number,
     createdAt: Timestamp,
@@ -90,10 +90,26 @@ export interface Transaction {
 
 
 /**
+ * We cant display analytic data like monthly revenue with the current method of Transaction sub collection 
+ * as it will involve iterating through all users which is time consuming, so this will help fetch data
+ * in firebase it is stored in AnalyticsTransactions collection
+ */
+export interface AnalyticTransaction {
+    id: string,
+    uid: string,
+    transactionId: string,
+    paid: number,
+    createdAt: Timestamp,
+    expiresAt: Timestamp
+}
+
+
+/**
  * landlord details like documents among other things
  */
 export interface LandLord {
-    licenseNumber: string,
+    verified: string,
+    licenseNumber?: string,
     documents: string[]
 }
 
@@ -174,21 +190,31 @@ export interface GeoLocate{
 
 
 /**
- * Unit properties
+ * Unit properties, in this project this sure is like a room(for apartments and studio) or the whole house for homes
+ * the thing here is the system is not set to make each room for an apartment seperately cause it will be time consuming
+ * and we know not all studio in an building is the same, so landlords are adviced to split the rooms in buildings based on properties
+ * @example a building with 3 12 building but 3 distinct rooms will have the landlord create 3 units and with "totalnumber" property defining how many rooms and 
+ * "instock" number available  but dont think this is necessary as available and state property help regulate the visibility state
+ * 
  * @description on firebase have collections: likes, views, reviews
  * in firebase, it is stored in the units collection
  */
 export interface Unit {
     id: string,
-    building: {id: string, name: string},
+    building: {id: string, name: string}, // not necessary
     name: string,
     description: string,
     price: number,
     period?: string,
     currency: string,
     location: string,
+    totalnumber: number,
 
     available: boolean,
+    remark?: { // incase an info like limited room left needs to be displayed or something like a notice on the unit's page
+        type: "basic" | 'info' | 'warning' | 'danger',
+        text: string
+    }
     type: RentingType,
     imageUrl: string[] // images 
     floor?:number, // floor number
@@ -203,6 +229,9 @@ export interface Unit {
     features?: string[] // Wifi, water
     tags: string[] // apartment, street, in-door toilet (in general additional search params)
     views: number, // number of times the unit has been viewed
+
+    
+    state: -1|0|1, // -1 for unavailable likely under system review or structural maintenance, 0 means has tenant, 1 means available
 }
 
 
