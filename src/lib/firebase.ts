@@ -36,5 +36,5 @@ it dissapears can u arrange that,
 i mean make it be at top level in the app not just the Caretaker,
 cause the functionality will be used by users and admins too
 
-ANY UPLOAD FUNCTION SHOULD USE THE NEW UPLOAD SERVICE IN @/lib/services/mediaUploadService.ts
+ANY UPLOAD FUNCTION SHOULD USE THE NEW UPLOAD SERVICE IN @/lib/services/mediaUploadService (JS implementation)
 */

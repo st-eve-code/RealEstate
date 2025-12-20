@@ -23,15 +23,15 @@ import {
 
 // Main menu items for the sidebar navigation
 const menuItems = [
-  { id: 1, name: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
-  { id: 2, name: 'Clients', icon: Users, path: '/admin/dashboard/clients' },
-  { id: 3, name: 'Caretakers', icon: UserCheck, path: '/admin/dashboard/caretakers' },
-  { id: 4, name: 'House Agents', icon: Building, path: '/admin/dashboard/house-agents' },
-  { id: 5, name: 'Properties', icon: Building, path: '/admin/dashboard/properties' },
-  { id: 6, name: 'Blogs', icon: FileText, path: '/admin/dashboard/blogs' },
-  { id: 7, name: 'Notification', icon: Bell, path: '/admin/dashboard/notification' },
-  { id: 8, name: 'Members', icon: User, path: '/admin/dashboard/members' },
-  { id: 9, name: 'Setting', icon: Settings, path: '/admin/dashboard/settings' }, // This item has sub-menu items
+  { id: 1, name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+  { id: 2, name: 'Clients', icon: Users, path: '/dashboard/clients' },
+  { id: 3, name: 'Caretakers', icon: UserCheck, path: '/dashboard/caretakers' },
+  { id: 4, name: 'House Agents', icon: Building, path: '/dashboard/house-agents' },
+  { id: 5, name: 'Properties', icon: Building, path: '/dashboard/properties' },
+  { id: 6, name: 'Blogs', icon: FileText, path: '/dashboard/blogs' },
+  { id: 7, name: 'Notification', icon: Bell, path: '/dashboard/notification' },
+  { id: 8, name: 'Members', icon: User, path: '/dashboard/members' },
+  { id: 9, name: 'Setting', icon: Settings, path: '/dashboard/settings' }, // This item has sub-menu items
   { id: 10, name: 'Logout', icon: LogOut, path: 'logout' },
 ];
 

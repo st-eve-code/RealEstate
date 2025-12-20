@@ -19,6 +19,7 @@ import {
 
 // Mock logo - replace with your actual import
 import logo from '../assets/logo.svg';
+import { useAuth } from '@/lib/auth-context';
 // Mock Logout component for demo
 function Logout({ isOpen, onClose, onConfirm }) {
   if (!isOpen) return null;
@@ -47,17 +48,15 @@ function Sidebar({ isCollapsed, onToggle }) {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isOpen, setOpen] = useState(false);
   const navigate = useNavigate();
+  const {signOut} = useAuth();
 
   const handleLogoutConfirm = () => {
     // Clear authentication tokens/session
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-
-    // Close modal
     setShowLogoutModal(false);
+    signOut()
 
-    // Navigate to login
-    navigate('/login');
   };
 
   // Handle selected option

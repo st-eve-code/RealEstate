@@ -9,11 +9,11 @@ function Settings({ isSidebarCollapsed }) {
   const location = useLocation();
 
   const settingsItems = [
-    { name: 'Profile', path: '/admin/dashboard/settings/profile', description: 'Manage your profile settings', icon: User },
-    { name: 'Tables', path: '/admin/dashboard/settings/tables', description: 'Database configuration', icon: Database },
-    { name: 'Storage', path: '/admin/dashboard/settings/storage', description: 'Storage settings', icon: HardDrive },
-    { name: 'Api Gateway', path: '/admin/dashboard/settings/api-gateway', description: 'API Gateway management', icon: Globe },
-    { name: 'Theme', path: '/admin/dashboard/settings/theme', description: 'Theme customization', icon: Palette },
+    { name: 'Profile', path: '/dashboard/settings/profile', description: 'Manage your profile settings', icon: User },
+    { name: 'Tables', path: '/dashboard/settings/tables', description: 'Database configuration', icon: Database },
+    { name: 'Storage', path: '/dashboard/settings/storage', description: 'Storage settings', icon: HardDrive },
+    { name: 'Api Gateway', path: '/dashboard/settings/api-gateway', description: 'API Gateway management', icon: Globe },
+    { name: 'Theme', path: '/dashboard/settings/theme', description: 'Theme customization', icon: Palette },
   ];
 
   return (

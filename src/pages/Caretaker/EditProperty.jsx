@@ -65,13 +65,13 @@ function EditProperty() {
             setFormData(formDataFromUnit);
           } else {
             alert('Property not found or you do not have permission to edit it.');
-            navigate('/caretaker-dashboard/properties');
+            navigate('/dashboard/properties');
           }
         }
       } catch (error) {
         console.error('Error fetching property:', error);
         alert('Failed to load property data.');
-        navigate('/caretaker-dashboard/properties');
+        navigate('/dashboard/properties');
       } finally {
         setLoading(false);
       }
@@ -228,7 +228,7 @@ function EditProperty() {
       alert('Property updated successfully!');
       
       // Navigate back to property details
-      navigate(`/caretaker-dashboard/properties/${id}`);
+      navigate(`/dashboard/properties/${id}`);
     } catch (error) {
       console.error('Error updating property:', error);
       alert('Failed to update property. Please try again.');
@@ -242,7 +242,7 @@ function EditProperty() {
    */
   const handleDiscard = () => {
     if (window.confirm('Are you sure you want to discard your changes? All unsaved data will be lost.')) {
-      navigate(`/caretaker-dashboard/properties/${id}`);
+      navigate(`/dashboard/properties/${id}`);
     }
   };
 

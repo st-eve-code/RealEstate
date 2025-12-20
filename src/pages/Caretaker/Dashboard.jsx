@@ -8,6 +8,7 @@ import PropertyDetails from './PropertyDetails'
 import ListProperty from './ListProperty'
 import EditProperty from './EditProperty'
 import Profile from '@/components/User_Dashboard/Profile'
+import { MessagesPage } from '@/components/Messaging'
 import { useAuth } from '@/lib/auth-context'
 
 /**
@@ -28,6 +29,7 @@ export default function Dashboard(){
           <Route index element={<CaretakerDashboard />} />
           <Route path="properties" element={<PropertyPage />} />
           <Route path="properties/:id" element={<PropertyDetails />} />
+          <Route path="messages" element={<MessagesPage />} />
           <Route path="list-property" element={<ListProperty />} />
           <Route path="edit-property/:id" element={<EditProperty />} />
           <Route path="profile" element={<Profile user={user} />} />

@@ -1,6 +1,8 @@
 import React from 'react'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, MessageSquare } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '@/lib/auth-context';
+
 
 const NavItem = ({children, active, onClick} = {}) => (
   <button 
@@ -16,11 +18,12 @@ const NavItem = ({children, active, onClick} = {}) => (
 
 export default function Sidebar({ isMobileMenuOpen, setIsMobileMenuOpen }){
   const location = useLocation();
+  const {signOut} = useAuth();
 
   // Determine active route
   const isActive = (path) => {
-    if (path === '/caretaker-dashboard') {
-      return location.pathname === '/caretaker-dashboard' || location.pathname === '/caretaker-dashboard/';
+    if (path === '/dashboard') {
+      return location.pathname === '/dashboard' || location.pathname === '/dashboard/';
     }
     return location.pathname.startsWith(path);
   };
@@ -81,17 +84,25 @@ export default function Sidebar({ isMobileMenuOpen, setIsMobileMenuOpen }){
 
         {/* Navigation */}
         <nav className="space-y-2">
-          <Link to={'/caretaker-dashboard'} onClick={handleLinkClick}>
-            <NavItem active={isActive('/caretaker-dashboard')}>Dashboard</NavItem>
+          <Link to={'/dashboard'} onClick={handleLinkClick}>
+            <NavItem active={isActive('/dashboard')}>Dashboard</NavItem>
           </Link>
-          <Link to={'/caretaker-dashboard/properties'} onClick={handleLinkClick}>
-            <NavItem active={isActive('/caretaker-dashboard/properties')}>My Properties</NavItem>
+          <Link to={'/dashboard/properties'} onClick={handleLinkClick}>
+            <NavItem active={isActive('/dashboard/properties')}>My Properties</NavItem>
           </Link>
-          <Link to={'/caretaker-dashboard/list-property'} onClick={handleLinkClick}>
-            <NavItem active={isActive('/caretaker-dashboard/list-property')}>List Property</NavItem>
+          <Link to={'/dashboard/list-property'} onClick={handleLinkClick}>
+            <NavItem active={isActive('/dashboard/list-property')}>List Property</NavItem>
           </Link>
-          <Link to={'/caretaker-dashboard/profile'} onClick={handleLinkClick}>
-            <NavItem active={isActive('/caretaker-dashboard/profile')}>My Profile</NavItem>
+          <Link to={'/dashboard/profile'} onClick={handleLinkClick}>
+            <NavItem active={isActive('/dashboard/profile')}>My Profile</NavItem>
+          </Link>
+          <Link to={'/dashboard/messages'} onClick={handleLinkClick}>
+            <NavItem active={isActive('/dashboard/messages')}>
+              <div className="flex items-center gap-3">
+                <MessageSquare className="w-4 h-4 text-gray-600" />
+                <span>Messages</span>
+              </div>
+            </NavItem>
           </Link>
         </nav>
 
@@ -101,7 +112,9 @@ export default function Sidebar({ isMobileMenuOpen, setIsMobileMenuOpen }){
             Settings
           </button>
 
-          <button className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm mt-3 text-red-600 bg-white/60 hover:bg-white transition-colors">
+          <button 
+            onClick={signOut}
+            className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm mt-3 text-red-600 bg-white/60 hover:bg-white transition-colors">
             Logout
           </button>
         </div>

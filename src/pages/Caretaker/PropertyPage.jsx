@@ -315,7 +315,7 @@ function PropertyPage() {
   };
 
   const handleViewDetails = (propertyId) => {
-    navigate(`/caretaker-dashboard/properties/${propertyId}`);
+    navigate(`/dashboard/properties/${propertyId}`);
   };
 
   const hasActiveFilters = Object.values(filters).some(value => value !== '');
@@ -563,7 +563,7 @@ function PropertyPage() {
             </p>
             {units.length === 0 && (
               <a
-                href="/caretaker-dashboard/list-property"
+                href="/dashboard/list-property"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-colors font-medium"
               >
                 <Sparkles className="w-5 h-5" />
