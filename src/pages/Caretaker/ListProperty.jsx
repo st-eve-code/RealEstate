@@ -159,13 +159,18 @@ function ListProperty() {
       );
       
       if (!uploadResult.success && uploadResult.errors.length > 0) {
-        console.warn('Some files failed to upload:', uploadResult.errors);
-        // Continue anyway, but show warning
+        console.error('Upload errors:', uploadResult.errors);
+        // Show detailed error message
+        const errorMessage = uploadResult.errors.length > 5 
+          ? `${uploadResult.errors.slice(0, 5).join('\n')}\n... and ${uploadResult.errors.length - 5} more errors`
+          : uploadResult.errors.join('\n');
+        
         const shouldContinue = window.confirm(
-          `Some files failed to upload:\n${uploadResult.errors.join('\n')}\n\nContinue anyway?`
+          `Some files failed to upload:\n\n${errorMessage}\n\nContinue anyway?`
         );
         if (!shouldContinue) {
           setIsUploading(false);
+          setUploadProgress({ category: '', progress: 0, message: '' });
           return;
         }
       }

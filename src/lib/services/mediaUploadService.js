@@ -8,6 +8,23 @@
  */
 
 /**
+ * Safely get environment variable (works with both CRA and Vite)
+ * @param {string} key - Environment variable key
+ * @param {string} defaultValue - Default value if env var is not found
+ * @returns {string} - Environment variable value or default
+ */
+const getEnvVar = (key, defaultValue) => {
+  try {
+    if (typeof process !== 'undefined' && process.env) {
+      return process.env[key] || defaultValue;
+    }
+  } catch (e) {
+    // process not available
+  }
+  return defaultValue;
+};
+
+/**
  * Generate a unique ID for media uploads
  * Format: {prefix}{randomString}{timestamp}
  * @param {string} prefix - Optional prefix (e.g., user name, property name)
@@ -29,9 +46,23 @@ export const generateUniqueId = (prefix = '') => {
  * @returns {Promise<{success: boolean, url?: string, error?: string}>}
  */
 export const uploadFile = async (file, uniqueId, category, fileType = 'image') => {
+  // Validate inputs
+  if (!file) {
+    return {
+      success: false,
+      error: 'No file provided'
+    };
+  }
+  
+  if (!uniqueId || !category) {
+    return {
+      success: false,
+      error: 'Missing required parameters (uniqueId or category)'
+    };
+  }
+
   try {
-    // TODO: Replace with actual PHP server endpoint
-    const UPLOAD_ENDPOINT = process.env.REACT_APP_MEDIA_UPLOAD_URL || 'https://example.com/upload';
+    const UPLOAD_ENDPOINT = getEnvVar('REACT_APP_MEDIA_UPLOAD_URL', 'http://192.168.1.151/tests/upload.php');
     
     // Create FormData for file upload
     const formData = new FormData();
@@ -40,22 +71,56 @@ export const uploadFile = async (file, uniqueId, category, fileType = 'image') =
     formData.append('category', category);
     formData.append('fileType', fileType);
     
-    // Uncomment when PHP server is ready
     try {
       const response = await fetch(UPLOAD_ENDPOINT, {
         method: 'POST',
         body: formData
+        // Note: Don't set Content-Type header, browser will set it with boundary for FormData
         // Add authentication headers if needed:
         // headers: {
         //   'Authorization': `Bearer ${token}`
         // }
       });
       
+      // Check if response is ok
       if (!response.ok) {
-        throw new Error(`Upload failed: ${response.statusText}`);
+        let errorMessage = `Server error (${response.status}): ${response.statusText}`;
+        
+        // Try to get error details from response
+        try {
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorData.message || errorMessage;
+          } else {
+            const errorText = await response.text();
+            if (errorText) {
+              errorMessage = `${errorMessage}\nServer response: ${errorText.substring(0, 200)}`;
+            }
+          }
+        } catch (parseError) {
+          // If we can't parse the error, use the status text
+          console.warn('Could not parse error response:', parseError);
+        }
+        
+        throw new Error(errorMessage);
       }
       
-      const result = await response.json();
+      // Try to parse JSON response
+      let result;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          result = await response.json();
+        } catch (jsonError) {
+          const text = await response.text();
+          throw new Error(`Invalid JSON response from server: ${text.substring(0, 200)}`);
+        }
+      } else {
+        // If not JSON, read as text
+        const text = await response.text();
+        throw new Error(`Invalid response format. Expected JSON, got: ${text.substring(0, 200)}`);
+      }
       
       if (result.success) {
         return {
@@ -66,22 +131,30 @@ export const uploadFile = async (file, uniqueId, category, fileType = 'image') =
       } else {
         return {
           success: false,
-          error: result.error || 'Upload failed'
+          error: result.error || 'Upload failed on server'
         };
       }
-    } catch (error) {
-      // Fallback to placeholder URL for development/testing
-      console.warn('Upload endpoint not available, using placeholder URL:', error.message);
-      const fileName = file.name;
-      const url = `https://example.com/viewMedia/${uniqueId}/${fileName}`;
+    } catch (fetchError) {
+      // Handle network errors, CORS errors, etc.
+      console.error('Upload fetch error:', {
+        name: fetchError.name,
+        message: fetchError.message,
+        stack: fetchError.stack,
+        endpoint: UPLOAD_ENDPOINT
+      });
       
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Check if it's a network/CORS error
+      if (fetchError.name === 'TypeError' && (fetchError.message.includes('fetch') || fetchError.message.includes('Failed to fetch'))) {
+        return {
+          success: false,
+          error: `Network error: Cannot connect to ${UPLOAD_ENDPOINT}. Check if the server is running and CORS is configured.`
+        };
+      }
       
+      // For other errors, return the error
       return {
-        success: true,
-        url: url,
-        fileName: fileName
+        success: false,
+        error: fetchError.message || 'Failed to upload file'
       };
     }
   } catch (error) {
@@ -268,8 +341,7 @@ export const uploadPropertyMedia = async (mediaData, uniqueId, onProgress = null
  */
 export const deleteMediaFile = async (url) => {
   try {
-    // TODO: Replace with actual PHP server endpoint
-    const DELETE_ENDPOINT = process.env.REACT_APP_MEDIA_DELETE_URL || 'https://example.com/delete';
+    const DELETE_ENDPOINT = getEnvVar('REACT_APP_MEDIA_DELETE_URL', 'http://192.168.1.151/tests/delete.php');
     
     // Extract uniqueId and filename from URL
     const urlMatch = url.match(/viewMedia\/([^/]+)\/(.+)$/);
