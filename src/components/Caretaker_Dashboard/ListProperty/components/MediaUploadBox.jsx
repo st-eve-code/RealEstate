@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Upload, X, Play } from 'lucide-react';
+import { FORM_LABELS, ERROR_MESSAGES } from '../data/formConstants';
 
 /**
  * MediaUploadBox Component
@@ -41,15 +42,15 @@ function MediaUploadBox({
   // Handle file validation
   const validateFile = (file, type, maxSize) => {
     if (type === 'image' && !file.type.startsWith('image/')) {
-      alert('Please upload a valid image file');
+      alert(ERROR_MESSAGES.invalidFileType('image'));
       return false;
     }
     if (type === 'video' && !file.type.startsWith('video/')) {
-      alert('Please upload a valid video file');
+      alert(ERROR_MESSAGES.invalidFileType('video'));
       return false;
     }
     if (file.size > maxSize * 1024 * 1024) {
-      alert(`File size must be less than ${maxSize}MB`);
+      alert(ERROR_MESSAGES.maxFileSize(type, maxSize));
       return false;
     }
     return true;
@@ -143,7 +144,7 @@ function MediaUploadBox({
             >
               <Upload className="w-12 h-12 text-purple-500 mb-3" />
               <p className="text-sm text-gray-600">
-                Click to upload images or Drag and drop here
+                {FORM_LABELS.uploadImages}
               </p>
             </div>
           ) : (
@@ -170,7 +171,7 @@ function MediaUploadBox({
               >
                 <div className="text-center p-4">
                   <Upload className="w-8 h-8 text-purple-500 mx-auto mb-2" />
-                  <p className="text-xs text-gray-600">Upload more</p>
+                  <p className="text-xs text-gray-600">{FORM_LABELS.uploadMore}</p>
                 </div>
               </div>
             </div>
@@ -206,10 +207,10 @@ function MediaUploadBox({
                 className="flex flex-col items-center justify-center cursor-pointer"
                 onClick={() => videoInputRef.current?.click()}
               >
-                <Upload className="w-12 h-12 text-purple-500 mb-3" />
-                <p className="text-sm text-gray-600">
-                  Click to upload video or Drag and drop here
-                </p>
+              <Upload className="w-12 h-12 text-purple-500 mb-3" />
+              <p className="text-sm text-gray-600">
+                {FORM_LABELS.uploadVideo}
+              </p>
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -235,8 +236,8 @@ function MediaUploadBox({
                   onClick={() => videoInputRef.current?.click()}
                 >
                   <div className="text-center p-4">
-                    <Upload className="w-8 h-8 text-purple-500 mx-auto mb-2" />
-                    <p className="text-xs text-gray-600">Upload more</p>
+                  <Upload className="w-8 h-8 text-purple-500 mx-auto mb-2" />
+                  <p className="text-xs text-gray-600">{FORM_LABELS.uploadMore}</p>
                   </div>
                 </div>
               </div>

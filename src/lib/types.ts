@@ -202,36 +202,110 @@ export interface GeoLocate{
 export interface Unit {
     id: string,
     building: {id: string, name: string}, // not necessary
+    caretaker: {id: string, name: string},
     name: string,
     description: string,
-    price: number,
-    period?: string,
-    currency: string,
-    location: string,
+    payment: {
+        price: number, // amount to be paid
+        period?: string, // yearly, monthly, weekly, daily
+        currency: string,  // XAF, USD, EUR, etc.
+        tax?: number, // 0.25 = 25%, 0.1 = 10%
+    }
     totalnumber: number,
 
+    visible: boolean,
     available: boolean,
     remark?: { // incase an info like limited room left needs to be displayed or something like a notice on the unit's page
         type: "basic" | 'info' | 'warning' | 'danger',
         text: string
     }
     type: RentingType,
-    imageUrl: string[] // images 
-    floor?:number, // floor number
-    
-    rooms: string[] // kitchen, bedroom, indoor toilet
+    videoUrl?: string,
+    images: {
+        category: string
+        urls: string[]
+        videoUrls?: string[]
+    }[],
+    location: {
+        country: string
+        city: string
+        address: string
+    },
+    rooms: {
+        bedrooms: number
+        bathrooms: number
+        parlors: number
+        kitchens: number
+    },
     rating: {
         value: number, // sum of all rates
         total: number, // number of voters
         reviews?: number // counts
     },
     // reviews: {user: string, star: number, comment?: string}[] // read 
-    features?: string[] // Wifi, water
+
+    amenities: string[] // Wifi, water
+    extraAmenities: string[] // Wifi, water but with extra cost
+    houseRules: string
     tags: string[] // apartment, street, in-door toilet (in general additional search params)
     views: number, // number of times the unit has been viewed
 
     
-    state: -1|0|1, // -1 for unavailable likely under system review or structural maintenance, 0 means has tenant, 1 means available
+    status: "pending" | "approved" | "rejected" | "archived", // status of unit during listing process (approval or rejection), rejected means the unit is not suitable for listing, the unit is still available for editing. archived means the unit is no longer available for listing, deleted means the unit is deleted from the system.
+    isVerified: boolean,
+    createdAt: Timestamp,
+    updatedAt?: Timestamp,
+
+    reportCount: number, 
+}
+
+/**
+ * Listing Status, containing listing details like status, reason, reviewed by and reviewed at
+ * in firebase, it is stored in the units/id/ListingStatus subcollection
+ * This is used to track the status of a listing and the reason for the status and also how many times the listing has been reviewed
+ */
+export interface ListingStatus {
+    id: string,
+    unitId: string,
+    landlordId: string,
+    status: 'pending' | 'approved' | 'rejected' | 'archived',
+    createdAt: Timestamp,
+    updatedAt?: Timestamp,
+    reason?: string,
+    reviewedBy?: {id: string, name: string},
+    reviewedAt?: Timestamp,
+    reviewedReason?: string,
+}
+
+/**
+ * Reports are used to report a unit or a landlord for a reason,
+ * this (UnitReport) is used to track the reports on unit and the reason for the report
+ * in firebase, it is stored in the units/id/Reports subcollection
+ * each time a report is made, the unit's count is incremented and the report is stored in the subcollection
+ */
+export interface UnitReport {
+    id: string,
+    unitId: string,
+    uid: string,
+    report: string,
+    createdAt: Timestamp,
+    updatedAt?: Timestamp,
+}
+
+/**
+ * when a listing is created and needs to be reviewed by the admin, this is used
+ * cause we cant store the listing status in the unit itself as it will be too cluttered
+ * in firebase, it is stored in the listings collection, 
+ * yeah, so basically an anchor for the listing status, which triggers for attention when the listing is pending and only be done
+ */
+export interface Listing {
+    id: string,
+    unitId: string,
+    landlordId: string,
+    status: 'pending' | 'approved' | 'rejected' | 'archived',
+    count: number,
+    createdAt: Timestamp,
+    updatedAt?: Timestamp,
 }
 
 

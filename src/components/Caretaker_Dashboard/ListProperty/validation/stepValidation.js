@@ -6,6 +6,7 @@
  */
 
 import { getRequiredCategories, getCategoryDisplayName } from '../config/categoryMapping';
+import { VALIDATION_RULES, ERROR_MESSAGES } from '../data/formConstants';
 
 /**
  * Validate Step 1: Basic Information
@@ -18,35 +19,35 @@ export const validateBasicInformation = (formData) => {
 
   // Property type validation
   if (!basic.propertyType) {
-    errors.propertyType = 'Property type is required';
+    errors.propertyType = ERROR_MESSAGES.required('Property type');
   }
 
   // Location validation
   if (!basic.location.country) {
-    errors.country = 'Country is required';
+    errors.country = ERROR_MESSAGES.required('Country');
   }
 
   if (!basic.location.city) {
-    errors.city = 'City is required';
+    errors.city = ERROR_MESSAGES.required('City');
   }
 
   if (!basic.location.address) {
-    errors.address = 'Address is required';
+    errors.address = ERROR_MESSAGES.required('Address');
   }
 
-  // Rental fee validation
-  if (!basic.rentalFee || parseFloat(basic.rentalFee) <= 0) {
-    errors.rentalFee = 'Valid rental fee is required';
+  // Payment validation
+  if (!basic.payment?.price || parseFloat(basic.payment.price) <= 0) {
+    errors.rentalFee = ERROR_MESSAGES.invalidPrice;
   }
 
   // Property name validation
-  if (!basic.propertyName || basic.propertyName.trim().length < 3) {
-    errors.propertyName = 'Property name must be at least 3 characters';
+  if (!basic.propertyName || basic.propertyName.trim().length < VALIDATION_RULES.propertyName.minLength) {
+    errors.propertyName = ERROR_MESSAGES.minLength('Property name', VALIDATION_RULES.propertyName.minLength);
   }
 
   // Description validation
-  if (!basic.description || basic.description.trim().length < 20) {
-    errors.description = 'Description must be at least 20 characters';
+  if (!basic.description || basic.description.trim().length < VALIDATION_RULES.description.minLength) {
+    errors.description = ERROR_MESSAGES.minLength('Description', VALIDATION_RULES.description.minLength);
   }
 
   // Room validation - at least one room type should have a value
@@ -56,8 +57,8 @@ export const validateBasicInformation = (formData) => {
     basic.rooms.parlors + 
     basic.rooms.kitchens;
   
-  if (totalRooms === 0) {
-    errors.rooms = 'At least one room must be specified';
+  if (totalRooms < VALIDATION_RULES.rooms.minTotal) {
+    errors.rooms = VALIDATION_RULES.rooms.message;
   }
 
   return {
@@ -78,9 +79,9 @@ export const validateMediaUpload = (formData) => {
 
   // Validate walkthrough video (optional, but if provided, check size)
   if (media.walkthroughVideo) {
-    const maxVideoSize = 100 * 1024 * 1024; // 100MB
+    const maxVideoSize = VALIDATION_RULES.media.maxVideoSize * 1024 * 1024;
     if (media.walkthroughVideo.size > maxVideoSize) {
-      errors.walkthroughVideo = 'Video size must be less than 100MB';
+      errors.walkthroughVideo = ERROR_MESSAGES.maxFileSize('Video', VALIDATION_RULES.media.maxVideoSize);
     }
   }
 
@@ -98,14 +99,14 @@ export const validateMediaUpload = (formData) => {
       return;
     }
     
-    // Validate images (minimum 2 required)
-    if (!categoryData.images || categoryData.images.length < 2) {
-      errors[`${category}Images`] = `${getCategoryDisplayName(category)} must have at least 2 images`;
+    // Validate images (minimum required)
+    if (!categoryData.images || categoryData.images.length < VALIDATION_RULES.media.imagesPerCategory) {
+      errors[`${category}Images`] = ERROR_MESSAGES.minImages(getCategoryDisplayName(category));
     }
 
-    // Validate videos (minimum 1 required)
-    if (!categoryData.videos || categoryData.videos.length < 1) {
-      errors[`${category}Videos`] = `${getCategoryDisplayName(category)} must have at least 1 video`;
+    // Validate videos (minimum required)
+    if (!categoryData.videos || categoryData.videos.length < VALIDATION_RULES.media.videosPerCategory) {
+      errors[`${category}Videos`] = ERROR_MESSAGES.minVideos(getCategoryDisplayName(category));
     }
   });
 
