@@ -90,7 +90,9 @@ export default function Sidebar({ isMobileMenuOpen, setIsMobileMenuOpen }){
           <Link to={'/caretaker-dashboard/list-property'} onClick={handleLinkClick}>
             <NavItem active={isActive('/caretaker-dashboard/list-property')}>List Property</NavItem>
           </Link>
-          <NavItem>My Profile</NavItem>
+          <Link to={'/caretaker-dashboard/profile'} onClick={handleLinkClick}>
+            <NavItem active={isActive('/caretaker-dashboard/profile')}>My Profile</NavItem>
+          </Link>
         </nav>
 
         {/* Bottom Actions */}

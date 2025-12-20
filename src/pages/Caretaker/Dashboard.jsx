@@ -7,6 +7,8 @@ import PropertyPage from './PropertyPage'
 import PropertyDetails from './PropertyDetails'
 import ListProperty from './ListProperty'
 import EditProperty from './EditProperty'
+import Profile from '@/components/User_Dashboard/Profile'
+import { useAuth } from '@/lib/auth-context'
 
 /**
  * Caretaker Dashboard Routes
@@ -17,6 +19,8 @@ import EditProperty from './EditProperty'
  * the sidebar and main content structure.
  */
 export default function Dashboard(){
+  const { user } = useAuth();
+  
   return (
     <ProtectedCaretakerRoute>
       <Routes>
@@ -26,6 +30,7 @@ export default function Dashboard(){
           <Route path="properties/:id" element={<PropertyDetails />} />
           <Route path="list-property" element={<ListProperty />} />
           <Route path="edit-property/:id" element={<EditProperty />} />
+          <Route path="profile" element={<Profile user={user} />} />
         </Route>
       </Routes>
     </ProtectedCaretakerRoute>
