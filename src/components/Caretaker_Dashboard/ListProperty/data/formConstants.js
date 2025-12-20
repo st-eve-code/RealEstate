@@ -153,6 +153,28 @@ export const ROOM_TYPES = [
 ];
 
 /**
+ * Common Property Items (Props)
+ * Common items that can be included in a property (e.g., beds, tables, chairs)
+ */
+export const COMMON_PROPS = [
+  'Beds',
+  'Tables',
+  'Chairs',
+  'Wardrobes',
+  'Desks',
+  'Sofas',
+  'TVs',
+  'Refrigerators',
+  'Washing Machines',
+  'Air Conditioners',
+  'Fans',
+  'Lights',
+  'Mirrors',
+  'Cabinets',
+  'Bookshelves'
+];
+
+/**
  * Default Form Values
  * Used to initialize form fields
  */
@@ -183,7 +205,8 @@ export const DEFAULT_VALUES = {
   houseRules: '',
   amenities: [],
   extraAmenities: [],
-  tags: []
+  tags: [],
+  props: {} // {[key: string]: number} - e.g., {"Beds": 2, "Tables": 1}
 };
 
 /**
@@ -242,7 +265,13 @@ export const FORM_LABELS = {
   walkthroughVideo: 'Walkthrough Video',
   uploadImages: 'Click to upload images or Drag and drop here',
   uploadVideo: 'Click to upload video or Drag and drop here',
-  uploadMore: 'Upload more'
+  uploadMore: 'Upload more',
+  propertyItems: 'Property Items',
+  propertyItemsDescription: 'Specify items included in the property (e.g., 2 beds, 1 table)',
+  itemName: 'Item name',
+  itemCount: 'Count',
+  addItem: 'Add Item',
+  removeItem: 'Remove'
 };
 
 /**

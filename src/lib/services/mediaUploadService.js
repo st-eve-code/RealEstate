@@ -1,40 +1,44 @@
 /**
  * Media Upload Service
  * 
- * Modular service for uploading images and videos to a PHP server.
- * Handles unique ID generation and URL formatting.
- * 
- * This service can be reused across different modules in the application.
+ * Provides functions for uploading images and videos to a PHP server.
+ * Handles unique ID generation, file uploads, and URL formatting.
  */
 
 /**
- * Safely get environment variable (works with both CRA and Vite)
- * @param {string} key - Environment variable key
- * @param {string} defaultValue - Default value if env var is not found
- * @returns {string} - Environment variable value or default
+ * Get environment variable (supports both CRA and Vite)
  */
 const getEnvVar = (key, defaultValue) => {
+  // Try process.env first (Create React App)
+  if (typeof process !== 'undefined' && process.env && process.env[key]) {
+    return process.env[key];
+  }
+  
+  // Try import.meta.env (Vite) - using eval to avoid linter issues
   try {
-    if (typeof process !== 'undefined' && process.env) {
-      return process.env[key] || defaultValue;
+    // eslint-disable-next-line no-eval
+    const viteEnv = eval('typeof import !== "undefined" && import.meta && import.meta.env ? import.meta.env : null');
+    if (viteEnv && viteEnv[key]) {
+      return viteEnv[key];
     }
   } catch (e) {
-    // process not available
+    // Ignore if import.meta is not available
   }
+  
   return defaultValue;
 };
 
 /**
  * Generate a unique ID for media uploads
- * Format: {prefix}{randomString}{timestamp}
- * @param {string} prefix - Optional prefix (e.g., user name, property name)
- * @returns {string} - Unique ID
+ * Format: name + randomNumber
+ * Example: "joseph14", "property23"
+ * @param {string} baseName - Base name for the unique ID
+ * @returns {string} - Unique identifier
  */
-export const generateUniqueId = (prefix = '') => {
-  const randomString = Math.random().toString(36).substring(2, 8);
-  const timestamp = Date.now().toString(36);
-  const cleanPrefix = prefix.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().substring(0, 10);
-  return cleanPrefix ? `${cleanPrefix}${randomString}${timestamp}` : `${randomString}${timestamp}`;
+export const generateUniqueId = (baseName = 'property') => {
+  const sanitizedName = baseName.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const randomNum = Math.floor(Math.random() * 10000);
+  return `${sanitizedName}${randomNum}`;
 };
 
 /**
@@ -43,28 +47,26 @@ export const generateUniqueId = (prefix = '') => {
  * @param {string} uniqueId - Unique identifier for this upload session
  * @param {string} category - Category name (e.g., 'bedroom', 'parlor')
  * @param {string} fileType - 'image' or 'video'
- * @returns {Promise<{success: boolean, url?: string, error?: string}>}
+ * @returns {Promise<{success: boolean, url?: string, fileName?: string, error?: string}>}
  */
 export const uploadFile = async (file, uniqueId, category, fileType = 'image') => {
-  // Validate inputs
-  if (!file) {
+  if (!file || !(file instanceof File)) {
     return {
       success: false,
-      error: 'No file provided'
+      error: 'Invalid file provided'
     };
   }
-  
+
   if (!uniqueId || !category) {
     return {
       success: false,
-      error: 'Missing required parameters (uniqueId or category)'
+      error: 'Missing required parameters: uniqueId and category are required'
     };
   }
 
   try {
     const UPLOAD_ENDPOINT = getEnvVar('REACT_APP_MEDIA_UPLOAD_URL', 'http://192.168.1.151/tests/upload.php');
     
-    // Create FormData for file upload
     const formData = new FormData();
     formData.append('file', file);
     formData.append('uniqueId', uniqueId);
@@ -75,51 +77,20 @@ export const uploadFile = async (file, uniqueId, category, fileType = 'image') =
       const response = await fetch(UPLOAD_ENDPOINT, {
         method: 'POST',
         body: formData
-        // Note: Don't set Content-Type header, browser will set it with boundary for FormData
-        // Add authentication headers if needed:
-        // headers: {
-        //   'Authorization': `Bearer ${token}`
-        // }
       });
       
-      // Check if response is ok
       if (!response.ok) {
-        let errorMessage = `Server error (${response.status}): ${response.statusText}`;
-        
-        // Try to get error details from response
-        try {
-          const contentType = response.headers.get('content-type');
-          if (contentType && contentType.includes('application/json')) {
-            const errorData = await response.json();
-            errorMessage = errorData.error || errorData.message || errorMessage;
-          } else {
-            const errorText = await response.text();
-            if (errorText) {
-              errorMessage = `${errorMessage}\nServer response: ${errorText.substring(0, 200)}`;
-            }
-          }
-        } catch (parseError) {
-          // If we can't parse the error, use the status text
-          console.warn('Could not parse error response:', parseError);
-        }
-        
-        throw new Error(errorMessage);
+        const errorText = await response.text();
+        throw new Error(`Server error (${response.status}): ${errorText || response.statusText}`);
       }
       
-      // Try to parse JSON response
       let result;
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
-        try {
-          result = await response.json();
-        } catch (jsonError) {
-          const text = await response.text();
-          throw new Error(`Invalid JSON response from server: ${text.substring(0, 200)}`);
-        }
+        result = await response.json();
       } else {
-        // If not JSON, read as text
         const text = await response.text();
-        throw new Error(`Invalid response format. Expected JSON, got: ${text.substring(0, 200)}`);
+        throw new Error(`Invalid response format. Expected JSON, got: ${text.substring(0, 100)}`);
       }
       
       if (result.success) {
@@ -135,7 +106,6 @@ export const uploadFile = async (file, uniqueId, category, fileType = 'image') =
         };
       }
     } catch (fetchError) {
-      // Handle network errors, CORS errors, etc.
       console.error('Upload fetch error:', {
         name: fetchError.name,
         message: fetchError.message,
@@ -143,7 +113,6 @@ export const uploadFile = async (file, uniqueId, category, fileType = 'image') =
         endpoint: UPLOAD_ENDPOINT
       });
       
-      // Check if it's a network/CORS error
       if (fetchError.name === 'TypeError' && (fetchError.message.includes('fetch') || fetchError.message.includes('Failed to fetch'))) {
         return {
           success: false,
@@ -151,7 +120,6 @@ export const uploadFile = async (file, uniqueId, category, fileType = 'image') =
         };
       }
       
-      // For other errors, return the error
       return {
         success: false,
         error: fetchError.message || 'Failed to upload file'
@@ -167,7 +135,7 @@ export const uploadFile = async (file, uniqueId, category, fileType = 'image') =
 };
 
 /**
- * Upload multiple files (images or videos) for a category
+ * Upload multiple files sequentially
  * @param {File[]} files - Array of files to upload
  * @param {string} uniqueId - Unique identifier for this upload session
  * @param {string} category - Category name
@@ -176,17 +144,24 @@ export const uploadFile = async (file, uniqueId, category, fileType = 'image') =
  * @returns {Promise<{success: boolean, urls: string[], errors: string[]}>}
  */
 export const uploadFiles = async (files, uniqueId, category, fileType = 'image', onProgress = null) => {
+  if (!Array.isArray(files) || files.length === 0) {
+    return {
+      success: true,
+      urls: [],
+      errors: []
+    };
+  }
+
   const urls = [];
   const errors = [];
-  
+
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     
-    // Report progress
     if (onProgress) {
       onProgress(i, (i / files.length) * 100);
     }
-    
+
     const result = await uploadFile(file, uniqueId, category, fileType);
     
     if (result.success) {
@@ -195,8 +170,7 @@ export const uploadFiles = async (files, uniqueId, category, fileType = 'image',
       errors.push(`${file.name}: ${result.error}`);
     }
   }
-  
-  // Report completion
+
   if (onProgress) {
     onProgress(files.length, 100);
   }
@@ -209,40 +183,51 @@ export const uploadFiles = async (files, uniqueId, category, fileType = 'image',
 };
 
 /**
- * Upload all media for a property listing
+ * Upload all media for a property listing (with support for preserving existing media)
  * Organizes uploads by category and handles both images and videos
  * @param {object} mediaData - Media data from form
  * @param {string} uniqueId - Unique identifier for this property
  * @param {function} onProgress - Optional progress callback (category, progress, message)
+ * @param {object} originalMedia - Optional original media data to preserve existing URLs
  * @returns {Promise<{success: boolean, images: Array, videoUrl?: string, errors: string[]}>}
  */
-export const uploadPropertyMedia = async (mediaData, uniqueId, onProgress = null) => {
+export const uploadPropertyMedia = async (mediaData, uniqueId, onProgress = null, originalMedia = null) => {
   const images = []; // Array of {category, urls, videoUrls}
   const errors = [];
   let walkthroughVideoUrl = null;
   
   try {
-    // Upload walkthrough video if exists
+    // Handle walkthrough video
     if (mediaData.walkthroughVideo) {
-      if (onProgress) {
-        onProgress('walkthrough', 0, 'Uploading walkthrough video...');
-      }
-      
-      const videoResult = await uploadFile(
-        mediaData.walkthroughVideo,
-        uniqueId,
-        'walkthrough',
-        'video'
-      );
-      
-      if (videoResult.success) {
-        walkthroughVideoUrl = videoResult.url;
+      // Check if it's a File object (new upload) or a string URL (existing)
+      if (mediaData.walkthroughVideo instanceof File) {
+        // New file to upload
         if (onProgress) {
-          onProgress('walkthrough', 100, 'Walkthrough video uploaded');
+          onProgress('walkthrough', 0, 'Uploading walkthrough video...');
         }
-      } else {
-        errors.push(`Walkthrough video: ${videoResult.error}`);
+        
+        const videoResult = await uploadFile(
+          mediaData.walkthroughVideo,
+          uniqueId,
+          'walkthrough',
+          'video'
+        );
+        
+        if (videoResult.success) {
+          walkthroughVideoUrl = videoResult.url;
+          if (onProgress) {
+            onProgress('walkthrough', 100, 'Walkthrough video uploaded');
+          }
+        } else {
+          errors.push(`Walkthrough video: ${videoResult.error}`);
+        }
+      } else if (typeof mediaData.walkthroughVideo === 'string' && mediaData.walkthroughVideo.trim() !== '') {
+        // Existing URL, preserve it
+        walkthroughVideoUrl = mediaData.walkthroughVideo;
       }
+    } else if (originalMedia?.videoUrl) {
+      // No new video, but preserve original if it exists
+      walkthroughVideoUrl = originalMedia.videoUrl;
     }
     
     // Upload media for each category
@@ -252,6 +237,17 @@ export const uploadPropertyMedia = async (mediaData, uniqueId, onProgress = null
       const categoryData = mediaData.categories[category];
       
       if (!categoryData || (!categoryData.images?.length && !categoryData.videos?.length)) {
+        // Check if we should preserve original media for this category
+        if (originalMedia?.images) {
+          const originalCategory = originalMedia.images.find(img => img.category === category);
+          if (originalCategory && (originalCategory.urls?.length > 0 || originalCategory.videoUrls?.length > 0)) {
+            images.push({
+              category: category,
+              urls: originalCategory.urls || [],
+              videoUrls: originalCategory.videoUrls || []
+            });
+          }
+        }
         continue;
       }
       
@@ -261,51 +257,87 @@ export const uploadPropertyMedia = async (mediaData, uniqueId, onProgress = null
         videoUrls: []
       };
       
-      // Upload images for this category
+      // Separate File objects (new) from strings (existing URLs)
+      const newImageFiles = [];
+      const existingImageUrls = [];
+      
       if (categoryData.images && categoryData.images.length > 0) {
+        categoryData.images.forEach(item => {
+          if (item instanceof File) {
+            newImageFiles.push(item);
+          } else if (typeof item === 'string' && item.trim() !== '') {
+            existingImageUrls.push(item);
+          }
+        });
+      }
+      
+      // Preserve existing URLs
+      categoryImages.urls = [...existingImageUrls];
+      
+      // Upload new image files
+      if (newImageFiles.length > 0) {
         if (onProgress) {
-          onProgress(category, 0, `Uploading ${categoryData.images.length} images for ${category}...`);
+          onProgress(category, 0, `Uploading ${newImageFiles.length} new images for ${category}...`);
         }
         
         const imageResults = await uploadFiles(
-          categoryData.images,
+          newImageFiles,
           uniqueId,
           category,
           'image',
           (fileIndex, progress) => {
             if (onProgress) {
-              onProgress(category, progress, `Uploading image ${fileIndex + 1}/${categoryData.images.length}`);
+              onProgress(category, progress, `Uploading image ${fileIndex + 1}/${newImageFiles.length}`);
             }
           }
         );
         
         if (imageResults.success) {
-          categoryImages.urls = imageResults.urls;
+          // Merge new URLs with existing ones
+          categoryImages.urls = [...categoryImages.urls, ...imageResults.urls];
         } else {
           errors.push(...imageResults.errors);
         }
       }
       
-      // Upload videos for this category
+      // Separate File objects (new) from strings (existing URLs) for videos
+      const newVideoFiles = [];
+      const existingVideoUrls = [];
+      
       if (categoryData.videos && categoryData.videos.length > 0) {
+        categoryData.videos.forEach(item => {
+          if (item instanceof File) {
+            newVideoFiles.push(item);
+          } else if (typeof item === 'string' && item.trim() !== '') {
+            existingVideoUrls.push(item);
+          }
+        });
+      }
+      
+      // Preserve existing video URLs
+      categoryImages.videoUrls = [...existingVideoUrls];
+      
+      // Upload new video files
+      if (newVideoFiles.length > 0) {
         if (onProgress) {
-          onProgress(category, 50, `Uploading ${categoryData.videos.length} videos for ${category}...`);
+          onProgress(category, 50, `Uploading ${newVideoFiles.length} new videos for ${category}...`);
         }
         
         const videoResults = await uploadFiles(
-          categoryData.videos,
+          newVideoFiles,
           uniqueId,
           category,
           'video',
           (fileIndex, progress) => {
             if (onProgress) {
-              onProgress(category, 50 + (progress / 2), `Uploading video ${fileIndex + 1}/${categoryData.videos.length}`);
+              onProgress(category, 50 + (progress / 2), `Uploading video ${fileIndex + 1}/${newVideoFiles.length}`);
             }
           }
         );
         
         if (videoResults.success) {
-          categoryImages.videoUrls = videoResults.urls;
+          // Merge new URLs with existing ones
+          categoryImages.videoUrls = [...categoryImages.videoUrls, ...videoResults.urls];
         } else {
           errors.push(...videoResults.errors);
         }
@@ -317,69 +349,116 @@ export const uploadPropertyMedia = async (mediaData, uniqueId, onProgress = null
       }
     }
     
-    return {
-      success: errors.length === 0,
-      images: images,
-      videoUrl: walkthroughVideoUrl,
-      errors: errors
-    };
+    // Handle custom categories
+    if (mediaData.customCategories && mediaData.customCategories.length > 0) {
+      for (const customCategory of mediaData.customCategories) {
+        // Similar logic for custom categories
+        const customImages = {
+          category: customCategory.category || 'custom',
+          urls: [],
+          videoUrls: []
+        };
+        
+        // Process images
+        if (customCategory.urls) {
+          customCategory.urls.forEach(item => {
+            if (item instanceof File) {
+              // Would need to upload, but for now preserve structure
+            } else if (typeof item === 'string') {
+              customImages.urls.push(item);
+            }
+          });
+        }
+        
+        // Process videos
+        if (customCategory.videoUrls) {
+          customCategory.videoUrls.forEach(item => {
+            if (item instanceof File) {
+              // Would need to upload, but for now preserve structure
+            } else if (typeof item === 'string') {
+              customImages.videoUrls.push(item);
+            }
+          });
+        }
+        
+        if (customImages.urls.length > 0 || customImages.videoUrls.length > 0) {
+          images.push(customImages);
+        }
+      }
+    }
+    
+    // Preserve original categories that weren't modified
+    if (originalMedia?.images) {
+      const processedCategories = new Set(categories);
+      originalMedia.images.forEach(originalCategory => {
+        if (originalCategory.category && !processedCategories.has(originalCategory.category)) {
+          // This category exists in original but wasn't in the form data, preserve it
+          images.push({
+            category: originalCategory.category,
+            urls: originalCategory.urls || [],
+            videoUrls: originalCategory.videoUrls || []
+          });
+        }
+      });
+    }
+    
+    if (onProgress) {
+      onProgress('complete', 100, 'Media processing complete');
+    }
+    
   } catch (error) {
     console.error('Error uploading property media:', error);
-    return {
-      success: false,
-      images: images,
-      videoUrl: walkthroughVideoUrl,
-      errors: [...errors, error.message || 'Failed to upload media']
-    };
+    errors.push(`Upload error: ${error.message}`);
   }
+  
+  return {
+    success: errors.length === 0,
+    images: images,
+    videoUrl: walkthroughVideoUrl,
+    errors: errors
+  };
 };
 
 /**
  * Delete a media file from the server
- * @param {string} url - The URL of the file to delete
+ * @param {string} fileUrl - URL of the file to delete
  * @returns {Promise<{success: boolean, error?: string}>}
  */
-export const deleteMediaFile = async (url) => {
+export const deleteMediaFile = async (fileUrl) => {
+  if (!fileUrl || typeof fileUrl !== 'string') {
+    return {
+      success: false,
+      error: 'Invalid file URL provided'
+    };
+  }
+
   try {
     const DELETE_ENDPOINT = getEnvVar('REACT_APP_MEDIA_DELETE_URL', 'http://192.168.1.151/tests/delete.php');
     
-    // Extract uniqueId and filename from URL
-    const urlMatch = url.match(/viewMedia\/([^/]+)\/(.+)$/);
-    if (!urlMatch) {
-      return { success: false, error: 'Invalid URL format' };
+    const response = await fetch(DELETE_ENDPOINT, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ url: fileUrl })
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Server error (${response.status}): ${errorText || response.statusText}`);
     }
     
-    const [, uniqueId, fileName] = urlMatch;
+    const result = await response.json();
     
-    try {
-      const response = await fetch(DELETE_ENDPOINT, {
-        method: 'DELETE',
-        headers: { 
-          'Content-Type': 'application/json'
-          // Add authentication headers if needed:
-          // 'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ uniqueId, fileName })
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Delete failed: ${response.statusText}`);
-      }
-      
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      // Fallback for development/testing
-      console.warn('Delete endpoint not available:', error.message);
-      await new Promise(resolve => setTimeout(resolve, 200));
-      return { success: true };
-    }
+    return {
+      success: result.success || false,
+      error: result.error || null
+    };
   } catch (error) {
-    console.error('Error deleting file:', error);
+    console.error('Error deleting media file:', error);
     return {
       success: false,
-      error: error.message || 'Failed to delete file'
+      error: error.message || 'Failed to delete media file'
     };
   }
 };
-

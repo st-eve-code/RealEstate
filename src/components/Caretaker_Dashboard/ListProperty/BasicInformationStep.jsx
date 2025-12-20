@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import RoomCounter from './components/RoomCounter';
 import AmenitySelector from './components/AmenitySelector';
 import {
@@ -8,9 +8,11 @@ import {
   COUNTRIES,
   getCitiesByCountry,
   COMMON_AMENITIES,
+  COMMON_PROPS,
   FORM_LABELS,
   FORM_PLACEHOLDERS
 } from './data/formConstants';
+import { Plus, X } from 'lucide-react';
 
 /**
  * BasicInformationStep Component
@@ -410,6 +412,192 @@ function BasicInformationStep({
           availableAmenities={COMMON_AMENITIES}
         />
       </div>
+
+      {/* Property Items (Props) Section */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            {FORM_LABELS.propertyItems}
+          </h2>
+          <p className="text-sm text-gray-600 mb-4">
+            {FORM_LABELS.propertyItemsDescription}
+          </p>
+        </div>
+
+        {/* Existing Props */}
+        {basic.props && Object.keys(basic.props).length > 0 && (
+          <div className="space-y-3">
+            {Object.entries(basic.props).map(([itemName, count]) => (
+              <div key={itemName} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-700">{itemName}</div>
+                  <div className="text-xs text-gray-500">Count: {count}</div>
+                </div>
+                <input
+                  type="number"
+                  min="0"
+                  value={count}
+                  onChange={(e) => {
+                    const newCount = parseInt(e.target.value) || 0;
+                    if (newCount === 0) {
+                      // Remove item if count is 0
+                      const newProps = { ...basic.props };
+                      delete newProps[itemName];
+                      updateFormData('basic', 'props', newProps);
+                    } else {
+                      // Update count
+                      updateFormData('basic', 'props', {
+                        ...basic.props,
+                        [itemName]: newCount
+                      });
+                    }
+                  }}
+                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newProps = { ...basic.props };
+                    delete newProps[itemName];
+                    updateFormData('basic', 'props', newProps);
+                  }}
+                  className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  aria-label={`Remove ${itemName}`}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Add New Item */}
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+          <PropertyItemAdder
+            onAdd={(itemName, count) => {
+              const newProps = {
+                ...(basic.props || {}),
+                [itemName]: count
+              };
+              updateFormData('basic', 'props', newProps);
+            }}
+            existingItems={Object.keys(basic.props || {})}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Property Item Adder Component
+ * Allows users to add new property items with a name and count
+ */
+function PropertyItemAdder({ onAdd, existingItems = [] }) {
+  const [itemName, setItemName] = useState('');
+  const [count, setCount] = useState(1);
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [customItemName, setCustomItemName] = useState('');
+
+  const availableItems = COMMON_PROPS.filter(item => !existingItems.includes(item));
+
+  const handleAddFromList = (name) => {
+    if (name && !existingItems.includes(name)) {
+      onAdd(name, 1);
+      setItemName('');
+    }
+  };
+
+  const handleAddCustom = () => {
+    const name = customItemName.trim();
+    if (name && !existingItems.includes(name)) {
+      onAdd(name, count);
+      setCustomItemName('');
+      setCount(1);
+      setShowCustomInput(false);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      {availableItems.length > 0 && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Select from common items
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {availableItems.slice(0, 8).map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => handleAddFromList(item)}
+                className="px-3 py-1.5 text-sm bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!showCustomInput ? (
+        <button
+          type="button"
+          onClick={() => setShowCustomInput(true)}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          Add Custom Item
+        </button>
+      ) : (
+        <div className="space-y-3 p-3 bg-white rounded-lg border border-gray-200">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {FORM_LABELS.itemName}
+            </label>
+            <input
+              type="text"
+              value={customItemName}
+              onChange={(e) => setCustomItemName(e.target.value)}
+              placeholder="e.g., Beds, Tables, Chairs"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {FORM_LABELS.itemCount}
+            </label>
+            <input
+              type="number"
+              min="1"
+              value={count}
+              onChange={(e) => setCount(parseInt(e.target.value) || 1)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleAddCustom}
+              disabled={!customItemName.trim() || existingItems.includes(customItemName.trim())}
+              className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            >
+              {FORM_LABELS.addItem}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowCustomInput(false);
+                setCustomItemName('');
+                setCount(1);
+              }}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

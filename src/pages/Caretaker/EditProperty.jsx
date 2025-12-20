@@ -1,39 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
 import { Timestamp } from 'firebase/firestore';
 import ProgressIndicator from '@/components/Caretaker_Dashboard/ListProperty/ProgressIndicator';
 import BasicInformationStep from '@/components/Caretaker_Dashboard/ListProperty/BasicInformationStep';
 import UploadMediaStep from '@/components/Caretaker_Dashboard/ListProperty/UploadMediaStep';
 import ReviewListingStep from '@/components/Caretaker_Dashboard/ListProperty/ReviewListingStep';
-import { getInitialFormData, formatFormDataForDatabase } from '@/components/Caretaker_Dashboard/ListProperty/utils/formData';
+import { getInitialFormData, formatFormDataForDatabase, unitToFormData } from '@/components/Caretaker_Dashboard/ListProperty/utils/formData';
 import { validateStep } from '@/components/Caretaker_Dashboard/ListProperty/validation/stepValidation';
 import { uploadPropertyMedia, generateUniqueId } from '@/lib/services/mediaUploadService';
-import { setDocumentWithInternalId } from '@/lib/utils/firestoreDocumentOperation';
+import { selectDocumentsByConstraint } from '@/lib/utils/firestoreDocumentOperation';
+import { updateDocumentById } from '@/lib/internal-firebase';
 
 /**
- * ListProperty Component - Main container for property listing flow
+ * EditProperty Component - Edit existing property
  * 
- * This component manages a 3-step property listing process:
- * 1. Basic Information - Property details, location, amenities
- * 2. Upload Media - Images and videos for different property areas
- * 3. Review Listing - Preview and publish the listing
+ * This component reuses the ListProperty form but pre-populates it with existing data
+ * and updates the document instead of creating a new one.
  */
-function ListProperty() {
-  // Get current user (caretaker) from auth context
+function EditProperty() {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   
-  // Current step in the multi-step form (1, 2, or 3)
   const [currentStep, setCurrentStep] = useState(1);
-  
-  // Form data containing all property listing information
   const [formData, setFormData] = useState(getInitialFormData());
-  
-  // Form validation errors
   const [errors, setErrors] = useState({});
-  
-  // Upload progress state
   const [uploadProgress, setUploadProgress] = useState({ category: '', progress: 0, message: '' });
   const [isUploading, setIsUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [originalProperty, setOriginalProperty] = useState(null);
 
   // Step definitions for the progress indicator
   const steps = [
@@ -41,6 +37,48 @@ function ListProperty() {
     { id: 2, title: 'Upload Media' },
     { id: 3, title: 'Review Listing' }
   ];
+
+  // Fetch existing property data
+  useEffect(() => {
+    const fetchProperty = async () => {
+      if (!user?.uid || !id) return;
+
+      try {
+        setLoading(true);
+        const constraints = [
+          {
+            field: 'caretaker.id',
+            operator: '==',
+            value: user.uid
+          }
+        ];
+
+        const result = await selectDocumentsByConstraint('units', constraints);
+        
+        if (result.success) {
+          const foundProperty = result.data.find(unit => unit.id === id);
+          if (foundProperty) {
+            // Store original property for media preservation
+            setOriginalProperty(foundProperty);
+            // Convert Unit data to form data format
+            const formDataFromUnit = unitToFormData(foundProperty);
+            setFormData(formDataFromUnit);
+          } else {
+            alert('Property not found or you do not have permission to edit it.');
+            navigate('/caretaker-dashboard/properties');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching property:', error);
+        alert('Failed to load property data.');
+        navigate('/caretaker-dashboard/properties');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperty();
+  }, [id, user, navigate]);
 
   /**
    * Handle navigation to next step
@@ -67,9 +105,6 @@ function ListProperty() {
 
   /**
    * Update form data for a specific field
-   * @param {string} section - The section name (e.g., 'basic', 'media')
-   * @param {string} field - The field name
-   * @param {any} value - The new value
    */
   const updateFormData = (section, field, value) => {
     setFormData(prev => ({
@@ -83,86 +118,67 @@ function ListProperty() {
 
   /**
    * Update nested form data (for complex objects)
-   * @param {string} section - The section name
-   * @param {string} subsection - The subsection name
-   * @param {string} field - The field name (or object key)
-   * @param {any} value - The new value
    */
-  const updateNestedFormData = (section, subsection, field, value) => {
-    setFormData(prev => {
-      // Handle special case for categories where field is actually a category name
-      if (section === 'media' && subsection === 'categories') {
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [subsection]: {
-              ...(prev[section]?.[subsection] || {}),
-              [field]: value
-            }
-          }
-        };
-      }
-      
-      // Default nested update
-      return {
-        ...prev,
-        [section]: {
-          ...prev[section],
-          [subsection]: {
-            ...(prev[section]?.[subsection] || {}),
-            [field]: value
-          }
+  const updateNestedFormData = (section, nestedKey, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [nestedKey]: {
+          ...prev[section][nestedKey],
+          [field]: value
         }
-      };
-    });
+      }
+    }));
   };
 
   /**
-   * Handle publishing the listing
-   * This will save the property to the database
+   * Handle publishing/updating the property
    */
   const handlePublish = async () => {
     // Validate all steps before publishing
-    const step1Validation = validateStep(1, formData);
-    const step2Validation = validateStep(2, formData);
-    
-    if (!step1Validation.isValid || !step2Validation.isValid) {
-      setErrors({
-        ...step1Validation.errors,
-        ...step2Validation.errors
-      });
-      setCurrentStep(1); // Go back to first step with errors
-      return;
+    for (let step = 1; step <= 3; step++) {
+      const isValid = validateStep(step, formData);
+      if (!isValid.isValid) {
+        setErrors(isValid.errors);
+        setCurrentStep(step);
+        alert('Please fix all errors before updating the property.');
+        return;
+      }
     }
 
     try {
       setIsUploading(true);
-      setUploadProgress({ category: 'initializing', progress: 0, message: 'Preparing upload...' });
+      setUploadProgress({ category: 'initializing', progress: 0, message: 'Preparing update...' });
       
-      // Get caretaker info from current user
       const caretaker = user ? {
         id: user.uid,
         name: user.displayName || user.fullName || 'Caretaker'
       } : { id: '', name: '' };
 
-      // Generate unique ID for this property listing
+      // Generate unique ID (reuse existing or generate new)
       const uniqueId = generateUniqueId(caretaker.name || 'property');
       
-      // Upload all media files
-      setUploadProgress({ category: 'media', progress: 0, message: 'Uploading media files...' });
+      // Upload all media files (only new files, preserve existing URLs)
+      setUploadProgress({ category: 'media', progress: 0, message: 'Processing media files...' });
+      
+      // Pass original media to preserve existing URLs
+      const originalMedia = {
+        images: originalProperty?.images || [],
+        videoUrl: originalProperty?.videoUrl || null
+      };
       
       const uploadResult = await uploadPropertyMedia(
         formData.media,
         uniqueId,
         (category, progress, message) => {
           setUploadProgress({ category, progress, message });
-        }
+        },
+        originalMedia
       );
       
       if (!uploadResult.success && uploadResult.errors.length > 0) {
         console.error('Upload errors:', uploadResult.errors);
-        // Show detailed error message
         const errorMessage = uploadResult.errors.length > 5 
           ? `${uploadResult.errors.slice(0, 5).join('\n')}\n... and ${uploadResult.errors.length - 5} more errors`
           : uploadResult.errors.join('\n');
@@ -182,54 +198,51 @@ function ListProperty() {
         formData,
         caretaker,
         {
-          images: uploadResult.images,
+          images: uploadResult.images.length > 0 ? uploadResult.images : undefined,
           videoUrl: uploadResult.videoUrl
         }
       );
       
-      // Add Firestore Timestamp fields
-      const now = Timestamp.now();
-      const firestoreUnitData = {
-        ...unitData,
-        createdAt: now,
-        updatedAt: now
+      // Remove fields that should not be updated (preserve existing values)
+      const { createdAt, rating, views, reportCount, status, isVerified, ...updateableFields } = unitData;
+      
+      // Add updatedAt timestamp
+      const updateData = {
+        ...updateableFields,
+        updatedAt: Timestamp.now()
+        // Note: createdAt, rating, views, reportCount, status, isVerified are preserved
+        // updateDoc will merge, so these won't be overwritten
       };
       
-      // Save unitData to Firestore 'units' collection
-      setUploadProgress({ category: 'saving', progress: 95, message: 'Saving property to database...' });
+      // Update unitData in Firestore 'units' collection
+      setUploadProgress({ category: 'saving', progress: 95, message: 'Updating property in database...' });
       
-      const saveResult = await setDocumentWithInternalId('units', firestoreUnitData);
+      const updateResult = await updateDocumentById('units', id, updateData);
       
-      if (!saveResult.success) {
-        console.error('Failed to save unit to Firestore:', saveResult.error);
-        throw new Error(saveResult.message || 'Failed to save property to database');
+      if (!updateResult.success) {
+        console.error('Failed to update unit in Firestore:', updateResult.error);
+        throw new Error(updateResult.message || 'Failed to update property in database');
       }
       
-      console.log('Property saved successfully with ID:', saveResult.newDocId);
-      alert('Property listed successfully! It will be reviewed by an admin before going live.');
+      console.log('Property updated successfully');
+      alert('Property updated successfully!');
       
-      // Reset form after successful publish
-      setFormData(getInitialFormData());
-      setCurrentStep(1);
-      setIsUploading(false);
-      setUploadProgress({ category: '', progress: 0, message: '' });
+      // Navigate back to property details
+      navigate(`/caretaker-dashboard/properties/${id}`);
     } catch (error) {
-      console.error('Error publishing property:', error);
-      alert('Failed to publish property. Please try again.');
+      console.error('Error updating property:', error);
+      alert('Failed to update property. Please try again.');
       setIsUploading(false);
       setUploadProgress({ category: '', progress: 0, message: '' });
     }
   };
 
   /**
-   * Handle discarding the listing
-   * Resets the form to initial state
+   * Handle discarding changes
    */
   const handleDiscard = () => {
-    if (window.confirm('Are you sure you want to discard this listing? All entered data will be lost.')) {
-      setFormData(getInitialFormData());
-      setCurrentStep(1);
-      setErrors({});
+    if (window.confirm('Are you sure you want to discard your changes? All unsaved data will be lost.')) {
+      navigate(`/caretaker-dashboard/properties/${id}`);
     }
   };
 
@@ -270,12 +283,23 @@ function ListProperty() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
+          <p className="text-gray-600">Loading property data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-6 px-4 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Page Title */}
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          List Your First Property
+          Edit Property
         </h1>
 
         {/* Progress Indicator */}
@@ -319,5 +343,5 @@ function ListProperty() {
   );
 }
 
-export default ListProperty;
+export default EditProperty;
 

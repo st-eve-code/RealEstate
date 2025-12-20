@@ -196,6 +196,26 @@ function ReviewListingStep({ formData, onPublish, onDiscard, isUploading = false
             </div>
           )}
         </div>
+
+        {/* Property Items (Props) */}
+        {basic.props && Object.keys(basic.props).length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Property Items</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {Object.entries(basic.props).map(([itemName, count]) => (
+                <div key={itemName} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Check className="w-4 h-4 text-green-500" />
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">{itemName}</div>
+                      <div className="text-xs text-gray-600">Quantity: {count}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Action Buttons */}

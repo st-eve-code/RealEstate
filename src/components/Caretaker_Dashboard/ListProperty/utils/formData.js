@@ -51,7 +51,10 @@ export const getInitialFormData = () => ({
     extraAmenities: [...DEFAULT_VALUES.extraAmenities],
     
     // Unit.tags (for search)
-    tags: [...DEFAULT_VALUES.tags]
+    tags: [...DEFAULT_VALUES.tags],
+    
+    // Unit.props (property items like beds, tables, etc.)
+    props: { ...DEFAULT_VALUES.props }
   },
   
   // Step 2: Upload Media
@@ -68,16 +71,74 @@ export const getInitialFormData = () => ({
   }
 });
 
+/**
+ * Convert Unit data from database to form data format
+ * Used when editing an existing property
+ * @param {object} unit - Unit data from Firestore
+ * @returns {object} - Form data structure ready for editing
+ */
+export const unitToFormData = (unit) => {
+  if (!unit) return getInitialFormData();
+
+  // Convert images array to categories object
+  const categories = {};
+  const customCategories = [];
+  
+  if (unit.images && Array.isArray(unit.images)) {
+    unit.images.forEach((imageCategory) => {
+      if (imageCategory.category) {
+        categories[imageCategory.category] = {
+          images: imageCategory.urls || [],
+          videos: imageCategory.videoUrls || []
+        };
+      } else {
+        customCategories.push(imageCategory);
+      }
+    });
+  }
+
+  return {
+    basic: {
+      propertyName: unit.name || '',
+      propertyType: unit.type || '',
+      description: unit.description || '',
+      rooms: {
+        bedrooms: unit.rooms?.bedrooms || 0,
+        bathrooms: unit.rooms?.bathrooms || 0,
+        parlors: unit.rooms?.parlors || 0,
+        kitchens: unit.rooms?.kitchens || 0
+      },
+      location: {
+        country: unit.location?.country || '',
+        city: unit.location?.city || '',
+        address: unit.location?.address || ''
+      },
+      payment: {
+        price: unit.payment?.price || '',
+        period: unit.payment?.period || 'yearly',
+        currency: unit.payment?.currency || 'XAF',
+        tax: unit.payment?.tax || 0
+      },
+      available: unit.available !== false,
+      visible: unit.visible !== false,
+      totalnumber: unit.totalnumber || 1,
+      houseRules: unit.houseRules || '',
+      amenities: unit.amenities || [],
+      extraAmenities: unit.extraAmenities || [],
+      tags: unit.tags || [],
+      props: unit.props || {}
+    },
+    media: {
+      walkthroughVideo: unit.videoUrl || null,
+      categories: categories,
+      customCategories: customCategories
+    }
+  };
+};
+
 // Validation has been moved to validation/stepValidation.js
 // Import validateStep from there instead
 
-/**
- * Format form data for database storage
- * Converts the form data structure to match the Unit interface exactly
- * @param {object} formData - The form data to format
- * @param {object} caretaker - Caretaker info {id: string, name: string}
- * @returns {object} - Formatted data ready for database (matches Unit interface)
- */
 /**
  * Format form data for database storage
  * Converts the form data structure to match the Unit interface exactly
@@ -172,9 +233,11 @@ export const formatFormDataForDatabase = (formData, caretaker, uploadedMedia = n
     isVerified: false,
     
     // Unit.reportCount
-    reportCount: 0
+    reportCount: 0,
+    
+    // Unit.props (property items)
+    ...(basic.props && Object.keys(basic.props).length > 0 && { props: basic.props })
     
     // Unit.createdAt & Unit.updatedAt will be set by Firebase serverTimestamp()
   };
 };
-

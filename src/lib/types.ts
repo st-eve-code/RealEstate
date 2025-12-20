@@ -150,6 +150,12 @@ export interface User {
     fA2: boolean,
     inAppNotification: string[],
     emailSubscription: string[],
+    permissions?: {
+        shareContactInfo: boolean,
+        sharePhoto: boolean,
+    },
+    privacyPolicy: string, // privacy policy accepted by the user
+
 
     loadedUnits: Unit[],
 
@@ -237,12 +243,12 @@ export interface Unit {
         parlors: number
         kitchens: number
     },
+    props?: {[index: string]: number}, // properties like 2 bed, 2 tables, etc
     rating: {
         value: number, // sum of all rates
         total: number, // number of voters
         reviews?: number // counts
-    },
-    // reviews: {user: string, star: number, comment?: string}[] // read 
+    }, // rating obtained by taking value/total
 
     amenities: string[] // Wifi, water
     extraAmenities: string[] // Wifi, water but with extra cost
@@ -262,7 +268,7 @@ export interface Unit {
 /**
  * Listing Status, containing listing details like status, reason, reviewed by and reviewed at
  * in firebase, it is stored in the units/id/ListingStatus subcollection
- * This is used to track the status of a listing and the reason for the status and also how many times the listing has been reviewed
+ * This is used to track the status of a listing and the reason for the status and also how many times the listing unit has been reviewed
  */
 export interface ListingStatus {
     id: string,
@@ -294,7 +300,7 @@ export interface UnitReport {
 
 /**
  * when a listing is created and needs to be reviewed by the admin, this is used
- * cause we cant store the listing status in the unit itself as it will be too cluttered
+ * we cant use the one store as unit subcollection cause finding all pending listings will be time consuming as we'll have to iterate through all units
  * in firebase, it is stored in the listings collection, 
  * yeah, so basically an anchor for the listing status, which triggers for attention when the listing is pending and only be done
  */
