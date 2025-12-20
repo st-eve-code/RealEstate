@@ -191,17 +191,53 @@ try {
     $uniqueFileName = uniqid() . '_' . time() . '.' . $fileExtension;
     
     // Create upload directory structure: uploads/{uniqueId}/
-    $uploadDir = __DIR__ . '/uploads/' . $uniqueId . '/';
+    $baseUploadDir = __DIR__ . '/uploads/';
+    $uploadDir = $baseUploadDir . $uniqueId . '/';
     
-    if (!is_dir($uploadDir)) {
-        if (!mkdir($uploadDir, 0755, true)) {
+    // First, ensure the base uploads directory exists
+    if (!is_dir($baseUploadDir)) {
+        if (!mkdir($baseUploadDir, 0755, true)) {
             http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'error' => 'Failed to create upload directory'
+                'error' => 'Failed to create base uploads directory. Check permissions on: ' . $baseUploadDir
             ]);
             exit;
         }
+    }
+    
+    // Check if base directory is writable
+    if (!is_writable($baseUploadDir)) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Base uploads directory is not writable. Path: ' . $baseUploadDir
+        ]);
+        exit;
+    }
+    
+    // Create the uniqueId subdirectory if it doesn't exist
+    if (!is_dir($uploadDir)) {
+        if (!mkdir($uploadDir, 0755, true)) {
+            $lastError = error_get_last();
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Failed to create upload directory: ' . $uploadDir . 
+                          (isset($lastError['message']) ? ' - ' . $lastError['message'] : '')
+            ]);
+            exit;
+        }
+    }
+    
+    // Verify the directory is writable
+    if (!is_writable($uploadDir)) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Upload directory is not writable: ' . $uploadDir
+        ]);
+        exit;
     }
 
     $targetPath = $uploadDir . $uniqueFileName;
