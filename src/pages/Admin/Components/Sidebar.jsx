@@ -20,6 +20,8 @@ import {
   Menu,
   X
 } from 'lucide-react';
+import Eventbus from '@/lib/utils/Eventbus';
+import { useAuth } from '@/lib/auth-context';
 
 // Main menu items for the sidebar navigation
 const menuItems = [
@@ -32,13 +34,16 @@ const menuItems = [
   { id: 7, name: 'Notification', icon: Bell, path: '/dashboard/notification' },
   { id: 8, name: 'Members', icon: User, path: '/dashboard/members' },
   { id: 9, name: 'Setting', icon: Settings, path: '/dashboard/settings' }, // This item has sub-menu items
-  { id: 10, name: 'Logout', icon: LogOut, path: 'logout' },
+  { id: 10, name: 'Logout', icon: LogOut, cb: new Eventbus()  },
 ];
 
 
 function Sidebar({ isCollapsed, setIsCollapsed }) {
   // State for mobile menu overlay
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { signOut } = useAuth();
+  const item10 = menuItems.find(i=>i.id==10);
+  item10.cb.subscribe('action', signOut.bind(this))
 
   return (
     <>
@@ -86,9 +91,9 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
             {menuItems.map((item) => (
               <li key={item.id}>
                 <Link
-                  to={item.path}
+                  to={item.path || ''}
                   className="flex items-center text-gray-700 hover:text-blue-500 transition-colors py-2 px-3 rounded-lg hover:bg-gray-100"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => {setIsMobileMenuOpen(false); item.cb?.dispatch('action')}}
                 >
                   <item.icon size={20} className="mr-3 flex-shrink-0" />
                   {!isCollapsed && <span className="truncate">{item.name}</span>}

@@ -204,6 +204,7 @@ function ListProperty() {
         console.error('Failed to save unit to Firestore:', saveResult.error);
         throw new Error(saveResult.message || 'Failed to save property to database');
       }
+      up
       
       console.log('Property saved successfully with ID:', saveResult.newDocId);
       alert('Property listed successfully! It will be reviewed by an admin before going live.');

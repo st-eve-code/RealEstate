@@ -11,6 +11,9 @@ import Notification from './Components/Notification';
 import Members from './Components/Members';
 import Settings from './Components/Settings';
 import Property from './Components/Property';
+import PropertyReports from './Components/Property/UnitReports';
+import PropertyReviews from './Components/Property/UnitReviews';
+import PropertyDetails from './Components/Property/UnitDetails';
 
 function Admin() {
   // Shared state for sidebar collapse - controls main content width
@@ -28,6 +31,9 @@ function Admin() {
         <Route path="caretakers" element={<Caretakers isSidebarCollapsed={isSidebarCollapsed} />} />
         <Route path="house-agents" element={<HouseAgents isSidebarCollapsed={isSidebarCollapsed} />} />
         <Route path="properties" element={<Property isSidebarCollapsed={isSidebarCollapsed} />} />
+        <Route path="properties/reports/:unitId" element={<PropertyReports isSidebarCollapsed={isSidebarCollapsed} />} />
+        <Route path="properties/reviews/:unitId" element={<PropertyReviews isSidebarCollapsed={isSidebarCollapsed} />} />
+        <Route path="properties/:unitId" element={<PropertyDetails isSidebarCollapsed={isSidebarCollapsed} />} />
         <Route path="blogs" element={<Blogs isSidebarCollapsed={isSidebarCollapsed} />} />
         <Route path="notification" element={<Notification isSidebarCollapsed={isSidebarCollapsed} />} />
         <Route path="members" element={<Members isSidebarCollapsed={isSidebarCollapsed} />} />
