@@ -7,9 +7,10 @@
 
 /**
  * Maps room property names to their corresponding media category names
+ * This matches the Unit interface rooms structure: {bedrooms, bathrooms, parlors, kitchens}
  */
 export const ROOM_TO_CATEGORY_MAP = {
-  bedrooms: null, // Bedrooms don't have a specific category (use general property images)
+  bedrooms: 'bedroom', // Bedrooms use the "bedroom" category
   bathrooms: 'toilet', // Bathrooms use the "toilet" category
   parlors: 'parlor', // Parlors use the "parlor" category
   kitchens: 'kitchen' // Kitchens use the "kitchen" category
@@ -19,7 +20,7 @@ export const ROOM_TO_CATEGORY_MAP = {
  * Default categories that are always required (not tied to room counts)
  * These are general property features that should always have media
  */
-export const DEFAULT_REQUIRED_CATEGORIES = ['parking']; // Parking is always required
+export const DEFAULT_REQUIRED_CATEGORIES = []; // No default required categories
 
 /**
  * Get which media categories should be validated based on room counts

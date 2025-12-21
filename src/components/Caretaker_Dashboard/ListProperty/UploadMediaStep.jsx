@@ -2,6 +2,7 @@ import React from 'react';
 import { Plus, X } from 'lucide-react';
 import MediaUploadBox from './components/MediaUploadBox';
 import { getRequiredCategories } from './config/categoryMapping';
+import { FORM_LABELS, FORM_PLACEHOLDERS, VALIDATION_RULES } from './data/formConstants';
 
 /**
  * UploadMediaStep Component
@@ -25,18 +26,25 @@ function UploadMediaStep({
 }) {
   const { media } = formData;
   
-  // Ensure media.categories exists with default structure
-  const categories = media?.categories || {
-    parlor: { images: [], videos: [] },
-    kitchen: { images: [], videos: [] },
-    toilet: { images: [], videos: [] },
-    parking: { images: [], videos: [] }
-  };
+  // Get required categories based on room counts from Step 1
+  const rooms = formData.basic?.rooms || {};
+  const requiredCategories = getRequiredCategories(rooms);
+  
+  // Initialize categories object with only required categories + parking (always required)
+  // This ensures we don't show categories for rooms that weren't specified
+  const categories = media?.categories || {};
+  
+  // Initialize categories for required rooms (if they don't exist yet)
+  requiredCategories.forEach(category => {
+    if (!categories[category]) {
+      categories[category] = { images: [], videos: [] };
+    }
+  });
 
   // Handle walkthrough video upload
   const handleWalkthroughVideoUpload = (file) => {
-    if (file && file.size > 100 * 1024 * 1024) {
-      alert('Video size must be less than 100MB');
+    if (file && file.size > VALIDATION_RULES.media.maxVideoSize * 1024 * 1024) {
+      alert(`Video size must be less than ${VALIDATION_RULES.media.maxVideoSize}MB`);
       return;
     }
     updateFormData('media', 'walkthroughVideo', file);
@@ -80,7 +88,7 @@ function UploadMediaStep({
 
   // Handle adding a new custom category
   const handleAddCustomCategory = () => {
-    const categoryName = prompt('Enter category name (e.g., "Balcony", "Garden"):');
+    const categoryName = prompt(FORM_PLACEHOLDERS.categoryName);
     if (categoryName && categoryName.trim()) {
       const newCategory = categoryName.trim().toLowerCase();
       updateNestedFormData('media', 'categories', newCategory, {
@@ -99,18 +107,15 @@ function UploadMediaStep({
     }
   };
 
-  // Get required categories based on room counts from Step 1
-  const rooms = formData.basic?.rooms || {};
-  const requiredCategories = getRequiredCategories(rooms);
-  
   // Get custom categories (categories that were manually added but aren't in required list)
   // These are categories added via "Add new category" button
+  const allPossibleCategories = ['bedroom', 'parlor', 'kitchen', 'toilet', 'parking'];
   const customCategories = Object.keys(categories).filter(
-    cat => !requiredCategories.includes(cat) && !['parlor', 'kitchen', 'toilet', 'parking'].includes(cat)
+    cat => !requiredCategories.includes(cat) && !allPossibleCategories.includes(cat)
   );
   
   // Only show required categories + custom categories (not all default categories)
-  // This ensures we only display categories that are actually needed
+  // This ensures we only display categories that are actually needed based on room counts
   const allCategories = [...new Set([...requiredCategories, ...customCategories])];
   
   // Debug: Uncomment to see what categories are being shown
@@ -123,14 +128,14 @@ function UploadMediaStep({
       {/* Walkthrough Video Section */}
       <div>
         <MediaUploadBox
-          title="Walkthrough Video"
-          instruction="Upload a walkthrough video of the house (Max video size: 100mb)"
+          title={FORM_LABELS.walkthroughVideo}
+          instruction={`Upload a walkthrough video of the house (Max video size: ${VALIDATION_RULES.media.maxVideoSize}MB)`}
           videos={media?.walkthroughVideo ? [media.walkthroughVideo] : []}
           onVideoUpload={(file) => handleWalkthroughVideoUpload(file)}
           onVideoRemove={() => updateFormData('media', 'walkthroughVideo', null)}
           allowVideo={true}
           allowImages={false}
-          maxVideoSize={100}
+          maxVideoSize={VALIDATION_RULES.media.maxVideoSize}
         />
         {errors.walkthroughVideo && (
           <p className="text-red-500 text-sm mt-2">{errors.walkthroughVideo}</p>
@@ -139,14 +144,14 @@ function UploadMediaStep({
 
       {/* Property Category Sections */}
       {allCategories.map((category) => {
-        const categoryData = categories[category];
-        const isDefaultCategory = ['parlor', 'kitchen', 'toilet', 'parking'].includes(category);
+        const categoryData = categories[category] || { images: [], videos: [] };
+        const isDefaultCategory = ['bedroom', 'parlor', 'kitchen', 'toilet', 'parking'].includes(category);
 
         return (
           <div key={category}>
             <MediaUploadBox
               title={category.charAt(0).toUpperCase() + category.slice(1)}
-              instruction="At least 2 images and 1 video"
+              instruction={`At least ${VALIDATION_RULES.media.imagesPerCategory} images and ${VALIDATION_RULES.media.videosPerCategory} video`}
               images={categoryData?.images || []}
               videos={categoryData?.videos || []}
               onImageUpload={(file) => handleCategoryImageUpload(category, file)}
@@ -154,6 +159,8 @@ function UploadMediaStep({
               onImageRemove={(index) => handleCategoryImageRemove(category, index)}
               onVideoRemove={(index) => handleCategoryVideoRemove(category, index)}
               allowVideo={true}
+              maxImageSize={VALIDATION_RULES.media.maxImageSize}
+              maxVideoSize={VALIDATION_RULES.media.maxVideoSize}
             />
             {errors[`${category}Images`] && (
               <p className="text-red-500 text-sm mt-2">
@@ -186,7 +193,7 @@ function UploadMediaStep({
         className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
       >
         <Plus className="w-5 h-5" />
-        Add new category
+        {FORM_LABELS.addCategory}
       </button>
     </div>
   );

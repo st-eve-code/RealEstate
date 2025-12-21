@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { useAuth } from '@/lib/auth-context';
+import { Timestamp } from 'firebase/firestore';
 import ProgressIndicator from '@/components/Caretaker_Dashboard/ListProperty/ProgressIndicator';
 import BasicInformationStep from '@/components/Caretaker_Dashboard/ListProperty/BasicInformationStep';
 import UploadMediaStep from '@/components/Caretaker_Dashboard/ListProperty/UploadMediaStep';
 import ReviewListingStep from '@/components/Caretaker_Dashboard/ListProperty/ReviewListingStep';
-import { getInitialFormData } from '@/components/Caretaker_Dashboard/ListProperty/utils/formData';
+import { getInitialFormData, formatFormDataForDatabase } from '@/components/Caretaker_Dashboard/ListProperty/utils/formData';
 import { validateStep } from '@/components/Caretaker_Dashboard/ListProperty/validation/stepValidation';
+import { uploadPropertyMedia, generateUniqueId } from '@/lib/services/mediaUploadService';
+import { setDocumentWithInternalId } from '@/lib/utils/firestoreDocumentOperation';
 
 /**
  * ListProperty Component - Main container for property listing flow
@@ -15,6 +19,9 @@ import { validateStep } from '@/components/Caretaker_Dashboard/ListProperty/vali
  * 3. Review Listing - Preview and publish the listing
  */
 function ListProperty() {
+  // Get current user (caretaker) from auth context
+  const { user } = useAuth();
+  
   // Current step in the multi-step form (1, 2, or 3)
   const [currentStep, setCurrentStep] = useState(1);
   
@@ -23,6 +30,10 @@ function ListProperty() {
   
   // Form validation errors
   const [errors, setErrors] = useState({});
+  
+  // Upload progress state
+  const [uploadProgress, setUploadProgress] = useState({ category: '', progress: 0, message: '' });
+  const [isUploading, setIsUploading] = useState(false);
 
   // Step definitions for the progress indicator
   const steps = [
@@ -126,15 +137,88 @@ function ListProperty() {
     }
 
     try {
-      // TODO: Implement Firebase save logic here
-      console.log('Publishing property:', formData);
-      alert('Property listed successfully!');
+      setIsUploading(true);
+      setUploadProgress({ category: 'initializing', progress: 0, message: 'Preparing upload...' });
+      
+      // Get caretaker info from current user
+      const caretaker = user ? {
+        id: user.uid,
+        name: user.displayName || user.fullName || 'Caretaker'
+      } : { id: '', name: '' };
+
+      // Generate unique ID for this property listing
+      const uniqueId = generateUniqueId(caretaker.name || 'property');
+      
+      // Upload all media files
+      setUploadProgress({ category: 'media', progress: 0, message: 'Uploading media files...' });
+      
+      const uploadResult = await uploadPropertyMedia(
+        formData.media,
+        uniqueId,
+        (category, progress, message) => {
+          setUploadProgress({ category, progress, message });
+        }
+      );
+      
+      if (!uploadResult.success && uploadResult.errors.length > 0) {
+        console.error('Upload errors:', uploadResult.errors);
+        // Show detailed error message
+        const errorMessage = uploadResult.errors.length > 5 
+          ? `${uploadResult.errors.slice(0, 5).join('\n')}\n... and ${uploadResult.errors.length - 5} more errors`
+          : uploadResult.errors.join('\n');
+        
+        const shouldContinue = window.confirm(
+          `Some files failed to upload:\n\n${errorMessage}\n\nContinue anyway?`
+        );
+        if (!shouldContinue) {
+          setIsUploading(false);
+          setUploadProgress({ category: '', progress: 0, message: '' });
+          return;
+        }
+      }
+      
+      // Format data according to Unit interface with uploaded media URLs
+      const unitData = formatFormDataForDatabase(
+        formData,
+        caretaker,
+        {
+          images: uploadResult.images,
+          videoUrl: uploadResult.videoUrl
+        }
+      );
+      
+      // Add Firestore Timestamp fields
+      const now = Timestamp.now();
+      const firestoreUnitData = {
+        ...unitData,
+        createdAt: now,
+        updatedAt: now
+      };
+      
+      // Save unitData to Firestore 'units' collection
+      setUploadProgress({ category: 'saving', progress: 95, message: 'Saving property to database...' });
+      
+      const saveResult = await setDocumentWithInternalId('units', firestoreUnitData);
+      
+      if (!saveResult.success) {
+        console.error('Failed to save unit to Firestore:', saveResult.error);
+        throw new Error(saveResult.message || 'Failed to save property to database');
+      }
+      up
+      
+      console.log('Property saved successfully with ID:', saveResult.newDocId);
+      alert('Property listed successfully! It will be reviewed by an admin before going live.');
+      
       // Reset form after successful publish
       setFormData(getInitialFormData());
       setCurrentStep(1);
+      setIsUploading(false);
+      setUploadProgress({ category: '', progress: 0, message: '' });
     } catch (error) {
       console.error('Error publishing property:', error);
       alert('Failed to publish property. Please try again.');
+      setIsUploading(false);
+      setUploadProgress({ category: '', progress: 0, message: '' });
     }
   };
 
@@ -179,6 +263,7 @@ function ListProperty() {
             formData={formData}
             onPublish={handlePublish}
             onDiscard={handleDiscard}
+            isUploading={isUploading}
           />
         );
       default:
@@ -210,14 +295,20 @@ function ListProperty() {
               {currentStep > 1 && (
                 <button
                   onClick={handlePrevious}
-                  className="px-6 py-2.5 rounded-lg font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 transition-colors"
+                  disabled={isUploading}
+                  className={`px-6 py-2.5 rounded-lg font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 transition-colors ${
+                    isUploading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 >
                   Previous
                 </button>
               )}
               <button
                 onClick={handleNext}
-                className="px-6 py-2.5 rounded-lg font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors"
+                disabled={isUploading}
+                className={`px-6 py-2.5 rounded-lg font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors ${
+                  isUploading ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
                 Next
               </button>

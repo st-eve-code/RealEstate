@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, updateDoc, doc, Timestamp } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import { Search, Eye, X, Crown, TrendingUp, MessageSquare, Filter, Users } from 'lucide-react';
+import { useMessaging } from '@/components/Messaging';
 function Members({ isSidebarCollapsed }) {
   const [members, setMembers] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
@@ -12,6 +13,7 @@ function Members({ isSidebarCollapsed }) {
   const [showComplaintModal, setShowComplaintModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [complaintText, setComplaintText] = useState('');
+  const { openConversationWithUser } = useMessaging();
 
   useEffect(() => {
     fetchMembers();
@@ -227,9 +229,9 @@ function Members({ isSidebarCollapsed }) {
                           <Eye size={16} />
                         </button>
                         <button
-                          onClick={() => openComplaintModal(member)}
+                          onClick={() => { if (member.uid) openConversationWithUser(member.uid); }}
                           className="p-2 text-orange-600 hover:bg-orange-50 rounded transition-colors"
-                          title="Handle Complaint"
+                          title="Message"
                         >
                           <MessageSquare size={16} />
                         </button>

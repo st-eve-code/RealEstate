@@ -9,6 +9,7 @@ import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 
 import { auth } from '@/lib/firebase';
 import { createUser, userExists } from '@/lib/internal-firebase';
 import { useAuth } from '@/lib/auth-context';
+import Loader from '@/components/ado/loader';
 
 function Login() {
   // State
@@ -88,7 +89,7 @@ function Login() {
       }
       // additional handling here
       // @todo check if user did clientsurvey(if a client) before redirecting to destination
-      navigate("/dashboard");
+      // navigate("/dashboard");
 
     } catch (error) {
       console.error(error);
@@ -113,7 +114,7 @@ function Login() {
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password)
       // any additional function here
-      navigate("/dashboard")
+      // navigate("/dashboard")
     } catch (error) {
       console.error("Error Signing ",error)
       Swal.fire({
@@ -131,24 +132,6 @@ function Login() {
       setLoading(false)
     }
 
-    // Demo: Simulate API call delay
-    /* setTimeout(() => {
-      // Show success alert
-      Swal.fire({
-        title: 'Login Successful!',
-        text: 'You have been logged in successfully.',
-        icon: 'success',
-        confirmButtonColor: '#2563EB',
-        confirmButtonText: 'Continue',
-      }).then(() => {
-        // Clear form data
-        setFormData({ email: '', password: '' });
-        // Navigate to dashboard (demo)
-        navigate('/dashboard');
-      });
-
-      setLoading(false);
-    }, 1500); */
   };
 
   useEffect(()=>{

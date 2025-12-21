@@ -27,3 +27,14 @@ let analytics = null;
 
 
 export { db, auth, app, firebaseConfig };
+
+/* 
+okay so given u read the @Messaging README.md , im sure u can create now the functionalities.
+
+Another thing, when i set the conversation in popup mode and go to another directory,
+it dissapears can u arrange that,
+i mean make it be at top level in the app not just the Caretaker,
+cause the functionality will be used by users and admins too
+
+ANY UPLOAD FUNCTION SHOULD USE THE NEW UPLOAD SERVICE IN @/lib/services/mediaUploadService (JS implementation)
+*/

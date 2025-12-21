@@ -1,5 +1,6 @@
 import React from 'react';
 import { MapPin, Bed, Bath, Check } from 'lucide-react';
+import { CURRENCIES, RENTAL_PERIODS } from './data/formConstants';
 
 /**
  * ReviewListingStep Component
@@ -12,7 +13,7 @@ import { MapPin, Bed, Bath, Check } from 'lucide-react';
  * @param {function} onPublish - Callback when user clicks publish
  * @param {function} onDiscard - Callback when user clicks discard
  */
-function ReviewListingStep({ formData, onPublish, onDiscard }) {
+function ReviewListingStep({ formData, onPublish, onDiscard, isUploading = false }) {
   const { basic, media } = formData;
 
   // Get first few images for preview
@@ -104,7 +105,13 @@ function ReviewListingStep({ formData, onPublish, onDiscard }) {
             {/* Price */}
             <div className="pt-2">
               <span className="inline-block px-4 py-2 bg-purple-600 text-white rounded-lg font-semibold">
-                {basic.rentalFee ? `${parseFloat(basic.rentalFee).toLocaleString()} XAF/${basic.rentalPeriod}` : 'Price not set'}
+                {basic.payment?.price 
+                  ? (() => {
+                      const currency = CURRENCIES.find(c => c.value === basic.payment.currency) || CURRENCIES[0];
+                      const period = RENTAL_PERIODS.find(p => p.value === basic.payment.period) || RENTAL_PERIODS[0];
+                      return `${parseFloat(basic.payment.price).toLocaleString()} ${currency.value}/${period.label}`;
+                    })()
+                  : 'Price not set'}
               </span>
             </div>
           </div>
@@ -117,11 +124,11 @@ function ReviewListingStep({ formData, onPublish, onDiscard }) {
         </div>
 
         {/* Landlord Provides */}
-        {basic.amenitiesIncluded.length > 0 && (
+        {basic.amenities && basic.amenities.length > 0 && (
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Landlord provides</h3>
             <ul className="space-y-2">
-              {basic.amenitiesIncluded.map((amenity, index) => (
+              {basic.amenities.map((amenity, index) => (
                 <li key={index} className="flex items-center gap-2 text-gray-600">
                   <Check className="w-5 h-5 text-green-500" />
                   <span>{amenity}</span>
@@ -152,13 +159,13 @@ function ReviewListingStep({ formData, onPublish, onDiscard }) {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Amenities</h3>
           
           {/* Amenities Included in Rent */}
-          {basic.amenitiesIncluded.length > 0 && (
+          {basic.amenities && basic.amenities.length > 0 && (
             <div className="mb-4">
               <p className="text-sm font-medium text-gray-700 mb-2">
                 Amenities included in rent
               </p>
               <div className="flex flex-wrap gap-2">
-                {basic.amenitiesIncluded.map((amenity, index) => (
+                {basic.amenities.map((amenity, index) => (
                   <span
                     key={index}
                     className="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium"
@@ -171,13 +178,13 @@ function ReviewListingStep({ formData, onPublish, onDiscard }) {
           )}
 
           {/* Amenities with Extra Fees */}
-          {basic.amenitiesExtra.length > 0 && (
+          {basic.extraAmenities && basic.extraAmenities.length > 0 && (
             <div>
               <p className="text-sm font-medium text-gray-700 mb-2">
                 Amenities with extra fees
               </p>
               <div className="flex flex-wrap gap-2">
-                {basic.amenitiesExtra.map((amenity, index) => (
+                {basic.extraAmenities.map((amenity, index) => (
                   <span
                     key={index}
                     className="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium"
@@ -189,6 +196,26 @@ function ReviewListingStep({ formData, onPublish, onDiscard }) {
             </div>
           )}
         </div>
+
+        {/* Property Items (Props) */}
+        {basic.props && Object.keys(basic.props).length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Property Items</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {Object.entries(basic.props).map(([itemName, count]) => (
+                <div key={itemName} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Check className="w-4 h-4 text-green-500" />
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">{itemName}</div>
+                      <div className="text-xs text-gray-600">Quantity: {count}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Action Buttons */}
@@ -202,9 +229,12 @@ function ReviewListingStep({ formData, onPublish, onDiscard }) {
         <div className="flex gap-4">
           <button
             onClick={onPublish}
-            className="px-6 py-2.5 rounded-lg font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors"
+            disabled={isUploading}
+            className={`px-6 py-2.5 rounded-lg font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors ${
+              isUploading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            Publish Listing
+            {isUploading ? 'Publishing...' : 'Publish Listing'}
           </button>
         </div>
       </div>
