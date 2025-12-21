@@ -185,3 +185,5 @@ cython_debug/
 
 .vercel
 .firebase/hosting.ZGlzdA.cache
+cursor_accounts.txt
+install.sh
