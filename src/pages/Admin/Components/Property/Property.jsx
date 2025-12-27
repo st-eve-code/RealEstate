@@ -163,7 +163,7 @@ export default function Property({ isSidebarCollapsed }) {
       >
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="w-12 h-12 mx-auto border-b-2 border-blue-600 rounded-full animate-spin"></div>
             <p className="mt-4 text-gray-600">Loading units...</p>
           </div>
         </div>
@@ -173,17 +173,17 @@ export default function Property({ isSidebarCollapsed }) {
 
   return (
     <section
-      className={`bg-gray-50 min-h-screen w-full p-4 transition-all duration-300 ${
+      className={`bg-gray-50 max-md:mt-14 min-h-screen w-full p-4 transition-all duration-300 ${
         isSidebarCollapsed ? 'md:ml-20 lg:ml-20' : 'md:ml-64 lg:ml-80'
       }`}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto max-w-7xl">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-4">
-          <div className="flex justify-between items-center mb-4">
+        <div className="p-6 mb-4 bg-white rounded-lg shadow-sm">
+          <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-800">Property Management</h1>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="mt-1 text-sm text-gray-600">
                 Review, approve, reject, and manage property listings
               </p>
             </div>
@@ -191,7 +191,7 @@ export default function Property({ isSidebarCollapsed }) {
               {highReportUnits.length > 0 && (
                 <Link
                   to="/dashboard/properties?filter=high-reports"
-                  className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-red-700 transition-colors bg-red-100 rounded-lg hover:bg-red-200"
                 >
                   <AlertTriangle size={18} />
                   <span className="font-semibold">{highReportUnits.length} High Reports</span>
@@ -201,24 +201,24 @@ export default function Property({ isSidebarCollapsed }) {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-            <div className="p-4 bg-blue-50 rounded-lg">
+          <div className="grid grid-cols-2 gap-4 mt-4 md:grid-cols-4">
+            <div className="p-4 rounded-lg bg-blue-50">
               <div className="text-2xl font-bold text-blue-600">{units.length}</div>
               <div className="text-sm text-gray-600">Total Units</div>
             </div>
-            <div className="p-4 bg-yellow-50 rounded-lg">
+            <div className="p-4 rounded-lg bg-yellow-50">
               <div className="text-2xl font-bold text-yellow-600">
                 {units.filter((u) => u.status === 'pending').length}
               </div>
               <div className="text-sm text-gray-600">Pending Review</div>
             </div>
-            <div className="p-4 bg-green-50 rounded-lg">
+            <div className="p-4 rounded-lg bg-green-50">
               <div className="text-2xl font-bold text-green-600">
                 {units.filter((u) => u.status === 'approved').length}
               </div>
               <div className="text-sm text-gray-600">Approved</div>
             </div>
-            <div className="p-4 bg-red-50 rounded-lg">
+            <div className="p-4 rounded-lg bg-red-50">
               <div className="text-2xl font-bold text-red-600">
                 {highReportUnits.length}
               </div>

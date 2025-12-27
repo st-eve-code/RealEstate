@@ -17,11 +17,11 @@ function Settings({ isSidebarCollapsed }) {
   ];
 
   return (
-    <section className={`bg-gray-50 min-h-screen w-full p-4 transition-all duration-300 ${
+    <section className={`bg-gray-50 min-h-screen max-md:mt-16 w-full p-4 transition-all duration-300 ${
       isSidebarCollapsed ? 'md:ml-20 lg:ml-20' : 'md:ml-64 lg:ml-80'
     }`}>
-      <h1 className="text-2xl font-bold mb-6">Settings</h1>
-      <div className="flex max-md:flex-wrap gap-6">
+      <h1 className="mb-6 text-2xl font-bold">Settings</h1>
+      <div className="flex gap-6 max-md:flex-wrap">
         <nav className="w-full md:w-1/4">
           <ul className="flex flex-wrap gap-2 md:flex-col md:gap-0 md:space-y-2">
             {settingsItems.map((item) => {
@@ -59,9 +59,9 @@ function Settings({ isSidebarCollapsed }) {
 
 function DefaultSettings() {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-4">Settings Overview</h2>
-      <p className="text-gray-600 mb-4">Configure system settings, manage API access, and customize platform preferences.</p>
+    <div className="p-6 bg-white rounded-lg shadow-sm">
+      <h2 className="mb-4 text-xl font-semibold">Settings Overview</h2>
+      <p className="mb-4 text-gray-600">Configure system settings, manage API access, and customize platform preferences.</p>
       <p className="text-gray-600">Select a setting from the menu to get started.</p>
     </div>
   );
@@ -116,15 +116,15 @@ function ProfileSettings() {
   };
 
   if (!user) {
-    return <div className="bg-white rounded-lg shadow-sm p-6">Please log in to view profile settings.</div>;
+    return <div className="p-6 bg-white rounded-lg shadow-sm">Please log in to view profile settings.</div>;
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-6">Profile Settings</h2>
+    <div className="p-6 bg-white rounded-lg shadow-sm">
+      <h2 className="mb-6 text-xl font-semibold">Profile Settings</h2>
       <form onSubmit={handleSave} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Full Name</label>
           <input
             type="text"
             value={formData.fullName}
@@ -133,17 +133,17 @@ function ProfileSettings() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Email</label>
           <input
             type="email"
             value={user.email}
             disabled
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
+            className="w-full px-3 py-2 text-gray-500 bg-gray-100 border border-gray-300 rounded-lg"
           />
-          <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+          <p className="mt-1 text-xs text-gray-500">Email cannot be changed</p>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Phone Number</label>
           <input
             type="tel"
             value={formData.phoneNumber}
@@ -152,7 +152,7 @@ function ProfileSettings() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Profile Image URL</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Profile Image URL</label>
           <input
             type="url"
             value={formData.imageUrl}
@@ -163,7 +163,7 @@ function ProfileSettings() {
         <button
           type="submit"
           disabled={loading}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
         >
           <Save size={18} />
           {loading ? 'Saving...' : 'Save Changes'}
@@ -198,12 +198,12 @@ function TablesSettings() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-6">Database Configuration</h2>
+    <div className="p-6 bg-white rounded-lg shadow-sm">
+      <h2 className="mb-6 text-xl font-semibold">Database Configuration</h2>
       <form onSubmit={handleSave} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Max Connections</label>
+            <label className="block mb-1 text-sm font-medium text-gray-700">Max Connections</label>
             <input
               type="number"
               value={settings.maxConnections}
@@ -212,7 +212,7 @@ function TablesSettings() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Connection Timeout (seconds)</label>
+            <label className="block mb-1 text-sm font-medium text-gray-700">Connection Timeout (seconds)</label>
             <input
               type="number"
               value={settings.connectionTimeout}
@@ -222,7 +222,7 @@ function TablesSettings() {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Query Timeout (seconds)</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Query Timeout (seconds)</label>
           <input
             type="number"
             value={settings.queryTimeout}
@@ -243,7 +243,7 @@ function TablesSettings() {
         </div>
         {settings.enableBackup && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Backup Frequency</label>
+            <label className="block mb-1 text-sm font-medium text-gray-700">Backup Frequency</label>
             <select
               value={settings.backupFrequency}
               onChange={(e) => setSettings({ ...settings, backupFrequency: e.target.value })}
@@ -258,7 +258,7 @@ function TablesSettings() {
         <button
           type="submit"
           disabled={loading}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
         >
           <Save size={18} />
           {loading ? 'Saving...' : 'Save Settings'}
@@ -291,11 +291,11 @@ function StorageSettings() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-6">Storage Settings</h2>
+    <div className="p-6 bg-white rounded-lg shadow-sm">
+      <h2 className="mb-6 text-xl font-semibold">Storage Settings</h2>
       <form onSubmit={handleSave} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Max Storage Size (GB)</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Max Storage Size (GB)</label>
           <input
             type="number"
             value={settings.maxStorageSize}
@@ -304,7 +304,7 @@ function StorageSettings() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Storage Provider</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Storage Provider</label>
           <select
             value={settings.storageType}
             onChange={(e) => setSettings({ ...settings, storageType: e.target.value })}
@@ -340,7 +340,7 @@ function StorageSettings() {
         <button
           type="submit"
           disabled={loading}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
         >
           <Save size={18} />
           {loading ? 'Saving...' : 'Save Settings'}
@@ -374,11 +374,11 @@ function ApiGatewaySettings() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-6">API Gateway Management</h2>
+    <div className="p-6 bg-white rounded-lg shadow-sm">
+      <h2 className="mb-6 text-xl font-semibold">API Gateway Management</h2>
       <form onSubmit={handleSave} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">API Key</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">API Key</label>
           <div className="flex items-center gap-2">
             <input
               type="password"
@@ -391,7 +391,7 @@ function ApiGatewaySettings() {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Rate Limit (requests per hour)</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Rate Limit (requests per hour)</label>
           <input
             type="number"
             value={settings.rateLimit}
@@ -412,7 +412,7 @@ function ApiGatewaySettings() {
         </div>
         {settings.enableCaching && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Cache TTL (seconds)</label>
+            <label className="block mb-1 text-sm font-medium text-gray-700">Cache TTL (seconds)</label>
             <input
               type="number"
               value={settings.cacheTTL}
@@ -435,7 +435,7 @@ function ApiGatewaySettings() {
         <button
           type="submit"
           disabled={loading}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
         >
           <Save size={18} />
           {loading ? 'Saving...' : 'Save Settings'}
@@ -468,11 +468,11 @@ function ThemeSettings() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-6">Theme Customization</h2>
+    <div className="p-6 bg-white rounded-lg shadow-sm">
+      <h2 className="mb-6 text-xl font-semibold">Theme Customization</h2>
       <form onSubmit={handleSave} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Primary Color</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Primary Color</label>
           <div className="flex items-center gap-3">
             <input
               type="color"
@@ -489,7 +489,7 @@ function ThemeSettings() {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Secondary Color</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Secondary Color</label>
           <div className="flex items-center gap-3">
             <input
               type="color"
@@ -506,7 +506,7 @@ function ThemeSettings() {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Theme Mode</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Theme Mode</label>
           <select
             value={settings.theme}
             onChange={(e) => setSettings({ ...settings, theme: e.target.value })}
@@ -518,7 +518,7 @@ function ThemeSettings() {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Font Size</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Font Size</label>
           <select
             value={settings.fontSize}
             onChange={(e) => setSettings({ ...settings, fontSize: e.target.value })}
@@ -532,7 +532,7 @@ function ThemeSettings() {
         <button
           type="submit"
           disabled={loading}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
         >
           <Save size={18} />
           {loading ? 'Saving...' : 'Save Theme'}

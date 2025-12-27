@@ -249,7 +249,7 @@ function Blogs({ isSidebarCollapsed }) {
       }`}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="w-12 h-12 mx-auto border-b-2 border-blue-600 rounded-full animate-spin"></div>
             <p className="mt-4 text-gray-600">Loading blogs...</p>
           </div>
         </div>
@@ -258,15 +258,15 @@ function Blogs({ isSidebarCollapsed }) {
   }
 
   return (
-    <section className={`bg-gray-50 min-h-screen w-full p-4 transition-all duration-300 ${
+    <section className={`bg-gray-50 max-md:mt-14 min-h-screen w-full p-4 transition-all duration-300 ${
       isSidebarCollapsed ? 'md:ml-20 lg:ml-20' : 'md:ml-64 lg:ml-80'
     }`}>
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex justify-between items-center mb-6">
+      <div className="p-6 bg-white rounded-lg shadow-sm">
+        <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Blogs Management</h1>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            className="flex items-center justify-between gap-2 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
           >
             <Plus size={20} />
             Create New Post
@@ -274,15 +274,15 @@ function Blogs({ isSidebarCollapsed }) {
         </div>
 
         {/* Search and Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        <div className="flex flex-col gap-4 mb-6 md:flex-row">
+          <div className="relative flex-1">
+            <Search className="absolute text-gray-400 transform -translate-y-1/2 left-3 top-1/2" size={20} />
             <input
               type="text"
               placeholder="Search blogs by title, author, or content..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -315,32 +315,32 @@ function Blogs({ isSidebarCollapsed }) {
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-100">
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Title</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Author</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Category</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Created</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Title</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Author</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Category</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Status</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Created</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredBlogs.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="border border-gray-200 px-4 py-8 text-center text-gray-500">
+                  <td colSpan={6} className="px-4 py-8 text-center text-gray-500 border border-gray-200">
                     No blogs found
                   </td>
                 </tr>
               ) : (
                 filteredBlogs.map((blog) => (
                   <tr key={blog.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700 font-medium">{blog.title}</td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">{blog.author}</td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm">
-                      <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                    <td className="px-4 py-3 text-sm font-medium text-gray-700 border border-gray-200">{blog.title}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">{blog.author}</td>
+                    <td className="px-4 py-3 text-sm border border-gray-200">
+                      <span className="px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full">
                         {blog.category}
                       </span>
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm border border-gray-200">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         blog.status === 'published' 
                           ? 'bg-green-100 text-green-800' 
@@ -351,21 +351,21 @@ function Blogs({ isSidebarCollapsed }) {
                         {blog.status}
                       </span>
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">
                       {blog.createdAt?.toDate ? new Date(blog.createdAt.toDate()).toLocaleDateString() : 'N/A'}
                     </td>
-                    <td className="border border-gray-200 px-4 py-3">
+                    <td className="px-4 py-3 border border-gray-200">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openViewModal(blog)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          className="p-2 text-blue-600 transition-colors rounded hover:bg-blue-50"
                           title="View"
                         >
                           <Eye size={16} />
                         </button>
                         <button
                           onClick={() => openEditModal(blog)}
-                          className="p-2 text-green-600 hover:bg-green-50 rounded transition-colors"
+                          className="p-2 text-green-600 transition-colors rounded hover:bg-green-50"
                           title="Edit"
                         >
                           <Edit size={16} />
@@ -374,14 +374,14 @@ function Blogs({ isSidebarCollapsed }) {
                           <>
                             <button
                               onClick={() => handlePublish(blog.id)}
-                              className="p-2 text-green-600 hover:bg-green-50 rounded transition-colors"
+                              className="p-2 text-green-600 transition-colors rounded hover:bg-green-50"
                               title="Publish"
                             >
                               <CheckCircle size={16} />
                             </button>
                             <button
                               onClick={() => handleReject(blog.id)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                              className="p-2 text-red-600 transition-colors rounded hover:bg-red-50"
                               title="Reject"
                             >
                               <XCircle size={16} />
@@ -390,7 +390,7 @@ function Blogs({ isSidebarCollapsed }) {
                         )}
                         <button
                           onClick={() => handleDelete(blog.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                          className="p-2 text-red-600 transition-colors rounded hover:bg-red-50"
                           title="Delete"
                         >
                           <Trash2 size={16} />
@@ -411,9 +411,9 @@ function Blogs({ isSidebarCollapsed }) {
 
       {/* Create Blog Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Create New Blog Post</h2>
               <button onClick={() => { setShowModal(false); resetForm(); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -422,7 +422,7 @@ function Blogs({ isSidebarCollapsed }) {
             <form onSubmit={handleCreateBlog}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Title</label>
                   <input
                     type="text"
                     required
@@ -433,7 +433,7 @@ function Blogs({ isSidebarCollapsed }) {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
+                    <label className="block mb-1 text-sm font-medium text-gray-700">Author</label>
                     <input
                       type="text"
                       required
@@ -443,7 +443,7 @@ function Blogs({ isSidebarCollapsed }) {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <label className="block mb-1 text-sm font-medium text-gray-700">Category</label>
                     <input
                       type="text"
                       required
@@ -454,7 +454,7 @@ function Blogs({ isSidebarCollapsed }) {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Excerpt</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Excerpt</label>
                   <textarea
                     required
                     value={formData.excerpt}
@@ -464,7 +464,7 @@ function Blogs({ isSidebarCollapsed }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Content</label>
                   <textarea
                     required
                     value={formData.content}
@@ -475,7 +475,7 @@ function Blogs({ isSidebarCollapsed }) {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                    <label className="block mb-1 text-sm font-medium text-gray-700">Image URL</label>
                     <input
                       type="url"
                       value={formData.image}
@@ -484,7 +484,7 @@ function Blogs({ isSidebarCollapsed }) {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Read Time</label>
+                    <label className="block mb-1 text-sm font-medium text-gray-700">Read Time</label>
                     <input
                       type="text"
                       value={formData.readTime}
@@ -498,14 +498,14 @@ function Blogs({ isSidebarCollapsed }) {
               <div className="flex gap-3 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
                 >
                   Create Blog
                 </button>
                 <button
                   type="button"
                   onClick={() => { setShowModal(false); resetForm(); }}
-                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
                 >
                   Cancel
                 </button>
@@ -517,9 +517,9 @@ function Blogs({ isSidebarCollapsed }) {
 
       {/* Edit Blog Modal */}
       {showEditModal && selectedBlog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Edit Blog Post</h2>
               <button onClick={() => { setShowEditModal(false); setSelectedBlog(null); resetForm(); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -528,7 +528,7 @@ function Blogs({ isSidebarCollapsed }) {
             <form onSubmit={handleSaveBlog}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Title</label>
                   <input
                     type="text"
                     required
@@ -539,7 +539,7 @@ function Blogs({ isSidebarCollapsed }) {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
+                    <label className="block mb-1 text-sm font-medium text-gray-700">Author</label>
                     <input
                       type="text"
                       required
@@ -549,7 +549,7 @@ function Blogs({ isSidebarCollapsed }) {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <label className="block mb-1 text-sm font-medium text-gray-700">Category</label>
                     <input
                       type="text"
                       required
@@ -560,7 +560,7 @@ function Blogs({ isSidebarCollapsed }) {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Excerpt</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Excerpt</label>
                   <textarea
                     required
                     value={formData.excerpt}
@@ -570,7 +570,7 @@ function Blogs({ isSidebarCollapsed }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Content</label>
                   <textarea
                     required
                     value={formData.content}
@@ -583,7 +583,7 @@ function Blogs({ isSidebarCollapsed }) {
               <div className="flex gap-3 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
                 >
                   <Save size={16} className="inline mr-2" />
                   Save Changes
@@ -591,7 +591,7 @@ function Blogs({ isSidebarCollapsed }) {
                 <button
                   type="button"
                   onClick={() => { setShowEditModal(false); setSelectedBlog(null); resetForm(); }}
-                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
                 >
                   Cancel
                 </button>
@@ -603,9 +603,9 @@ function Blogs({ isSidebarCollapsed }) {
 
       {/* View Blog Modal */}
       {showViewModal && selectedBlog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Blog Post Details</h2>
               <button onClick={() => { setShowViewModal(false); setSelectedBlog(null); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -613,23 +613,23 @@ function Blogs({ isSidebarCollapsed }) {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Title</label>
                 <p className="text-gray-900">{selectedBlog.title}</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Author</label>
                   <p className="text-gray-900">{selectedBlog.author}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                  <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Category</label>
+                  <span className="inline-block px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full">
                     {selectedBlog.category}
                   </span>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Status</label>
                 <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                   selectedBlog.status === 'published' 
                     ? 'bg-green-100 text-green-800' 
@@ -641,18 +641,18 @@ function Blogs({ isSidebarCollapsed }) {
                 </span>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Excerpt</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Excerpt</label>
                 <p className="text-gray-900">{selectedBlog.excerpt}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Content</label>
                 <p className="text-gray-900 whitespace-pre-wrap">{selectedBlog.content}</p>
               </div>
             </div>
             <div className="mt-6">
               <button
                 onClick={() => { setShowViewModal(false); setSelectedBlog(null); }}
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                className="w-full px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Close
               </button>

@@ -2,7 +2,7 @@
 // Renders a collapsible sidebar with main menu items and a special Settings sub-menu.
 // The Settings menu expands to show sub-items directly without category grouping.
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../../assets/logo.svg';
 import {
@@ -18,7 +18,8 @@ import {
   ChevronLast,
   ChevronFirst,
   Menu,
-  X
+  X,
+  ChevronUp
 } from 'lucide-react';
 import Eventbus from '@/lib/utils/Eventbus';
 import { useAuth } from '@/lib/auth-context';
@@ -41,6 +42,7 @@ const menuItems = [
 function Sidebar({ isCollapsed, setIsCollapsed }) {
   // State for mobile menu overlay
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navRef = useRef(null);
   const { signOut } = useAuth();
   const item10 = menuItems.find(i=>i.id==10);
   item10.cb.subscribe('action', signOut.bind(this))
@@ -59,7 +61,7 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
       </div>
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          className="relative inset-0 bg-black bg-opacity-50 z-40 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -86,7 +88,7 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
             )}
           </button>
         </div>
-        <nav className="mt-8">
+        <nav ref={navRef} className="mt-8 overflow-y-scroll max-h-[calc(100vh-200px)]">
           <ul className={`mx-auto ${isCollapsed ? 'space-y-6' : 'space-y-5'}`}>
             {menuItems.map((item) => (
               <li key={item.id}>
@@ -102,6 +104,13 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
             ))}
           </ul>
         </nav>
+        <button
+          onClick={() => navRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="absolute bottom-4 right-4 p-2 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors"
+          aria-label="Scroll to top"
+        >
+          <ChevronUp size={16} className="text-gray-600" />
+        </button>
       </aside>
     </>
   );

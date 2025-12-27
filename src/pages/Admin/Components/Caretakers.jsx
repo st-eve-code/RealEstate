@@ -141,7 +141,7 @@ function Caretakers({ isSidebarCollapsed }) {
       }`}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="w-12 h-12 mx-auto border-b-2 border-blue-600 rounded-full animate-spin"></div>
             <p className="mt-4 text-gray-600">Loading caretakers...</p>
           </div>
         </div>
@@ -150,15 +150,15 @@ function Caretakers({ isSidebarCollapsed }) {
   }
 
   return (
-    <section className={`bg-gray-50 min-h-screen w-full p-4 transition-all duration-300 ${
+    <section className={`bg-gray-50 min-h-screen w-full p-4 max-md:mt-14 transition-all duration-300 ${
       isSidebarCollapsed ? 'md:ml-20 lg:ml-20' : 'md:ml-64 lg:ml-80'
     }`}>
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex justify-between items-center mb-6">
+      <div className="p-6 bg-white rounded-lg shadow-sm">
+        <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Caretakers Management</h1>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
           >
             <UserPlus size={20} />
             Register New Caretaker
@@ -168,27 +168,27 @@ function Caretakers({ isSidebarCollapsed }) {
         {/* Search */}
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute text-gray-400 transform -translate-y-1/2 left-3 top-1/2" size={20} />
             <input
               type="text"
               placeholder="Search caretakers by name, email, or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
         {/* Caretakers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredCaretakers.length === 0 ? (
-            <div className="col-span-full text-center py-8 text-gray-500">
+            <div className="py-8 text-center text-gray-500 col-span-full">
               No caretakers found
             </div>
           ) : (
             filteredCaretakers.map((caretaker) => (
-              <div key={caretaker.uid} className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-3">
+              <div key={caretaker.uid} className="p-4 transition-shadow border border-gray-200 rounded-lg bg-gray-50 hover:shadow-md">
+                <div className="flex items-start justify-between mb-3">
                   <div>
                     <h3 className="font-semibold text-gray-800">{caretaker.fullName || caretaker.displayName}</h3>
                     <p className="text-sm text-gray-600">{caretaker.email}</p>
@@ -204,7 +204,7 @@ function Caretakers({ isSidebarCollapsed }) {
                   </div>
                 </div>
                 
-                <div className="space-y-2 mb-4">
+                <div className="mb-4 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Performance Score:</span>
                     <span className="font-medium text-gray-800">{caretaker.performanceScore || 0}%</span>
@@ -222,14 +222,14 @@ function Caretakers({ isSidebarCollapsed }) {
                 <div className="flex gap-2">
                   <button
                     onClick={() => openAssignModal(caretaker)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors"
+                    className="flex items-center justify-center flex-1 gap-2 px-3 py-2 text-sm text-white transition-colors bg-green-600 rounded-lg hover:bg-green-700"
                   >
                     <Building2 size={16} />
                     Assign Property
                   </button>
                   <button
                     onClick={() => openViewModal(caretaker)}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm transition-colors"
+                    className="flex-1 px-3 py-2 text-sm text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
                   >
                     <TrendingUp size={16} className="inline mr-1" />
                     Track Performance
@@ -247,9 +247,9 @@ function Caretakers({ isSidebarCollapsed }) {
 
       {/* Register Caretaker Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Register New Caretaker</h2>
               <button onClick={() => { setShowModal(false); resetForm(); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -258,7 +258,7 @@ function Caretakers({ isSidebarCollapsed }) {
             <form onSubmit={handleRegisterCaretaker}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Full Name</label>
                   <input
                     type="text"
                     required
@@ -268,7 +268,7 @@ function Caretakers({ isSidebarCollapsed }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Email</label>
                   <input
                     type="email"
                     required
@@ -278,7 +278,7 @@ function Caretakers({ isSidebarCollapsed }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Phone Number</label>
                   <input
                     type="tel"
                     required
@@ -291,14 +291,14 @@ function Caretakers({ isSidebarCollapsed }) {
               <div className="flex gap-3 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
                 >
                   Register Caretaker
                 </button>
                 <button
                   type="button"
                   onClick={() => { setShowModal(false); resetForm(); }}
-                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
                 >
                   Cancel
                 </button>
@@ -310,9 +310,9 @@ function Caretakers({ isSidebarCollapsed }) {
 
       {/* Assign Property Modal */}
       {showAssignModal && selectedCaretaker && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Assign Property to {selectedCaretaker.displayName}</h2>
               <button onClick={() => { setShowAssignModal(false); setSelectedProperty(''); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -320,7 +320,7 @@ function Caretakers({ isSidebarCollapsed }) {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Select Property</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Select Property</label>
                 <select
                   value={selectedProperty}
                   onChange={(e) => setSelectedProperty(e.target.value)}
@@ -339,13 +339,13 @@ function Caretakers({ isSidebarCollapsed }) {
               <button
                 onClick={handleAssignProperty}
                 disabled={!selectedProperty}
-                className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 text-white transition-colors bg-green-600 rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 Assign Property
               </button>
               <button
                 onClick={() => { setShowAssignModal(false); setSelectedProperty(''); }}
-                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Cancel
               </button>
@@ -356,9 +356,9 @@ function Caretakers({ isSidebarCollapsed }) {
 
       {/* View Caretaker Modal */}
       {showViewModal && selectedCaretaker && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Caretaker Details</h2>
               <button onClick={() => { setShowViewModal(false); setSelectedCaretaker(null); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -366,30 +366,30 @@ function Caretakers({ isSidebarCollapsed }) {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Full Name</label>
                 <p className="text-gray-900">{selectedCaretaker.fullName || selectedCaretaker.displayName || 'N/A'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Email</label>
                 <p className="text-gray-900">{selectedCaretaker.email}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Phone Number</label>
                 <p className="text-gray-900">{selectedCaretaker.phoneNumber || 'N/A'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Performance Score</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Performance Score</label>
                 <p className="text-gray-900">{selectedCaretaker.performanceScore || 0}%</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Properties Managed</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Properties Managed</label>
                 <p className="text-gray-900">{selectedCaretaker.totalPropertiesManaged || 0}</p>
               </div>
             </div>
             <div className="mt-6">
               <button
                 onClick={() => { setShowViewModal(false); setSelectedCaretaker(null); }}
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                className="w-full px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Close
               </button>

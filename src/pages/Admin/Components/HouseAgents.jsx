@@ -144,7 +144,7 @@ function HouseAgents({ isSidebarCollapsed }) {
       }`}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="w-12 h-12 mx-auto border-b-2 border-blue-600 rounded-full animate-spin"></div>
             <p className="mt-4 text-gray-600">Loading agents...</p>
           </div>
         </div>
@@ -153,24 +153,24 @@ function HouseAgents({ isSidebarCollapsed }) {
   }
 
   return (
-    <section className={`bg-gray-50 min-h-screen w-full p-4 transition-all duration-300 ${
+    <section className={`bg-gray-50 max-md:mt-16 min-h-screen w-full p-4 transition-all duration-300 ${
       isSidebarCollapsed ? 'md:ml-20 lg:ml-20' : 'md:ml-64 lg:ml-80'
     }`}>
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex justify-between items-center mb-6">
+      <div className="p-6 bg-white rounded-lg shadow-sm">
+        <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">House Agents Management</h1>
         </div>
 
         {/* Search and Filter */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        <div className="flex flex-col gap-4 mb-6 md:flex-row">
+          <div className="relative flex-1">
+            <Search className="absolute text-gray-400 transform -translate-y-1/2 left-3 top-1/2" size={20} />
             <input
               type="text"
               placeholder="Search agents by name, email, or license number..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -193,33 +193,33 @@ function HouseAgents({ isSidebarCollapsed }) {
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-100">
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">License Number</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Listings</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Complaints</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Name</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Email</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">License Number</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Status</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Listings</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Complaints</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredAgents.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="border border-gray-200 px-4 py-8 text-center text-gray-500">
+                  <td colSpan={7} className="px-4 py-8 text-center text-gray-500 border border-gray-200">
                     No agents found
                   </td>
                 </tr>
               ) : (
                 filteredAgents.map((agent) => (
                   <tr key={agent.uid} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">
                       {agent.fullName || agent.displayName || 'N/A'}
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">{agent.email}</td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">{agent.email}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">
                       {agent.licenseNumber || 'N/A'}
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm border border-gray-200">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         agent.applicationStatus === 'verified' 
                           ? 'bg-green-100 text-green-800' 
@@ -230,17 +230,17 @@ function HouseAgents({ isSidebarCollapsed }) {
                         {agent.applicationStatus || 'pending'}
                       </span>
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">
                       {agent.listingsCount || 0}
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">
                       {agent.complaints || 0}
                     </td>
-                    <td className="border border-gray-200 px-4 py-3">
+                    <td className="px-4 py-3 border border-gray-200">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openViewModal(agent)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          className="p-2 text-blue-600 transition-colors rounded hover:bg-blue-50"
                           title="View Details"
                         >
                           <Eye size={16} />
@@ -249,14 +249,14 @@ function HouseAgents({ isSidebarCollapsed }) {
                           <>
                             <button
                               onClick={() => handleApproveAgent(agent.uid)}
-                              className="p-2 text-green-600 hover:bg-green-50 rounded transition-colors"
+                              className="p-2 text-green-600 transition-colors rounded hover:bg-green-50"
                               title="Approve"
                             >
                               <CheckCircle size={16} />
                             </button>
                             <button
                               onClick={() => handleRejectAgent(agent.uid)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                              className="p-2 text-red-600 transition-colors rounded hover:bg-red-50"
                               title="Reject"
                             >
                               <XCircle size={16} />
@@ -265,7 +265,7 @@ function HouseAgents({ isSidebarCollapsed }) {
                         )}
                         <button
                           onClick={() => openComplaintModal(agent)}
-                          className="p-2 text-orange-600 hover:bg-orange-50 rounded transition-colors"
+                          className="p-2 text-orange-600 transition-colors rounded hover:bg-orange-50"
                           title="Handle Complaint"
                         >
                           <MessageSquare size={16} />
@@ -286,9 +286,9 @@ function HouseAgents({ isSidebarCollapsed }) {
 
       {/* View Agent Modal */}
       {showViewModal && selectedAgent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Agent Details</h2>
               <button onClick={() => { setShowViewModal(false); setSelectedAgent(null); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -296,23 +296,23 @@ function HouseAgents({ isSidebarCollapsed }) {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Full Name</label>
                 <p className="text-gray-900">{selectedAgent.fullName || selectedAgent.displayName || 'N/A'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Email</label>
                 <p className="text-gray-900">{selectedAgent.email}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Phone Number</label>
                 <p className="text-gray-900">{selectedAgent.phoneNumber || 'N/A'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">License Number</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">License Number</label>
                 <p className="text-gray-900">{selectedAgent.licenseNumber || 'N/A'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Status</label>
                 <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                   selectedAgent.applicationStatus === 'verified' 
                     ? 'bg-green-100 text-green-800' 
@@ -324,26 +324,26 @@ function HouseAgents({ isSidebarCollapsed }) {
                 </span>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Listings Count</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Listings Count</label>
                 <p className="text-gray-900">{selectedAgent.listingsCount || 0}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Complaints</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Complaints</label>
                 <p className="text-gray-900">{selectedAgent.complaints || 0}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Documents</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Documents</label>
                 <div className="mt-2">
                   {selectedAgent.documents && selectedAgent.documents.length > 0 ? (
                     <div className="space-y-2">
                       {selectedAgent.documents.map((doc, index) => (
-                        <a key={index} href={doc} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                        <a key={index} href={doc} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
                           Document {index + 1}
                         </a>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-sm">No documents uploaded</p>
+                    <p className="text-sm text-gray-500">No documents uploaded</p>
                   )}
                 </div>
               </div>
@@ -351,7 +351,7 @@ function HouseAgents({ isSidebarCollapsed }) {
             <div className="mt-6">
               <button
                 onClick={() => { setShowViewModal(false); setSelectedAgent(null); }}
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                className="w-full px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Close
               </button>
@@ -362,9 +362,9 @@ function HouseAgents({ isSidebarCollapsed }) {
 
       {/* Complaint Modal */}
       {showComplaintModal && selectedAgent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Handle Complaint - {selectedAgent.displayName}</h2>
               <button onClick={() => { setShowComplaintModal(false); setComplaintText(''); setSelectedAgent(null); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -372,7 +372,7 @@ function HouseAgents({ isSidebarCollapsed }) {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Complaint Details</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Complaint Details</label>
                 <textarea
                   value={complaintText}
                   onChange={(e) => setComplaintText(e.target.value)}
@@ -386,13 +386,13 @@ function HouseAgents({ isSidebarCollapsed }) {
               <button
                 onClick={handleSubmitComplaint}
                 disabled={!complaintText.trim()}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 Submit Complaint
               </button>
               <button
                 onClick={() => { setShowComplaintModal(false); setComplaintText(''); setSelectedAgent(null); }}
-                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Cancel
               </button>

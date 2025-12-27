@@ -112,7 +112,7 @@ function Members({ isSidebarCollapsed }) {
       }`}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="w-12 h-12 mx-auto border-b-2 border-blue-600 rounded-full animate-spin"></div>
             <p className="mt-4 text-gray-600">Loading members...</p>
           </div>
         </div>
@@ -121,24 +121,24 @@ function Members({ isSidebarCollapsed }) {
   }
 
   return (
-    <section className={`bg-gray-50 min-h-screen w-full p-4 transition-all duration-300 ${
+    <section className={`bg-gray-50 max-md:mt-14 min-h-screen w-full p-4 transition-all duration-300 ${
       isSidebarCollapsed ? 'md:ml-20 lg:ml-20' : 'md:ml-64 lg:ml-80'
     }`}>
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex justify-between items-center mb-6">
+      <div className="p-6 bg-white rounded-lg shadow-sm">
+        <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Members Management</h1>
         </div>
 
         {/* Search and Filter */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        <div className="flex flex-col gap-4 mb-6 md:flex-row">
+          <div className="relative flex-1">
+            <Search className="absolute text-gray-400 transform -translate-y-1/2 left-3 top-1/2" size={20} />
             <input
               type="text"
               placeholder="Search members by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -161,30 +161,30 @@ function Members({ isSidebarCollapsed }) {
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-100">
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Membership Level</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Subscription</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Engagement</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Complaints</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Name</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Email</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Membership Level</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Subscription</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Engagement</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Complaints</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredMembers.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="border border-gray-200 px-4 py-8 text-center text-gray-500">
+                  <td colSpan={7} className="px-4 py-8 text-center text-gray-500 border border-gray-200">
                     No members found
                   </td>
                 </tr>
               ) : (
                 filteredMembers.map((member) => (
                   <tr key={member.uid} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">
                       {member.fullName || member.displayName || 'N/A'}
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">{member.email}</td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">{member.email}</td>
+                    <td className="px-4 py-3 text-sm border border-gray-200">
                       <select
                         value={member.membershipLevel || 'free'}
                         onChange={(e) => handleUpdateMembershipLevel(member.uid, e.target.value)}
@@ -201,7 +201,7 @@ function Members({ isSidebarCollapsed }) {
                         <option value="gold">Gold</option>
                       </select>
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm border border-gray-200">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         member.subscriptionStatus === 'active' 
                           ? 'bg-green-100 text-green-800' 
@@ -210,27 +210,27 @@ function Members({ isSidebarCollapsed }) {
                         {member.subscriptionStatus || 'expired'}
                       </span>
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">
                       <div className="flex items-center gap-2">
                         <TrendingUp size={14} className="text-green-600" />
                         <span>{member.engagementScore || 0}%</span>
                       </div>
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">
                       {member.complaints || 0}
                     </td>
-                    <td className="border border-gray-200 px-4 py-3">
+                    <td className="px-4 py-3 border border-gray-200">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openViewModal(member)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          className="p-2 text-blue-600 transition-colors rounded hover:bg-blue-50"
                           title="View Details"
                         >
                           <Eye size={16} />
                         </button>
                         <button
                           onClick={() => { if (member.uid) openConversationWithUser(member.uid); }}
-                          className="p-2 text-orange-600 hover:bg-orange-50 rounded transition-colors"
+                          className="p-2 text-orange-600 transition-colors rounded hover:bg-orange-50"
                           title="Message"
                         >
                           <MessageSquare size={16} />
@@ -251,9 +251,9 @@ function Members({ isSidebarCollapsed }) {
 
       {/* View Member Modal */}
       {showViewModal && selectedMember && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Member Details</h2>
               <button onClick={() => { setShowViewModal(false); setSelectedMember(null); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -261,19 +261,19 @@ function Members({ isSidebarCollapsed }) {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Full Name</label>
                 <p className="text-gray-900">{selectedMember.fullName || selectedMember.displayName || 'N/A'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Email</label>
                 <p className="text-gray-900">{selectedMember.email}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Phone Number</label>
                 <p className="text-gray-900">{selectedMember.phoneNumber || 'N/A'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Membership Level</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Membership Level</label>
                 <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                   selectedMember.membershipLevel === 'gold'
                     ? 'bg-yellow-100 text-yellow-800'
@@ -285,7 +285,7 @@ function Members({ isSidebarCollapsed }) {
                 </span>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Subscription Status</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Subscription Status</label>
                 <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                   selectedMember.subscriptionStatus === 'active' 
                     ? 'bg-green-100 text-green-800' 
@@ -295,15 +295,15 @@ function Members({ isSidebarCollapsed }) {
                 </span>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Score</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Engagement Score</label>
                 <p className="text-gray-900">{selectedMember.engagementScore || 0}%</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Complaints</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Complaints</label>
                 <p className="text-gray-900">{selectedMember.complaints || 0}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Last Active</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Last Active</label>
                 <p className="text-gray-900">
                   {selectedMember.lastActive?.toDate ? new Date(selectedMember.lastActive.toDate()).toLocaleString() : 'N/A'}
                 </p>
@@ -312,7 +312,7 @@ function Members({ isSidebarCollapsed }) {
             <div className="mt-6">
               <button
                 onClick={() => { setShowViewModal(false); setSelectedMember(null); }}
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                className="w-full px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Close
               </button>
@@ -323,9 +323,9 @@ function Members({ isSidebarCollapsed }) {
 
       {/* Complaint Modal */}
       {showComplaintModal && selectedMember && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Handle Complaint - {selectedMember.displayName}</h2>
               <button onClick={() => { setShowComplaintModal(false); setComplaintText(''); setSelectedMember(null); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -333,7 +333,7 @@ function Members({ isSidebarCollapsed }) {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Complaint Details / Resolution Notes</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Complaint Details / Resolution Notes</label>
                 <textarea
                   value={complaintText}
                   onChange={(e) => setComplaintText(e.target.value)}
@@ -347,13 +347,13 @@ function Members({ isSidebarCollapsed }) {
               <button
                 onClick={handleSubmitComplaint}
                 disabled={!complaintText.trim()}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 Submit Resolution
               </button>
               <button
                 onClick={() => { setShowComplaintModal(false); setComplaintText(''); setSelectedMember(null); }}
-                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Cancel
               </button>

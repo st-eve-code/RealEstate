@@ -122,7 +122,7 @@ function Notification({ isSidebarCollapsed }) {
   }
 
   return (
-    <section className={`bg-gray-50 min-h-screen w-full p-4 transition-all duration-300 ${
+    <section className={`bg-gray-50 max-md:mt-14 min-h-screen w-full p-4 transition-all duration-300 ${
       isSidebarCollapsed ? 'md:ml-20 lg:ml-20' : 'md:ml-64 lg:ml-80'
     }`}>
       <div className="bg-white rounded-lg shadow-sm p-6">

@@ -177,7 +177,7 @@ function Clients({ isSidebarCollapsed }) {
       }`}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="w-12 h-12 mx-auto border-b-2 border-blue-600 rounded-full animate-spin"></div>
             <p className="mt-4 text-gray-600">Loading clients...</p>
           </div>
         </div>
@@ -186,15 +186,15 @@ function Clients({ isSidebarCollapsed }) {
   }
 
   return (
-    <section className={`bg-gray-50 min-h-screen w-full p-4 transition-all duration-300 ${
+    <section className={`bg-gray-50 min-h-screen max-md:mt-14 w-full p-4 transition-all duration-300 ${
       isSidebarCollapsed ? 'md:ml-20 lg:ml-20' : 'md:ml-64 lg:ml-80'
     }`}>
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex justify-between items-center mb-6">
+      <div className="p-6 bg-white rounded-lg shadow-sm">
+        <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Clients Management</h1>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-2 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
           >
             <UserPlus size={20} />
             Add New Client
@@ -202,15 +202,15 @@ function Clients({ isSidebarCollapsed }) {
         </div>
 
         {/* Search and Filter */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        <div className="flex flex-col gap-4 mb-6 md:flex-row">
+          <div className="relative flex-1">
+            <Search className="absolute text-gray-400 transform -translate-y-1/2 left-3 top-1/2" size={20} />
             <input
               type="text"
               placeholder="Search clients by name, email, or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -232,32 +232,32 @@ function Clients({ isSidebarCollapsed }) {
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-100">
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Phone</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Role</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Properties</th>
-                <th className="border border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Name</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Email</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Phone</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Role</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Properties</th>
+                <th className="px-4 py-3 text-sm font-semibold text-left text-gray-700 border border-gray-200">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredClients.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="border border-gray-200 px-4 py-8 text-center text-gray-500">
+                  <td colSpan={6} className="px-4 py-8 text-center text-gray-500 border border-gray-200">
                     No clients found
                   </td>
                 </tr>
               ) : (
                 filteredClients.map((client) => (
                   <tr key={client.uid} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">
                       {client.fullName || client.displayName || 'N/A'}
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">{client.email}</td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">{client.email}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">
                       {client.phoneNumber || 'N/A'}
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm border border-gray-200">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         client.role.role === 'landlord' 
                           ? 'bg-purple-100 text-purple-800' 
@@ -266,28 +266,28 @@ function Clients({ isSidebarCollapsed }) {
                         {client.role.role}
                       </span>
                     </td>
-                    <td className="border border-gray-200 px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 border border-gray-200">
                       {client.numberOfProperties || 0}
                     </td>
-                    <td className="border border-gray-200 px-4 py-3">
+                    <td className="px-4 py-3 border border-gray-200">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openViewModal(client)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          className="p-2 text-blue-600 transition-colors rounded hover:bg-blue-50"
                           title="View"
                         >
                           <Eye size={16} />
                         </button>
                         <button
                           onClick={() => openEditModal(client)}
-                          className="p-2 text-green-600 hover:bg-green-50 rounded transition-colors"
+                          className="p-2 text-green-600 transition-colors rounded hover:bg-green-50"
                           title="Edit"
                         >
                           <Edit size={16} />
                         </button>
                         <button
                           onClick={() => handleDeactivateClient(client.uid)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                          className="p-2 text-red-600 transition-colors rounded hover:bg-red-50"
                           title="Deactivate"
                         >
                           <Trash2 size={16} />
@@ -308,9 +308,9 @@ function Clients({ isSidebarCollapsed }) {
 
       {/* Add Client Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Add New Client</h2>
               <button onClick={() => { setShowModal(false); resetForm(); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -319,7 +319,7 @@ function Clients({ isSidebarCollapsed }) {
             <form onSubmit={handleAddClient}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Full Name</label>
                   <input
                     type="text"
                     required
@@ -329,7 +329,7 @@ function Clients({ isSidebarCollapsed }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Email</label>
                   <input
                     type="email"
                     required
@@ -339,7 +339,7 @@ function Clients({ isSidebarCollapsed }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Phone Number</label>
                   <input
                     type="tel"
                     value={formData.phoneNumber}
@@ -348,7 +348,7 @@ function Clients({ isSidebarCollapsed }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Role</label>
                   <select
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value /* as 'user' | 'landlord' */ })}
@@ -362,14 +362,14 @@ function Clients({ isSidebarCollapsed }) {
               <div className="flex gap-3 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
                 >
                   Add Client
                 </button>
                 <button
                   type="button"
                   onClick={() => { setShowModal(false); resetForm(); }}
-                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
                 >
                   Cancel
                 </button>
@@ -381,9 +381,9 @@ function Clients({ isSidebarCollapsed }) {
 
       {/* Edit Client Modal */}
       {showEditModal && selectedClient && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Edit Client</h2>
               <button onClick={() => { setShowEditModal(false); setSelectedClient(null); resetForm(); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -392,7 +392,7 @@ function Clients({ isSidebarCollapsed }) {
             <form onSubmit={handleEditClient}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Full Name</label>
                   <input
                     type="text"
                     required
@@ -402,17 +402,17 @@ function Clients({ isSidebarCollapsed }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Email</label>
                   <input
                     type="email"
                     value={formData.email}
                     disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
+                    className="w-full px-3 py-2 text-gray-500 bg-gray-100 border border-gray-300 rounded-lg"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                  <p className="mt-1 text-xs text-gray-500">Email cannot be changed</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Phone Number</label>
                   <input
                     type="tel"
                     value={formData.phoneNumber}
@@ -424,7 +424,7 @@ function Clients({ isSidebarCollapsed }) {
               <div className="flex gap-3 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
                 >
                   <Save size={16} className="inline mr-2" />
                   Save Changes
@@ -432,7 +432,7 @@ function Clients({ isSidebarCollapsed }) {
                 <button
                   type="button"
                   onClick={() => { setShowEditModal(false); setSelectedClient(null); resetForm(); }}
-                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
                 >
                   Cancel
                 </button>
@@ -444,9 +444,9 @@ function Clients({ isSidebarCollapsed }) {
 
       {/* View Client Modal */}
       {showViewModal && selectedClient && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Client Details</h2>
               <button onClick={() => { setShowViewModal(false); setSelectedClient(null); }} className="text-gray-400 hover:text-gray-600">
                 <X size={24} />
@@ -454,19 +454,19 @@ function Clients({ isSidebarCollapsed }) {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Full Name</label>
                 <p className="text-gray-900">{selectedClient.fullName || selectedClient.displayName || 'N/A'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Email</label>
                 <p className="text-gray-900">{selectedClient.email}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Phone Number</label>
                 <p className="text-gray-900">{selectedClient.phoneNumber || 'N/A'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Role</label>
                 <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                   selectedClient.role.role === 'landlord' 
                     ? 'bg-purple-100 text-purple-800' 
@@ -476,11 +476,11 @@ function Clients({ isSidebarCollapsed }) {
                 </span>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Number of Properties</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Number of Properties</label>
                 <p className="text-gray-900">{selectedClient.numberOfProperties || 0}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Created At</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">Created At</label>
                 <p className="text-gray-900">
                   {selectedClient.createdAt?.toDate ? new Date(selectedClient.createdAt.toDate()).toLocaleDateString() : 'N/A'}
                 </p>
@@ -489,7 +489,7 @@ function Clients({ isSidebarCollapsed }) {
             <div className="mt-6">
               <button
                 onClick={() => { setShowViewModal(false); setSelectedClient(null); }}
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                className="w-full px-4 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Close
               </button>
