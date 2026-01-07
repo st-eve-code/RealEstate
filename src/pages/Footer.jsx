@@ -6,6 +6,7 @@ import logo from '../assets/logo.svg';
 import { IonIcon } from '@ionic/react';
 import { logoInstagram, logoLinkedin, logoTwitter, logoFacebook, call, mail} from 'ionicons/icons';
 import { useRouter } from 'next/navigation';
+import { FOOTER_COMPANY_LINKS, FOOTER_LEGAL_LINKS, FOOTER_LOCATIONS, FOOTER_CONTACT } from '@/constants';
 import '../App.css';
 function Footer() {
     const [mounted, setMounted] = useState(false);
@@ -13,93 +14,7 @@ function Footer() {
     useEffect(() => {
         setMounted(true);
     }, []);
-    const links =[
-        {
-            path: '/',
-            name: 'Home'
-        },
-        {
-            path: '/about',
-            name: 'About'
-        },
-        {
-            path: '/contact',
-            name: 'Contact Us'
-        },
-        {
-            path: '/blog',
-            name: 'Blog'
-        },
-        {
-            path: '/plans',
-            name: 'Subscription'
-        },
-    ];
-
-    const legals = [
-        {
-            path: '/policy',
-            name: 'Cookie Policy'
-        },
-        {
-            path: '/terms',
-            name: 'Terms & Conditions'
-        },
-        {
-            path: '/user-policy',
-            name: 'User Policy'
-        },
-    ];
-    
-    const Locations = [
-        {
-            path: "/location/muea",
-            name: 'Muea'
-        },
-        {
-            path: "/location/bomaka",
-            name: 'Bomaka'
-        },
-        {
-            path: "/location/malingo",
-            name: 'Malingo'
-        },
-        {
-            path: "/location/mayor-street",
-            name: 'Mayor-Street'
-        },
-        {
-            path: "/location/molyko",
-            name: 'Molyko'
-        },
-            {
-            path: "/location/checkpoint",
-            name: 'CheckPoint'
-        },
-        {
-            path: "/location/biaka",
-            name: 'Biaka'
-        },
-        {
-            path: "/location/all",
-            name: 'More'
-        },
-    ];
-
-    const Contact =[
-        {
-            Icons: call,
-            name: '+237681987524'
-        },
-        {
-            Icons: call,
-            name: '+237651820548'
-        },
-        {
-            Icons: mail,
-            name: 'rentspot@gmail.com'
-        },
-    ];
+    // Constants imported from @/constants
 
     const router = useRouter();
   return (
@@ -143,7 +58,7 @@ function Footer() {
                     Quick Links
                 </h1>
                 <ul className='font-Custom font-normal text-sm text-gray-600'>
-                    {links.map(
+                    {FOOTER_COMPANY_LINKS.map(
                         (name, index) => (
                             <div key={index} className='py-1'>
                                 <li>
@@ -160,7 +75,7 @@ function Footer() {
                     Locations
                 </h1>
                 <ul className='font-Custom font-normal text-sm text-gray-600'>
-                    {Locations.map(
+                    {FOOTER_LOCATIONS.map(
                         (name, index) => (
                             <div key={index} className='py-1'>
                                 <li>
@@ -177,7 +92,7 @@ function Footer() {
                     Legals
                 </h1>
                 <ul className='font-Custom font-normal text-sm text-gray-600'>
-                    {legals.map(
+                    {FOOTER_LEGAL_LINKS.map(
                         (name, index) => (
                             <div key={index} className='py-1'>
                                 <li>
@@ -194,7 +109,7 @@ function Footer() {
                     Contacts
                 </h1>
                 <div >
-                    {Contact.map(
+                    {FOOTER_CONTACT.map(
                         (detail, index) => (
                            <div key={index} className='flex p-1 mx-auto items-center gap-2 space-y-2 font-Custom font-normal text-sm text-gray-600'>
                              {mounted && <IonIcon icon={detail.Icons} className='text-gray-500 size-4 pt-2'/>}

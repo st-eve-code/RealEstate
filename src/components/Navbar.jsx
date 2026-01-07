@@ -283,7 +283,7 @@ const Nav_bar = () => {
                         <DesktopDropdown
                             icon={<Globe size={16} />}
                             title="Language"
-                            items={Languages}
+                            items={LANGUAGES}
                             dropdownKey="language"
                             isLanguage
                         />

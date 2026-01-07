@@ -14,7 +14,7 @@ export default function StorePage() {
 
   return (
     <UserDashboardLayout>
-      <Store />
+      <Store sidebar={null} />
     </UserDashboardLayout>
   )
 }

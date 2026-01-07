@@ -4,7 +4,8 @@ import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import About_us from './About_us';
 import Questions from '../components/Questions';
-import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map, Facebook, Linkedin, Mail, AtSign } from 'lucide-react';
+import { Map, Facebook, Linkedin, Mail, AtSign } from 'lucide-react';
+import { TEAM_MEMBERS, COMPANY_VALUES } from '@/constants';
 import Navbar from '../components/Navbar';
 import Testimonial from '../components/ScrollTestimonials';
 import List_products from '../components/Properties';
@@ -71,71 +72,9 @@ function Home() {
     };
   }, []);
 
-  
-
-  // team members
-  const Member = [
-    {
-      name: 'Steve Caleb',
-      position: 'Founder/Coordinator and a vivid gamer who loves arts in all forms.',
-      facebooklink: 'https://www.facebook.com',
-      email: 'steve@gmail.com',
-      linkin: 'stevecaleb@linkedin.com'
-    },
-    {
-      name: 'Nji Rodney',
-      position: 'Ceo/Project Manager and a vivid gamer who loves solving problems .',
-      facebooklink: 'https://www.facebook.com',
-      email: 'rod@gmail.com',
-      linkin: 'rodney@linkedin.com'
-    },
-    {
-      name: 'Presly Takop',
-      position: 'Developer/Designer and a vivid gamer who loves tech and building sides projects. ',
-      facebooklink: 'https://www.facebook.com',
-      email: 'presly@gmail.com',
-      linkin: 'presly@linkedin.com'
-    },
-    {
-      name: 'Dorine Bless',
-      position: 'Marketing Strategist , Obsessed with video editing and music, enjoys attending shows.',
-      facebooklink: 'https://www.facebook.com',
-      email: 'Dorine@gmail.com',
-      linkin: 'Dorine@linkedin.com'
-    },
-    {
-      name: 'Bro Wesly',
-      position: 'Marketing Strategist and a vivid gamer , loves tech and building side projects.',
-      facebooklink: 'https://www.facebook.com',
-      email: 'wesly@gmail.com',
-      linkin: 'wesly@linkedin.com'
-    },
-    {
-      name: 'Elakie Leonie',
-      position: 'Customer support and Enthusiast of travel and photography, enjoys cooking new recipes.',
-      facebooklink: 'https://www.facebook.com',
-      email: 'Leo@gmail.com',
-      linkin: 'Leo@linkedin.com'
-    },
-  ]
   const router = useRouter()
-  const values= [
-    {
-      icon: MapPinHouse,
-      title: 'Locate Properties',
-      body: 'We curate a selection that suits various lifestyles. Our expert team ensures a smooth renting process.'
-    },
-    {
-      icon: PackageOpenIcon,
-      title: 'Rent Properties',
-      body: 'Trust us to handle the intricacies of negotiations, renting processes and making successful deals.'
-    },
-    {
-      icon: BookOpenCheckIcon,
-      title: 'Advertise Properties',
-      body: 'We connect tenants with landlords, streaming the rental process for a hassle-free experience .'
-    }
-  ]
+  
+  // Constants imported from @/constants
   return (
     <section className='w-full mx-auto'>
       <Navbar/>
@@ -193,7 +132,7 @@ function Home() {
           <div className='grid md:grid-cols-12 grid-cols-1 mx-auto gap-3 lg:px-20 md:px-10 px-8 mt-10'>
             {/* values or services */}
             {
-              values.map(
+              COMPANY_VALUES.map(
                 (items, index) => {const Icons = items.icon; return (
                   <div key={index} className='block-animate bg-white border col-span-4 shadow-md shadow-gray-300/40 max-w-[22rem] mt-1 p-3 rounded-2xl'>
                     <div className='size-10 my-2 bg-blue-600 p-1 rounded-md'><Icons size={30} className='text-white'/></div>
@@ -349,7 +288,7 @@ function Home() {
                </button>
             </div>
             <div className='mt-5 grid grid-cols-1 md:grid-cols-3 gap-4 px-10 '>
-               {Member.map(
+               {TEAM_MEMBERS.map(
                 (person, index) => {
                   return (
                     <div key={index} className='block-animate mx-auto mt-4 bg-gray-50/20 p-3 rounded-lg hover:shadow-lg  max-w-[20rem]'>

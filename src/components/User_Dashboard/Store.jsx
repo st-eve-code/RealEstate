@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { ArrowBigDown, ChevronDown, Eye, MapPin, Calendar, Tag } from 'lucide-react';
 
-function Store({ sidebar }) {
+function Store({ sidebar = null }) {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [isOpen, setIsOpen] = useState(false);
   
