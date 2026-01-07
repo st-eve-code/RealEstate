@@ -1,12 +1,15 @@
+'use client'
+
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '../../../lib/auth-context';
 import { updateDoc, doc, Timestamp } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import { Save, Database, HardDrive, Globe, Palette, User, Key, Server } from 'lucide-react';
 
 function Settings({ isSidebarCollapsed }) {
-  const location = useLocation();
+  const pathname = usePathname();
 
   const settingsItems = [
     { name: 'Profile', path: '/dashboard/settings/profile', description: 'Manage your profile settings', icon: User },
@@ -29,9 +32,9 @@ function Settings({ isSidebarCollapsed }) {
               return (
                 <li key={item.name} className="flex-1 md:flex-none">
                   <Link
-                    to={item.path}
+                    href={item.path}
                     className={`flex items-center gap-2 block p-3 rounded-lg transition-colors text-center md:text-left ${
-                      location.pathname === item.path ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'
+                      pathname === item.path ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'
                     }`}
                   >
                     <Icon size={18} />
@@ -43,14 +46,26 @@ function Settings({ isSidebarCollapsed }) {
           </ul>
         </nav>
         <div className="w-full md:w-3/4">
-          <Routes>
-            <Route index element={<DefaultSettings />} />
-            <Route path="profile" element={<ProfileSettings />} />
-            <Route path="tables" element={<TablesSettings />} />
-            <Route path="storage" element={<StorageSettings />} />
-            <Route path="api-gateway" element={<ApiGatewaySettings />} />
-            <Route path="theme" element={<ThemeSettings />} />
-          </Routes>
+          {/* Next.js App Router handles routing; render based on path */}
+          {(() => {
+            const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+            const last = pathname.split('/').pop();
+            switch (last) {
+              case 'profile':
+                return <ProfileSettings />;
+              case 'tables':
+                return <TablesSettings />;
+              case 'storage':
+                return <StorageSettings />;
+              case 'api-gateway':
+                return <ApiGatewaySettings />;
+              case 'theme':
+                return <ThemeSettings />;
+              default:
+                return <DefaultSettings />;
+            }
+          })()}
+
         </div>
       </div>
     </section>

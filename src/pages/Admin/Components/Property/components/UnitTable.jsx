@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react';
 import { 
   Eye, 
@@ -10,7 +12,7 @@ import {
   AlertTriangle,
   FileText
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const STATUS_CONFIG = {
   pending: {

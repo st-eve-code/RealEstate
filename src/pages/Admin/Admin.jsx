@@ -1,5 +1,7 @@
+'use client'
+
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+// React Router removed - using Next.js App Router
 import '../../App.css';
 import Sidebar from './Components/Sidebar';
 import Main from './Components/Main';
@@ -9,11 +11,6 @@ import HouseAgents from './Components/HouseAgents';
 import Blogs from './Components/Blogs';
 import Notification from './Components/Notification';
 import Members from './Components/Members';
-import Settings from './Components/Settings';
-import Property from './Components/Property';
-import PropertyReports from './Components/Property/UnitReports';
-import PropertyReviews from './Components/Property/UnitReviews';
-import PropertyDetails from './Components/Property/UnitDetails';
 
 function Admin() {
   // Shared state for sidebar collapse - controls main content width
@@ -25,20 +22,7 @@ function Admin() {
         isCollapsed={isSidebarCollapsed}
         setIsCollapsed={setIsSidebarCollapsed}
       />
-      <Routes>
-        <Route index element={<Main isSidebarCollapsed={isSidebarCollapsed} />} />
-        <Route path="clients" element={<Clients isSidebarCollapsed={isSidebarCollapsed} />} />
-        <Route path="caretakers" element={<Caretakers isSidebarCollapsed={isSidebarCollapsed} />} />
-        <Route path="house-agents" element={<HouseAgents isSidebarCollapsed={isSidebarCollapsed} />} />
-        <Route path="properties" element={<Property isSidebarCollapsed={isSidebarCollapsed} />} />
-        <Route path="properties/reports/:unitId" element={<PropertyReports isSidebarCollapsed={isSidebarCollapsed} />} />
-        <Route path="properties/reviews/:unitId" element={<PropertyReviews isSidebarCollapsed={isSidebarCollapsed} />} />
-        <Route path="properties/:unitId" element={<PropertyDetails isSidebarCollapsed={isSidebarCollapsed} />} />
-        <Route path="blogs" element={<Blogs isSidebarCollapsed={isSidebarCollapsed} />} />
-        <Route path="notification" element={<Notification isSidebarCollapsed={isSidebarCollapsed} />} />
-        <Route path="members" element={<Members isSidebarCollapsed={isSidebarCollapsed} />} />
-        <Route path="settings/*" element={<Settings isSidebarCollapsed={isSidebarCollapsed} />} />
-      </Routes>
+      <Main isSidebarCollapsed={isSidebarCollapsed} />
     </section>
   )
 }

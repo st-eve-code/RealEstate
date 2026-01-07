@@ -1,5 +1,7 @@
+'use client'
+
 import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import About_us from './About_us';
 import Questions from '../components/Questions';
 import { MapPinHouse, BookOpenCheckIcon, PackageOpenIcon, Map, Facebook, Linkedin, Mail, AtSign } from 'lucide-react';
@@ -14,7 +16,6 @@ import image4 from '../assets/images/9.jpg';
 import image5 from '../assets/images/10.jpg';
 import plan from '../assets/images/plan.png';
 import '../App.css';
-import L from 'leaflet';
 import { GrMoney, GrPlan, GrTransaction } from 'react-icons/gr';
 import Footer from './Footer';
 import Services from '../components/Services';
@@ -26,32 +27,43 @@ function Home() {
 
   // Initialize the map
   useEffect(() => {
+    let mounted = true;
+    
     if (mapRef.current && !mapInstanceRef.current) {
-      try {
-        const mapInstance = L.map(mapRef.current, {
-          center: [51.5074, -0.1278],
-          zoom: 14,
-          maxBounds: [
-            [40, -10],
-            [60, 10]
-          ],
-          maxBoundsViscosity: 1.0
-        });
+      // Dynamically import leaflet only on client side
+      import('leaflet').then((L) => {
+        if (!mounted) return;
+        
+        const leaflet = L.default;
+        try {
+          const mapInstance = leaflet.map(mapRef.current, {
+            center: [51.5074, -0.1278],
+            zoom: 14,
+            maxBounds: [
+              [40, -10],
+              [60, 10]
+            ],
+            maxBoundsViscosity: 1.0
+          });
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          minZoom: 2,
-          attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(mapInstance);
+          leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            minZoom: 2,
+            attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          }).addTo(mapInstance);
 
-        mapInstanceRef.current = mapInstance;
-      } catch (error) {
-        console.error('Error initializing map:', error);
-      }
+          mapInstanceRef.current = mapInstance;
+        } catch (error) {
+          console.error('Error initializing map:', error);
+        }
+      }).catch((error) => {
+        console.error('Error loading leaflet:', error);
+      });
     }
 
     // Cleanup function
     return () => {
+      mounted = false;
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
@@ -106,7 +118,7 @@ function Home() {
       linkin: 'Leo@linkedin.com'
     },
   ]
-  const navigate = useNavigate()
+  const router = useRouter()
   const values= [
     {
       icon: MapPinHouse,
@@ -141,31 +153,31 @@ function Home() {
         {/* buttons for view pricing and get more info */}
         <div className='block-animate flex justify-center items-center mx-auto gap-5 py-4'>
            {/* pricing */}
-           <button onClick={()=>navigate('/signup')}  className='bg-blue-500 min-w-[8rem] max-w-[10rem] px-2 h-10 flex justify-center py-2.5 rounded-full font-Custom font-medium text-sm text-white'>
+           <button onClick={()=>router.push('/signup')}  className='bg-blue-500 min-w-[8rem] max-w-[10rem] px-2 h-10 flex justify-center py-2.5 rounded-full font-Custom font-medium text-sm text-white'>
             Get Started
            </button>
            {/* get more info */}
-           <button onClick={()=>navigate('/contact')}  className='bg-white min-w-[8rem] max-w-[8rem] px-2 h-10 flex justify-center py-2.5 rounded-full font-Custom font-medium text-sm text-gray-700 border border-gray-600'>
+           <button onClick={()=>router.push('/contact')}  className='bg-white min-w-[8rem] max-w-[8rem] px-2 h-10 flex justify-center py-2.5 rounded-full font-Custom font-medium text-sm text-gray-700 border border-gray-600'>
             Get More Info
            </button>
         </div>
         <div className="grid grid-cols-12 gap-2 sm:gap-3 md:gap-4 lg:gap-6 h-48 sm:h-56 md:h-64 lg:h-80 xl:h-96 mt-8 px-3 lg:px-20">
           <div className="block-animate col-span-2 rounded-2xl overflow-hidden">
             <img 
-              src={image3}
+              src={image3.src || image3}
               alt="Image 3" 
               className="w-full h-full object-cover"
             />
           </div>
           <div className="block-animate col-span-4 sm:col-span-4 md:col-span-4 lg:col-span-4 rounded-2xl overflow-hidden">
             <img 
-              src={image5}
+              src={image5.src || image5}
               alt="Image 2" 
               className="w-full h-full object-cover"
             />
           </div>
           <div className='block-animate col-span-6 sm:col-span-6 md:col-span-6 lg:col-span-6 rounded-2xl overflow-hidden'>
-            <img src={image4}
+            <img src={image4.src || image4}
              alt="image1"
              className='object-cover h-full w-full' />
           </div>
@@ -259,9 +271,9 @@ function Home() {
                   {/* main payment methods */}
                   <div className='mt-10 mx-auto'>
                     <div className='flex items-center gap-1 md:gap-3 justify-center'>
-                      <img src={image1} alt="mtn" className='object-cover max-w-full h-12 rounded-md' />
-                      <img src={image2} alt="mastercard" className='object-cover w-auto h-14 rounded-lg' />
-                      <img src={image6} alt="paypal" className='object-cover w-auto h-16 rounded-lg' />
+                      <img src={image1.src || image1} alt="mtn" className='object-cover max-w-full h-12 rounded-md' />
+                      <img src={image2.src || image2} alt="mastercard" className='object-cover w-auto h-14 rounded-lg' />
+                      <img src={image6.src || image6} alt="paypal" className='object-cover w-auto h-16 rounded-lg' />
                     </div>
                     <div className='flex items-center justify-center mt-6 w-full'>
                       <p className='font-Custom font-normal text-xs text-gray-500 leading-4 flex-wrap w-full'>
@@ -291,7 +303,7 @@ function Home() {
                   </div>
                   {/* subscription plan */}
                   <div className='mt-12'>
-                    <img src={plan} alt="plan" className='rounded-lg'/>
+                    <img src={plan.src || plan} alt="plan" className='rounded-lg'/>
                   </div>
                 </div>
               </div>
@@ -329,10 +341,10 @@ function Home() {
               Unleashing creativity our team of design visionaries turns ordinary spaces into extraordinary experiences.
             </p>
             <div className='flex flex-1 justify-center items-center gap-2 mt-5'>
-               <button onClick={()=>navigate('/signup')} className='bg-red-500 text-white px-5 py-2 rounded-md shadow font-Poppins font-normal'>
+               <button onClick={()=>router.push('/signup')} className='bg-red-500 text-white px-5 py-2 rounded-md shadow font-Poppins font-normal'>
                 Get started
                </button>
-               <button onClick={()=>navigate('/contact')} className='bg-white border text-gray-600 px-5 py-2 rounded-md shadow font-Custom font-normal'>
+               <button onClick={()=>router.push('/contact')} className='bg-white border text-gray-600 px-5 py-2 rounded-md shadow font-Custom font-normal'>
                 Support Us !
                </button>
             </div>
@@ -341,7 +353,7 @@ function Home() {
                 (person, index) => {
                   return (
                     <div key={index} className='block-animate mx-auto mt-4 bg-gray-50/20 p-3 rounded-lg hover:shadow-lg  max-w-[20rem]'>
-                      <img src={image4} alt="" className='size-24 rounded-full shrink-0 mx-auto my-4'/>
+                      <img src={image4.src || image4} alt="" className='size-24 rounded-full shrink-0 mx-auto my-4'/>
                       <div className='mx-auto text-center'>
                         <h1 className='font-Poppins font-bold text-sm text-gray-800/70'>
                           {person.name}

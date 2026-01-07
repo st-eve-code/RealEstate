@@ -1,5 +1,8 @@
+'use client'
+
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useRouter } from 'next/navigation'
+import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { fetchUnits, approveUnit, rejectUnit, archiveUnit, deleteUnit, addRemarkToUnit } from './services/unitService';
 import UnitFilters from './components/UnitFilters';
@@ -9,7 +12,7 @@ import RemarksModal from './components/RemarksModal';
 import { AlertTriangle } from 'lucide-react';
 
 export default function Property({ isSidebarCollapsed }) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user } = useAuth();
   const [units, setUnits] = useState([]);
   const [filteredUnits, setFilteredUnits] = useState([]);
@@ -138,7 +141,7 @@ export default function Property({ isSidebarCollapsed }) {
   };
 
   const handleViewDetails = (unitId) => {
-    navigate(`/dashboard/properties/${unitId}`);
+    router.push(`/dashboard/properties/${unitId}`);
   };
 
   const handleReview = (unit) => {
@@ -237,8 +240,8 @@ export default function Property({ isSidebarCollapsed }) {
           onReject={handleReview}
           onArchive={handleArchive}
           onDelete={handleDelete}
-          onViewReports={(unitId) => navigate(`/dashboard/properties/reports/${unitId}`)}
-          onViewReviews={(unitId) => navigate(`/dashboard/properties/reviews/${unitId}`)}
+          onViewReports={(unitId) => router.push(`/dashboard/properties/reports/${unitId}`)}
+          onViewReviews={(unitId) => router.push(`/dashboard/properties/reviews/${unitId}`)}
           onAddRemark={handleAddRemarkClick}
           onViewDetails={handleViewDetails}
         />

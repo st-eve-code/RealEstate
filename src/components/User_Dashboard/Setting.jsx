@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react';
 import { Moon, Sun, Monitor, FileText, Shield, Cookie, Database, Users, MessageSquare, Bug, Trash2, Share2, Copy, Check, ChevronRight } from 'lucide-react';
 

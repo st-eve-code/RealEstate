@@ -1,6 +1,9 @@
+'use client'
+
 import React from 'react'
 import { Menu, X, MessageSquare } from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context';
 
 
@@ -17,15 +20,15 @@ const NavItem = ({children, active, onClick} = {}) => (
 )
 
 export default function Sidebar({ isMobileMenuOpen, setIsMobileMenuOpen }){
-  const location = useLocation();
+  const pathname = usePathname();
   const {signOut} = useAuth();
 
   // Determine active route
   const isActive = (path) => {
     if (path === '/dashboard') {
-      return location.pathname === '/dashboard' || location.pathname === '/dashboard/';
+      return pathname === '/dashboard' || pathname === '/dashboard/';
     }
-    return location.pathname.startsWith(path);
+    return pathname.startsWith(path);
   };
 
   // Close mobile menu when a link is clicked
@@ -84,19 +87,19 @@ export default function Sidebar({ isMobileMenuOpen, setIsMobileMenuOpen }){
 
         {/* Navigation */}
         <nav className="space-y-2">
-          <Link to={'/dashboard'} onClick={handleLinkClick}>
+          <Link href={'/dashboard'} onClick={handleLinkClick}>
             <NavItem active={isActive('/dashboard')}>Dashboard</NavItem>
           </Link>
-          <Link to={'/dashboard/properties'} onClick={handleLinkClick}>
+          <Link href={'/dashboard/properties'} onClick={handleLinkClick}>
             <NavItem active={isActive('/dashboard/properties')}>My Properties</NavItem>
           </Link>
-          <Link to={'/dashboard/list-property'} onClick={handleLinkClick}>
+          <Link href={'/dashboard/list-property'} onClick={handleLinkClick}>
             <NavItem active={isActive('/dashboard/list-property')}>List Property</NavItem>
           </Link>
-          <Link to={'/dashboard/profile'} onClick={handleLinkClick}>
+          <Link href={'/dashboard/profile'} onClick={handleLinkClick}>
             <NavItem active={isActive('/dashboard/profile')}>My Profile</NavItem>
           </Link>
-          <Link to={'/dashboard/messages'} onClick={handleLinkClick}>
+          <Link href={'/dashboard/messages'} onClick={handleLinkClick}>
             <NavItem active={isActive('/dashboard/messages')}>
               <div className="flex items-center gap-3">
                 <MessageSquare className="w-4 h-4 text-gray-600" />

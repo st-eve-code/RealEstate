@@ -1,3 +1,5 @@
+'use client'
+
 import { Bell, Search, Users, Building, DollarSign, TrendingUp, Eye, MessageSquare, Settings, Plus, Edit, Trash2 } from 'lucide-react';
 import avatar from '../../../assets/images/tiger.jpg'
 import React, { useState } from 'react';
@@ -136,7 +138,7 @@ function Main({ isSidebarCollapsed }) {
                 <Bell className='text-gray-600 transition-colors cursor-pointer hover:text-gray-800' size={20} />
                 <span className='absolute inline-block w-3 h-3 bg-red-500 rounded-full -top-1 -right-1'></span>
               </div>
-              <img src={avatar} alt="Admin Avatar" className='w-8 h-8 transition-colors border-2 border-gray-200 rounded-full cursor-pointer hover:border-gray-300' />
+              <img src={avatar.src || avatar} alt="Admin Avatar" className='w-8 h-8 transition-colors border-2 border-gray-200 rounded-full cursor-pointer hover:border-gray-300' />
             </div>
           </div>
         </div>

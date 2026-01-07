@@ -1,3 +1,5 @@
+'use client'
+
 import { Heart, MapPin, Bed, Bath, UtensilsCrossed, Star, ArrowUpRight, Search, DollarSign, Home, Filter, X, TrendingUp, Sparkles, ArrowLeft, Phone, Mail, Share2, Calendar, CheckCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 

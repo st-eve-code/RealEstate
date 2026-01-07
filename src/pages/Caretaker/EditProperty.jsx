@@ -1,5 +1,7 @@
+'use client'
+
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Timestamp } from 'firebase/firestore';
 import ProgressIndicator from '@/components/Caretaker_Dashboard/ListProperty/ProgressIndicator';
@@ -20,7 +22,7 @@ import { updateDocumentById } from '@/lib/internal-firebase';
  */
 function EditProperty() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user } = useAuth();
   
   const [currentStep, setCurrentStep] = useState(1);
@@ -65,20 +67,20 @@ function EditProperty() {
             setFormData(formDataFromUnit);
           } else {
             alert('Property not found or you do not have permission to edit it.');
-            navigate('/dashboard/properties');
+            router.push('/dashboard/properties');
           }
         }
       } catch (error) {
         console.error('Error fetching property:', error);
         alert('Failed to load property data.');
-        navigate('/dashboard/properties');
+        router.push('/dashboard/properties');
       } finally {
         setLoading(false);
       }
     };
 
     fetchProperty();
-  }, [id, user, navigate]);
+  }, [id, user, router]);
 
   /**
    * Handle navigation to next step
@@ -228,7 +230,7 @@ function EditProperty() {
       alert('Property updated successfully!');
       
       // Navigate back to property details
-      navigate(`/dashboard/properties/${id}`);
+      router.push(`/dashboard/properties/${id}`);
     } catch (error) {
       console.error('Error updating property:', error);
       alert('Failed to update property. Please try again.');
@@ -242,7 +244,7 @@ function EditProperty() {
    */
   const handleDiscard = () => {
     if (window.confirm('Are you sure you want to discard your changes? All unsaved data will be lost.')) {
-      navigate(`/dashboard/properties/${id}`);
+      router.push(`/dashboard/properties/${id}`);
     }
   };
 

@@ -1,6 +1,8 @@
+'use client'
+
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 function Client_data() {
     const [openDropdown, setOpenDropdown] = useState(null);
     const [selections, setSelections] = useState({
@@ -25,7 +27,7 @@ function Client_data() {
     const toggleDropdown = (dropdown) => {
         setOpenDropdown(openDropdown === dropdown ? null : dropdown);
     };
-    const navigate = useNavigate();
+    const router = useRouter();
     return (
         <section className="p-6">
             <div className="max-w-md mx-auto bg-white font-Custom rounded-lg shadow-lg p-6">
@@ -67,10 +69,10 @@ function Client_data() {
                     </div>
                 ))}
 
-                <button onClick={()=>navigate('/dashboard')} className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors mt-4">
+                <button onClick={()=>router.push('/dashboard')} className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors mt-4">
                     Continue
                 </button>
-                <p onClick={()=>navigate('/dashboard')} className='flex justify-center cursor-pointer mt-4 underline text-blue-600 hover:text-blue-400'>skip</p>
+                <p onClick={()=>router.push('/dashboard')} className='flex justify-center cursor-pointer mt-4 underline text-blue-600 hover:text-blue-400'>skip</p>
             </div>
         </section>
     );

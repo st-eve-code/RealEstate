@@ -1,8 +1,11 @@
+'use client'
+
 import React, { useEffect, useState } from 'react';
 import '../App.css';
 import logo from '../assets/logo.svg';
 import google from '../assets/images/google.png';
-import { Link, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation'
+import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
@@ -22,7 +25,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [shake, setShake] = useState(false);
 
-  const navigate = useNavigate();
+  const router = useRouter();
   const {loadingUser, firebaseUser} = useAuth();
 
   // Handle input change with real-time error clearing
@@ -89,7 +92,7 @@ function Login() {
       }
       // additional handling here
       // @todo check if user did clientsurvey(if a client) before redirecting to destination
-      // navigate("/dashboard");
+      // router.push("/dashboard");
 
     } catch (error) {
       console.error(error);
@@ -114,7 +117,7 @@ function Login() {
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password)
       // any additional function here
-      // navigate("/dashboard")
+      // router.push("/dashboard")
     } catch (error) {
       console.error("Error Signing ",error)
       Swal.fire({
@@ -136,8 +139,8 @@ function Login() {
 
   useEffect(()=>{
     if(loadingUser) return;
-    if(firebaseUser) return navigate('/dashboard');
-  }, [loadingUser, firebaseUser, navigate])
+    if(firebaseUser) return router.push('/dashboard');
+  }, [loadingUser, firebaseUser, router])
 
   if (loadingUser) {
     return (
@@ -151,8 +154,8 @@ function Login() {
     <section className='flex justify-center items-center min-h-screen mx-auto xl:h-[40rem] bg-gray-50'>
       <div className='max-w-[28rem] m-8 border bg-white shadow-lg h-auto shadow-gray-300/40 mx-auto px-8 py-6 rounded-xl'>
         <img 
-          src={logo} 
-          onClick={() => navigate('/')} 
+          src={logo.src || logo} 
+          onClick={() => router.push('/')} 
           alt="RentSpot Logo" 
           className="h-9 lg:h-10 w-auto mb-3 cursor-pointer mx-auto" 
         />
@@ -220,7 +223,7 @@ function Login() {
           </div>
 
           {/* Forgot Password Link */}
-          <Link to="/otpmethod">
+          <Link href="/otpmethod">
             <p className='text-blue-600 font-Custom font-medium text-sm hover:text-blue-700 transition'>
               Forgot password?
             </p>
@@ -252,12 +255,12 @@ function Login() {
             disabled={loading}
             className='justify-center border bg-white text-gray-800 font-Custom font-medium text-sm w-full h-11 rounded-lg shadow-md shadow-gray-300/40 mt-3 flex items-center text-center gap-2 mx-auto hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed'
           >
-            <img src={google} alt="Google logo" className='w-8 h-8' />
+            <img src={google.src || google} alt="Google logo" className='w-8 h-8' />
             Continue with Google
           </button>
 
           {/* Signup link */}
-          <Link to="/signup">
+          <Link href="/signup">
             <p className='underline font-Custom font-medium text-sm text-blue-600 text-center mx-auto mt-5 hover:text-blue-700 transition'>
               Don't have an account? Sign up
             </p>

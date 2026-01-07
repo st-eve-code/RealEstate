@@ -1,9 +1,11 @@
+'use client'
+
 // Admin Sidebar Component
 // Renders a collapsible sidebar with main menu items and a special Settings sub-menu.
 // The Settings menu expands to show sub-items directly without category grouping.
 
 import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import logo from '../../../assets/logo.svg';
 import {
   LayoutDashboard,
@@ -50,7 +52,7 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
   return (
     <>
       <div className="fixed top-0 left-0 right-0 z-30 md:hidden bg-white shadow p-4 flex items-center justify-between">
-        <img src={logo} alt="Logo" className="h-8" />
+        <img src={logo.src || logo} alt="Logo" className="h-8" />
         <button
           onClick={() => setIsMobileMenuOpen(true)}
           aria-label="Open menu"
@@ -74,7 +76,7 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
           <X size={20} />
         </button>
         <div className="flex items-center justify-between gap-2 mx-auto mb-8">
-          <img src={logo} alt="Logo" className={`h-10 w-[120px] mr-2 ${isCollapsed ? 'hidden' : 'block'}`} />
+          <img src={logo.src || logo} alt="Logo" className={`h-10 w-[120px] mr-2 ${isCollapsed ? 'hidden' : 'block'}`} />
           <button
             type="button"
             className="hidden md:block rounded hover:bg-gray-200 transition-colors"

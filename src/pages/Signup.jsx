@@ -1,8 +1,11 @@
+'use client'
+
 import React, { useEffect, useState } from 'react';
 import '../App.css';
 import logo from '@/assets/logo.svg';
 import google from '@/assets/images/google.png';
-import { Link, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation'
+import Link from 'next/link';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
@@ -24,7 +27,7 @@ function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [shake, setShake] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
   const {loadingUser, firebaseUser} = useAuth();
 
 
@@ -64,7 +67,7 @@ function Signup() {
       
       await setDoc(doc(db, "users", userdata.uid), user);
       
-      navigate("/clientdata");
+      router.push("/clientdata");
     } catch (error) {
       console.error(error.code, error);
       // Optionally show a toast or error message
@@ -158,7 +161,7 @@ function Signup() {
       }
       await setDoc(doc(db, "users", userdata.uid), user);
       setIsLoading(false)
-      navigate('/clientdata');
+      router.push('/clientdata');
 
       /* setTimeout(() => {
         // Show success alert with confetti
@@ -178,7 +181,7 @@ function Signup() {
           // Clear form data
           setFormData({ username: '', email: '', password: '' });
           // Navigate to clientdata (demo)
-          navigate('/clientdata');
+          router.push('/clientdata');
         });
 
         setIsLoading(false);
@@ -195,8 +198,8 @@ function Signup() {
 
   useEffect(() => {
     if(loadingUser) return;
-    if(firebaseUser) return navigate('/dashboard');
-  }, [loadingUser, firebaseUser, navigate])
+    if(firebaseUser) return router.push('/dashboard');
+  }, [loadingUser, firebaseUser, router])
 
   if (loadingUser) {
     return (
@@ -212,8 +215,8 @@ function Signup() {
     <section className='flex justify-center items-center min-h-screen mx-auto xl:h-[40rem] bg-gray-50'>
       <div className='max-w-[28rem] m-8 border bg-white shadow-lg h-auto shadow-gray-300/40 mx-auto px-8 py-6 rounded-xl'>
         <img 
-          src={logo} 
-          onClick={() => navigate('/')} 
+          src={logo.src || logo} 
+          onClick={() => router.push('/')} 
           alt="RentSpot Logo" 
           className="h-9 lg:h-10 w-auto mb-3 cursor-pointer mx-auto" 
         />
@@ -350,12 +353,12 @@ function Signup() {
             disabled={isLoading}
             className='justify-center border bg-white text-gray-800 font-Custom font-medium text-sm w-full h-11 rounded-lg shadow-md shadow-gray-300/40 mt-3 flex items-center text-center gap-2 mx-auto hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed'
           >
-            <img src={google} alt="Google logo" className='w-8 h-8' />
+            <img src={google.src || google} alt="Google logo" className='w-8 h-8' />
             Continue with Google
           </button>
 
           {/* Link to login */}
-          <Link to="/login">
+          <Link href="/login">
             <p className='font-Custom font-medium text-sm underline text-blue-600 text-center mx-auto mt-5 hover:text-blue-700 transition'>
               Already have an account? Log in
             </p>

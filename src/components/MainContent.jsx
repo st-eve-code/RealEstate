@@ -1,3 +1,5 @@
+'use client'
+
 // MainContent components
 import React, { useState } from 'react';
 import '../App.css';
@@ -63,7 +65,7 @@ function MainContent({isSidebarCollapsed, children}) {
                 <div className='flex gap-2 shrink-0 items-center max-md:hidden justify-center'>
                     {/* user profile image or avatar */}
                     <div className='relative shrink-0'>
-                      <img src={userProfile} alt="" srcSet="" className='md:size-8 size-7 rounded-full'/>
+                      <img src={userProfile.src || userProfile} alt="" srcSet="" className='md:size-8 size-7 rounded-full'/>
                       {/* green light for if user is active */}
                       <div className='bg-green-400 border-2 border-white rounded-full size-2.5 absolute top-5 md:top-6 left-5 transition-colors'></div>
                     </div>

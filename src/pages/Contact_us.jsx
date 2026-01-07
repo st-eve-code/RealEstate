@@ -1,6 +1,8 @@
+'use client'
+
 import React, { useRef, useEffect, useState } from 'react';
 import '../App.css';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import L from 'leaflet';
 import Navbar from '../components/Navbar';
 import Footer from './Footer';
@@ -19,7 +21,7 @@ import {
 
 function ContactUs() {
   // initialize navigation
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -320,7 +322,7 @@ function ContactUs() {
               Personalized Services, Globally Recognized 
              </h2>
             <p className='font-medium font-Custom text-white text-sm flex justify-center md:max-w-[34rem] leading-5 mx-auto items-center text-center px-3'>whether renting, investing or advertising, our clients appreciate the tailored approach that transcends geographical boundaries.</p>
-            <button onClick={()=>navigate('/signup')} className='max-w-[10rem] mx-auto flex mt-5 h-8 bg-white font-Custom font-medium text-xs text-blue-700 rounded-full px-8 py-2'>
+            <button onClick={()=>router.push('/signup')} className='max-w-[10rem] mx-auto flex mt-5 h-8 bg-white font-Custom font-medium text-xs text-blue-700 rounded-full px-8 py-2'>
               Get Started
             </button>
           </div>

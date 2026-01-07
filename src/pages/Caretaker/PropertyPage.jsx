@@ -1,6 +1,8 @@
+'use client'
+
 import React, { useState, useEffect } from 'react';
 import { Heart, MapPin, Bed, Bath, UtensilsCrossed, Star, ArrowUpRight, Search, DollarSign, Home, Filter, X, TrendingUp, Sparkles, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { selectDocumentsByConstraint } from '@/lib/utils/firestoreDocumentOperation';
 
@@ -236,7 +238,7 @@ function PropertyPage() {
   });
 
   const [favorites, setFavorites] = useState({});
-  const navigate = useNavigate();
+  const router = useRouter();
 
   // Fetch units for current caretaker
   useEffect(() => {
@@ -315,7 +317,7 @@ function PropertyPage() {
   };
 
   const handleViewDetails = (propertyId) => {
-    navigate(`/dashboard/properties/${propertyId}`);
+    router.push(`/dashboard/properties/${propertyId}`);
   };
 
   const hasActiveFilters = Object.values(filters).some(value => value !== '');

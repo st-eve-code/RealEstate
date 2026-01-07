@@ -1,5 +1,8 @@
+'use client'
+
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { 
   ArrowLeft, 
   MapPin, 
@@ -22,7 +25,7 @@ import ReviewModal from './components/ReviewModal';
 
 export default function UnitDetails({ isSidebarCollapsed }) {
   const { unitId } = useParams();
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user } = useAuth();
   const [unit, setUnit] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -103,7 +106,7 @@ export default function UnitDetails({ isSidebarCollapsed }) {
     try {
       await deleteUnit(unit.id);
       alert('Unit deleted successfully');
-      navigate('/dashboard/properties');
+      router.push('/dashboard/properties');
     } catch (error) {
       console.error('Error deleting unit:', error);
       alert('Failed to delete unit');

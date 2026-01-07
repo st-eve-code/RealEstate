@@ -1,7 +1,8 @@
+'use client'
+
 import React, { useState } from 'react';
 import Sidebar from '@/components/Caretaker_Dashboard/components/Sidebar';
 import MainContent from '@/components/MainContent';
-import { Outlet } from 'react-router-dom';
 
 /**
  * CaretakerLayout Component
@@ -12,7 +13,7 @@ import { Outlet } from 'react-router-dom';
  * This ensures the sidebar is managed in one place and all routes
  * automatically get the sidebar and main content structure.
  */
-function CaretakerLayout() {
+function CaretakerLayout({ children }) {
   // State for mobile sidebar toggle
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -27,8 +28,8 @@ function CaretakerLayout() {
       {/* Main Content Area - Contains all route content */}
       <div className="flex-1 w-full md:w-auto pt-16 md:pt-0">
         <MainContent>
-          {/* Outlet renders the matched child route component */}
-          <Outlet />
+          {/* Render nested content from Next.js layout */}
+          {children}
         </MainContent>
       </div>
     </div>

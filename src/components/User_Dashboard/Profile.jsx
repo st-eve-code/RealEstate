@@ -1,3 +1,5 @@
+'use client'
+
 import { Edit3, Save, Trash2, Upload, Camera, Eye, EyeOff, Bell, Mail, Shield, Calendar, Building2, FileText, CheckCircle, X } from 'lucide-react';
 import React, { useState, useRef } from 'react';
 import Loader from '../ado/loader';

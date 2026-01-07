@@ -1,5 +1,8 @@
+'use client'
+
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Heart, MapPin, Bed, Bath, UtensilsCrossed, Star, ArrowLeft, CheckCircle, Phone, Mail, Edit, Trash2, Settings } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { selectDocumentsByConstraint } from '@/lib/utils/firestoreDocumentOperation';
@@ -34,8 +37,9 @@ function StarRating({ rating }) {
 }
 
 function PropertyDetails() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id;
+  const router = useRouter();
   const { user } = useAuth();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -82,7 +86,7 @@ function PropertyDetails() {
   };
 
   const handleEdit = () => {
-    navigate(`/dashboard/edit-property/${id}`);
+    router.push(`/dashboard/edit-property/${id}`);
   };
 
   const handleDelete = async () => {
@@ -94,7 +98,7 @@ function PropertyDetails() {
       await deleteDoc(docRef);
       
       alert('Property deleted successfully');
-      navigate('/dashboard/properties');
+      router.push('/dashboard/properties');
     } catch (error) {
       console.error('Error deleting property:', error);
       alert('An error occurred while deleting the property. Please try again.');

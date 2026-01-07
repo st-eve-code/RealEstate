@@ -1,5 +1,7 @@
+'use client'
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import {
   Building,
   UserCircle,
@@ -47,7 +49,7 @@ function Logout({ isOpen, onClose, onConfirm }) {
 function Sidebar({ isCollapsed, onToggle }) {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isOpen, setOpen] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
   const {signOut} = useAuth();
 
   const handleLogoutConfirm = () => {
@@ -61,12 +63,12 @@ function Sidebar({ isCollapsed, onToggle }) {
 
   // Handle selected option
   const HandleSelection = (option) => {
-    navigate(option === 'dashboard' ? '/dashboard' : `/dashboard/${option}`, { replace: true });
+    router.push(option === 'dashboard' ? '/dashboard' : `/dashboard/${option}`, { replace: true });
     setOpen(false); // Close mobile menu after selection
   };
 
   const handleLogoClick = () => {
-    navigate('/');
+    router.push('/');
   };
 
   // Toggle sidebar collapse for desktop
@@ -161,7 +163,7 @@ function Sidebar({ isCollapsed, onToggle }) {
               isCollapsed ? 'md:hidden' : 'md:block'
             } ${isOpen ? 'block' : 'block md:block'}`}>
             <img
-              src={logo}
+              src={logo.src || logo}
               alt="RentSpot Logo"
               className="h-10"
               onClick={handleLogoClick}

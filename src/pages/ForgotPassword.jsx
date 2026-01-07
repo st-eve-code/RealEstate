@@ -1,8 +1,11 @@
+'use client'
+
 import React, { useState } from 'react';
 import '../App.css';
 import logo from '../assets/logo.svg';
 import { Mail, MessageCircleIcon, ArrowLeft } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation'
+import Link from 'next/link';
 
 // Constants
 const VERIFICATION_METHODS = {
@@ -152,7 +155,7 @@ const ContactInfoForm = ({ method, onSubmit, onGoBack, isLoading, error }) => {
 
   return (
     <div className='max-w-[28rem] shadow-lg shadow-gray-300/80 mx-auto mt-10 py-10 px-4  lg:mt-[5rem] xl:mt-[20rem] bg-white rounded-xl'>
-      <img src={logo} alt="logo" className='w-[11rem] py-2 mx-auto' />
+      <img src={logo.src || logo} alt="logo" className='w-[11rem] py-2 mx-auto' />
       <p className='font-Nunito font-medium text-md pt-2 text-gray-600 text-center'>
         Enter the {isEmail ? 'email' : 'phone number'} associated with your account
       </p>
@@ -315,7 +318,7 @@ const OtpConfirmation = ({ method, contactInfo, onGoBack, onResend, onProceed, i
 
 // Back Link Component
 const BackLink = () => (
-  <Link to="/login">
+  <Link href="/login">
     <p className='font-Nunito font-medium text-md text-blue-600 hover:text-blue-700 transition-colors text-center mx-auto pt-8 flex items-center justify-center gap-3'>
       <ArrowLeft size={20} />Go back
     </p>
@@ -401,7 +404,7 @@ function OtpVerificationMethod() {
     }
   };
   // Navigation link
-  const navigate = useNavigate();
+  const router = useRouter();
   const handleOtpSubmit = async (otpCode) => {
     setIsVerifying(true);
     setError('');
@@ -421,7 +424,7 @@ function OtpVerificationMethod() {
         console.log('OTP verification successful');
         // Handle successful verification
         // Example: navigate to dashboard or show success message
-        navigate('/resetpassword');
+        router.push('/resetpassword');
       } else {
         console.log('OTP verification failed');
         setError('Invalid OTP code. Please try again.');

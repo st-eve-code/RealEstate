@@ -1,11 +1,18 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+'use client'
+
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import logo from '../assets/logo.svg';
 import { IonIcon } from '@ionic/react';
 import { logoInstagram, logoLinkedin, logoTwitter, logoFacebook, call, mail} from 'ionicons/icons';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import '../App.css';
 function Footer() {
+    const [mounted, setMounted] = useState(false);
+    
+    useEffect(() => {
+        setMounted(true);
+    }, []);
     const links =[
         {
             path: '/',
@@ -94,34 +101,41 @@ function Footer() {
         },
     ];
 
-    const navigate = useNavigate();
+    const router = useRouter();
   return (
     <section className='bg-white backdrop-blur-sm mt-[5rem]'>
         <div className='flex flex-wrap justify-between items-start m-8 p-[1rem]'>
             <div className='p-3 max-w-[20rem]'> {/* links to all social medias */}
-                <img src={logo} onClick={()=>navigate('/')} alt="" className='w-[8rem] cursor-pointer'/>
+                <img src={logo.src || logo} onClick={()=>router.push('/')} alt="" className='w-[8rem] cursor-pointer'/>
                 <h1 className='font-Custom font-bold text-2xl text-gray-800 text-left max-w-[20rem] pt-3'>Discover real estate ideas from your own ease !</h1>
                 <div className='flex items-center gap-4 pt-5'>
-                    <a href="#">
-                    <div className='bg-blue-600 size-7 rounded-full p-1'>
-                            <IonIcon icon={logoFacebook} className='size-5 text-white'/>
-                        </div>
-                    </a>
-                    <a href="#">
-                    <div className='bg-blue-600 size-7 rounded-full p-1'>
-                            <IonIcon icon={logoInstagram} className='size-5 text-white'/>
-                        </div>
-                    </a>
-                    <a href="#">
-                        <div className='bg-blue-600 size-7 rounded-full p-1'>
-                            <IonIcon icon={logoLinkedin} className='size-5 text-white'/>
-                        </div>
-                    </a>
-                    <a href="#">
-                        <div className='bg-blue-600 size-7 rounded-full p-1'>
-                            <IonIcon icon={logoTwitter} className='size-5 text-white'/>
-                        </div>
-                    </a>
+                    {mounted ? (
+                        <>
+                            <a href="#">
+                            <div className='bg-blue-600 size-7 rounded-full p-1'>
+                                    <IonIcon icon={logoFacebook} className='size-5 text-white'/>
+                                </div>
+                            </a>
+                            <a href="#">
+                            <div className='bg-blue-600 size-7 rounded-full p-1'>
+                                    <IonIcon icon={logoInstagram} className='size-5 text-white'/>
+                                </div>
+                            </a>
+                            <a href="#">
+                                <div className='bg-blue-600 size-7 rounded-full p-1'>
+                                    <IonIcon icon={logoLinkedin} className='size-5 text-white'/>
+                                </div>
+                            </a>
+                            <a href="#">
+                                <div className='bg-blue-600 size-7 rounded-full p-1'>
+                                    <IonIcon icon={logoTwitter} className='size-5 text-white'/>
+                                </div>
+                            </a>
+                        </>
+                    ) : (
+                        // Placeholder to prevent layout shift
+                        <div className='h-7'></div>
+                    )}
                 </div>
             </div>
             <div className='block p-5'>
@@ -133,7 +147,7 @@ function Footer() {
                         (name, index) => (
                             <div key={index} className='py-1'>
                                 <li>
-                                    <Link to={name.path}>{name.name}</Link>
+                                    <Link href={name.path}>{name.name}</Link>
                                 </li>
                             </div>
                         )
@@ -150,7 +164,7 @@ function Footer() {
                         (name, index) => (
                             <div key={index} className='py-1'>
                                 <li>
-                                    <Link to={name.path}>{name.name}</Link>
+                                    <Link href={name.path}>{name.name}</Link>
                                 </li>
                             </div>
                         )
@@ -167,7 +181,7 @@ function Footer() {
                         (name, index) => (
                             <div key={index} className='py-1'>
                                 <li>
-                                    <Link to={name.path}>{name.name}</Link>
+                                    <Link href={name.path}>{name.name}</Link>
                                 </li>
                             </div>
                         )
@@ -183,7 +197,7 @@ function Footer() {
                     {Contact.map(
                         (detail, index) => (
                            <div key={index} className='flex p-1 mx-auto items-center gap-2 space-y-2 font-Custom font-normal text-sm text-gray-600'>
-                             <IonIcon icon={detail.Icons} className='text-gray-500 size-4 pt-2'/>
+                             {mounted && <IonIcon icon={detail.Icons} className='text-gray-500 size-4 pt-2'/>}
                              <p className={`${detail.name.includes('@') ? 'text-blue-500' : 'text-gray-600'}`}>{detail.name}</p>
                            </div>
                         )

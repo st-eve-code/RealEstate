@@ -33,10 +33,10 @@ function Services() {
     <section className='flex flex-wrap lg:p-[1rem] p-5 gap-10 mt-[2rem] items-center justify-center'>
         {/* section having all the services we offer */}
         {services.map(
-            (e)=> {
+            (e, index)=> {
                 const Icons =e.icon;
                 return (
-                    <div className='bg-white shadow-md shadow-gray-300/40 md:max-w-[18rem] lg:max-w-[16rem] rounded-2xl h-[11rem] p-4'>
+                    <div key={index} className='bg-white shadow-md shadow-gray-300/40 md:max-w-[18rem] lg:max-w-[16rem] rounded-2xl h-[11rem] p-4'>
                         <div className='block-animate size-9 bg-blue-600 rounded-full p-2 mb-3 mx-auto m-2'>
                             <Icons size={20} className='text-white'/>
                         </div>
