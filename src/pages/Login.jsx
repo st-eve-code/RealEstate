@@ -13,8 +13,12 @@ import { auth } from '@/lib/firebase';
 import { createUser, userExists } from '@/lib/internal-firebase';
 import { useAuth } from '@/lib/auth-context';
 import Loader from '@/components/ado/loader';
+import { useTranslation } from '@/i18n';
 
 function Login() {
+  // Translation
+  const { t } = useTranslation();
+  
   // State
   const [formData, setFormData] = useState({
     email: '',
@@ -160,7 +164,7 @@ function Login() {
           className="h-9 lg:h-10 w-auto mb-3 cursor-pointer mx-auto" 
         />
         <p className='font-Custom font-medium text-xs text-gray-500 text-center mb-4'>
-          Welcome back to Rentspot. Fill in the form to login
+          {t('auth.welcomeMessage')}
         </p>
 
         {errors.general && (
@@ -171,7 +175,7 @@ function Login() {
           {/* Email */}
           <div className='mb-4'>
             <label htmlFor="email" className='font-Custom font-semibold text-gray-800 text-sm block mb-2'>
-              Email
+              {t('auth.email')}
             </label>
             <input
               type="email"
@@ -192,7 +196,7 @@ function Login() {
           {/* Password with Toggle */}
           <div className='mb-4 relative'>
             <label htmlFor="password" className='font-Custom font-semibold text-gray-800 text-sm block mb-2'>
-              Password
+              {t('auth.password')}
             </label>
             <input
               type={showPassword ? "text" : "password"}
@@ -225,7 +229,7 @@ function Login() {
           {/* Forgot Password Link */}
           <Link href="/otpmethod">
             <p className='text-blue-600 font-Custom font-medium text-sm hover:text-blue-700 transition'>
-              Forgot password?
+              {t('auth.forgotPassword')}
             </p>
           </Link>
 
@@ -241,10 +245,10 @@ function Login() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Logging in...
+                {t('auth.loggingIn')}
               </>
             ) : (
-              'Login'
+              t('auth.loginButton')
             )}
           </button>
 
@@ -256,13 +260,13 @@ function Login() {
             className='justify-center border bg-white text-gray-800 font-Custom font-medium text-sm w-full h-11 rounded-lg shadow-md shadow-gray-300/40 mt-3 flex items-center text-center gap-2 mx-auto hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed'
           >
             <img src={google.src || google} alt="Google logo" className='w-8 h-8' />
-            Continue with Google
+            {t('auth.continueWithGoogle')}
           </button>
 
           {/* Signup link */}
           <Link href="/signup">
             <p className='underline font-Custom font-medium text-sm text-blue-600 text-center mx-auto mt-5 hover:text-blue-700 transition'>
-              Don't have an account? Sign up
+              {t('auth.dontHaveAccount')} {t('auth.signupButton')}
             </p>
           </Link>
         </form>

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import '../../App.css';
 import Nav_bar from '../../components/Navbar';
 import Footer from '../Footer';
+import { useTranslation } from '@/i18n';
 import { Send, Search, Calendar, Tag, ArrowLeft, Clock } from 'lucide-react';
 
 // Blog Articles Data
@@ -536,21 +537,23 @@ const BlogCard = ({ article, onClick, size = 'normal' }) => {
 };
 
 function Blog() {
+  const { t } = useTranslation();
+  
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const [selectedCategory, setSelectedCategory] = useState(t('blog.allCategories'));
   const [currentPage, setCurrentPage] = useState(1);
   const articlesPerPage = 6;
 
   // Get unique categories
-  const categories = ['All Categories', ...new Set(blogArticles.map(article => article.category))];
+  const categories = [t('blog.allCategories'), ...new Set(blogArticles.map(article => article.category))];
 
   // Filter articles
   const filteredArticles = blogArticles.filter(article => {
     const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          article.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          article.author.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All Categories' || article.category === selectedCategory;
+    const matchesCategory = selectedCategory === t('blog.allCategories') || article.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -593,7 +596,7 @@ function Blog() {
           onClick={() => setCurrentPage(currentPage + 1)}
           className='px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white font-Poppins font-semibold rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2'
         >
-          Load More Articles
+          {t('blog.loadMore')}
           <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
             <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
           </svg>
@@ -720,11 +723,10 @@ function Blog() {
         
         <div className='max-w-4xl mx-auto px-4'>
           <h1 className='font-Poppins font-bold text-gray-800 text-3xl md:text-4xl text-center mt-6'>
-            Discover Our Latest Insights and Updates on Rentals
+            {t('blog.title')}
           </h1>
           <p className='font-Poppins font-normal text-sm text-gray-600 text-center mt-4'>
-            Stay updated with the latest news, tips, and insights on renting properties. 
-            Explore our articles to learn more about how we are transforming the rental experience.
+            {t('blog.subtitle')}
           </p>
         </div>
 
@@ -744,10 +746,10 @@ function Blog() {
             <div className='lg:col-span-8'>
               <div className='bg-white rounded-lg shadow-md p-4 md:p-6 border border-gray-100'>
                 <h2 className='font-Poppins font-bold text-2xl md:text-3xl text-gray-800 mb-2'>
-                  Latest Articles
+                  {t('blog.latestArticles')}
                 </h2>
                 <p className='font-Poppins font-normal text-sm text-gray-600 mb-6'>
-                  Explore our collection of articles about renting, property management, and more.
+                  {t('blog.exploreCollection')}
                 </p>
 
                 {/* Filters and Search */}
@@ -781,7 +783,7 @@ function Blog() {
                         setCurrentPage(1); // Reset to first page on search
                       }}
                       className='border border-gray-300 rounded-lg py-3 pl-10 pr-4 w-full font-Poppins outline-blue-500 bg-white font-medium text-sm text-gray-800' 
-                      placeholder='Search articles by title, content, or author...'
+                      placeholder={t('blog.searchPlaceholder')}
                     />
                   </div>
                   <button 

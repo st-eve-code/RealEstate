@@ -2,9 +2,12 @@
 
 import React, { useState } from 'react';
 import { ChevronRight, ChevronDown } from 'lucide-react';
+import { useTranslation } from '@/i18n';
 import '../App.css';
 
 function Questions() {
+    const { t } = useTranslation();
+    
     // State to track which dropdowns are open (by their ID)
     // This allows each dropdown to be controlled independently
     const [openDropdowns, setOpenDropdowns] = useState({});
@@ -13,21 +16,21 @@ function Questions() {
     const steps = [
         {
             id: 1,
-            title: 'Clear pricing and fee structure',
-            sub: 'Customize your subscription',
-            body: 'Create an account and profit from our numerous services that we offer at affordable prices. Our transparent pricing ensures you know exactly what you\'re paying for.',
+            title: t('faq.pricing.title'),
+            sub: t('faq.pricing.subtitle'),
+            body: t('faq.pricing.description'),
         },
         {
             id: 2,
-            title: 'Document, Transparency and Verification',
-            sub: 'Savings and added value with our subscription plan',
-            body: 'Select a subscription plan and save more efficiently rather than spending more. All transactions are documented and verified for your security.',
+            title: t('faq.verification.title'),
+            sub: t('faq.verification.subtitle'),
+            body: t('faq.verification.description'),
         },
         {
             id: 3,
-            title: 'Real Time Transaction Updates',
-            sub: 'Subscribers are our priority, gain early access',
-            body: 'Subscribe right now and gain a place in real estate movements and enjoy the benefits as well. Get instant notifications for all your transactions.',
+            title: t('faq.updates.title'),
+            sub: t('faq.updates.subtitle'),
+            body: t('faq.updates.description'),
         },
     ];
 

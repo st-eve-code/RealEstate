@@ -7,9 +7,11 @@ import { IonIcon } from '@ionic/react';
 import { logoInstagram, logoLinkedin, logoTwitter, logoFacebook, call, mail} from 'ionicons/icons';
 import { useRouter } from 'next/navigation';
 import { FOOTER_COMPANY_LINKS, FOOTER_LEGAL_LINKS, FOOTER_LOCATIONS, FOOTER_CONTACT } from '@/constants';
+import { useTranslation } from '@/i18n';
 import '../App.css';
 function Footer() {
     const [mounted, setMounted] = useState(false);
+    const { t } = useTranslation();
     
     useEffect(() => {
         setMounted(true);
@@ -22,7 +24,7 @@ function Footer() {
         <div className='flex flex-wrap justify-between items-start m-8 p-[1rem]'>
             <div className='p-3 max-w-[20rem]'> {/* links to all social medias */}
                 <img src={logo.src || logo} onClick={()=>router.push('/')} alt="" className='w-[8rem] cursor-pointer'/>
-                <h1 className='font-Custom font-bold text-2xl text-gray-800 text-left max-w-[20rem] pt-3'>Discover real estate ideas from your own ease !</h1>
+                <h1 className='font-Custom font-bold text-2xl text-gray-800 text-left max-w-[20rem] pt-3'>{t('footer.tagline')}</h1>
                 <div className='flex items-center gap-4 pt-5'>
                     {mounted ? (
                         <>
@@ -55,7 +57,7 @@ function Footer() {
             </div>
             <div className='block p-5'>
                 <h1 className='font-bold text-md font-Custom text-gray-800'> 
-                    Quick Links
+                    {t('footer.quickLinks')}
                 </h1>
                 <ul className='font-Custom font-normal text-sm text-gray-600'>
                     {FOOTER_COMPANY_LINKS.map(
@@ -72,7 +74,7 @@ function Footer() {
             {/* links to different location */}
             <div className='block p-5'>
                 <h1 className='font-bold text-md font-Custom text-gray-800'> 
-                    Locations
+                    {t('footer.locations')}
                 </h1>
                 <ul className='font-Custom font-normal text-sm text-gray-600'>
                     {FOOTER_LOCATIONS.map(
@@ -89,7 +91,7 @@ function Footer() {
             {/* information concerning legals */}
             <div className='block p-5'>
                 <h1 className='font-bold text-md font-Custom text-gray-800'> 
-                    Legals
+                    {t('footer.legals')}
                 </h1>
                 <ul className='font-Custom font-normal text-sm text-gray-600'>
                     {FOOTER_LEGAL_LINKS.map(
@@ -106,7 +108,7 @@ function Footer() {
             {/* information concerning contacts */}
             <div className='block p-5'>
                 <h1 className='font-bold text-md font-Custom text-gray-800 pb-2'> 
-                    Contacts
+                    {t('footer.contacts')}
                 </h1>
                 <div >
                     {FOOTER_CONTACT.map(
@@ -123,7 +125,7 @@ function Footer() {
         </div>
         <div className='flex justify-center pb-5'>
             <p className='font-Custom font-normal text-xs text-gray-500'>
-                copyright @ 2025 Rentspot ltd
+                {t('footer.copyright')}
             </p>
         </div>
     </section>

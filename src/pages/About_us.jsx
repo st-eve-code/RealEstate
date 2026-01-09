@@ -4,6 +4,7 @@ import React, { use } from 'react';
 import Navbar from '../components/Navbar';
 import { useRouter } from 'next/navigation';
 import Footer from './Footer';
+import { useTranslation } from '@/i18n';
 import { 
   Building2, Home, Target, Users, Star, Award, 
   MapPin, Phone, Mail, ArrowRight,
@@ -14,6 +15,7 @@ import {
 } from 'lucide-react';
 
 const AboutPage = () => {
+  const { t } = useTranslation();
   // Updated Team Members Array - For RentSpot
   const teamMembers = [
     {
@@ -111,26 +113,26 @@ const AboutPage = () => {
     { 
       icon: <Building2 className="w-6 h-6" />, 
       number: '5,000+', 
-      label: 'Properties Listed',
-      description: 'Verified rental properties'
+      label: t('aboutPage.stats.propertiesListed'),
+      description: t('aboutPage.stats.verifiedProperties')
     },
     { 
       icon: <Users className="w-6 h-6" />, 
       number: '2,500+', 
-      label: 'Happy Tenants',
-      description: 'Found their homes'
+      label: t('aboutPage.stats.happyTenants'),
+      description: t('aboutPage.stats.foundHomes')
     },
     { 
       icon: <DollarSign className="w-6 h-6" />, 
       number: '0%', 
-      label: 'Agent Fees',
-      description: 'Direct connections only'
+      label: t('aboutPage.stats.agentFees'),
+      description: t('aboutPage.stats.directConnections')
     },
     { 
       icon: <ShieldCheck className="w-6 h-6" />, 
       number: '100%', 
-      label: 'Verified',
-      description: 'All properties checked'
+      label: t('aboutPage.stats.verified'),
+      description: t('aboutPage.stats.allChecked')
     }
   ];
 
@@ -138,21 +140,21 @@ const AboutPage = () => {
   const values = [
     {
       icon: <Target className="w-6 h-6" />,
-      title: 'Direct Connections',
-      description: 'Connect property owners and tenants directly without any middlemen or unnecessary fees.',
-      features: ['No Agent Fees', 'Direct Communication', 'Transparent Pricing']
+      title: t('aboutPage.values.directConnections.title'),
+      description: t('aboutPage.values.directConnections.description'),
+      features: [t('aboutPage.values.directConnections.feature1'), t('aboutPage.values.directConnections.feature2'), t('aboutPage.values.directConnections.feature3')]
     },
     {
       icon: <Star className="w-6 h-6" />,
-      title: 'Verified Properties',
-      description: 'Every property is verified to ensure authenticity and quality for our users.',
-      features: ['Property Verification', 'Owner Authentication', 'Quality Standards']
+      title: t('aboutPage.values.verified.title'),
+      description: t('aboutPage.values.verified.description'),
+      features: [t('aboutPage.values.verified.feature1'), t('aboutPage.values.verified.feature2'), t('aboutPage.values.verified.feature3')]
     },
     {
       icon: <Clock className="w-6 h-6" />,
-      title: 'Fast & Easy',
-      description: 'Find your perfect home or tenant quickly with our streamlined platform.',
-      features: ['Quick Search', 'Easy Booking', 'Instant Messaging']
+      title: t('aboutPage.values.fastEasy.title'),
+      description: t('aboutPage.values.fastEasy.description'),
+      features: [t('aboutPage.values.fastEasy.feature1'), t('aboutPage.values.fastEasy.feature2'), t('aboutPage.values.fastEasy.feature3')]
     }
   ];
 
@@ -160,20 +162,20 @@ const AboutPage = () => {
   const processSteps = [
     {
       step: '01',
-      title: 'Create Account',
-      description: 'Sign up for free as a property owner or tenant. Quick and simple process.',
+      title: t('aboutPage.process.step1.title'),
+      description: t('aboutPage.process.step1.description'),
       icon: <UserCheck className="w-6 h-6" />
     },
     {
       step: '02',
-      title: 'Browse & Connect',
-      description: 'Search verified properties or list yours. Connect directly with owners/tenants.',
+      title: t('aboutPage.process.step2.title'),
+      description: t('aboutPage.process.step2.description'),
       icon: <Search className="w-6 h-6" />
     },
     {
       step: '03',
-      title: 'Seal the Deal',
-      description: 'Meet in person, inspect property, and complete rental agreement offline.',
+      title: t('aboutPage.process.step3.title'),
+      description: t('aboutPage.process.step3.description'),
       icon: <CheckCircle className="w-6 h-6" />
     }
   ];
@@ -208,22 +210,21 @@ const AboutPage = () => {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3 mb-8">
             <Sparkles className="w-5 h-5 text-blue-300" />
-            <span className="text-sm font-semibold text-white">Connecting Property Owners & Tenants Since 2020</span>
+            <span className="text-sm font-semibold text-white">{t('aboutPage.hero.badge')}</span>
           </div>
 
           {/* Main Heading */}
           <div className="mb-12">
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              Welcome to
+              {t('aboutPage.hero.welcomeTo')}
               <span className="block bg-gradient-to-r from-blue-300 to-cyan-400 bg-clip-text text-transparent">
                 RentSpot
               </span>
             </h1>
             
             <p className="text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed mb-8 font-light">
-              <span className="font-semibold text-blue-200">No Agents. No Commissions. Direct Connections.</span>{' '}
-              We connect property owners directly with tenants, eliminating unnecessary fees and creating transparent, 
-              affordable rental solutions across Cameroon.
+              <span className="font-semibold text-blue-200">{t('aboutPage.hero.tagline')}</span>{' '}
+              {t('aboutPage.hero.description')}
             </p>
           </div>
 
@@ -232,14 +233,14 @@ const AboutPage = () => {
             <button onClick={()=>router.push('/signup')}
               className="group bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 flex items-center gap-3 shadow-lg transform hover:scale-105"
             >
-              <span>Start Browsing</span>
+              <span>{t('aboutPage.hero.startBrowsing')}</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             
             <button onClick={()=>router.push('/contact')}
               className="border-2 border-blue-400 text-blue-300 px-8 py-4 rounded-xl font-semibold hover:bg-blue-400 hover:text-slate-900 transition-all duration-300 backdrop-blur-sm"
             >
-              Support Us
+              {t('home.supportUs')}
             </button>
           </div>
 

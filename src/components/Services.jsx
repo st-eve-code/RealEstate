@@ -1,32 +1,38 @@
+'use client'
+
 import React from 'react';
 import '../App.css';
 import {Users, ThumbsUpIcon,TargetIcon,Waypoints,CloudyIcon} from 'lucide-react'
+import { useTranslation } from '@/i18n';
+
 function Services() {
+    const { t } = useTranslation();
+    
     const services = [
         {
             icon : Users,
-            title: 'Client Focused',
-            text: 'we prioritize our clients and attend to all their needs , making sure they are satisfied with our services.'
+            title: t('services.clientFocused.title'),
+            text: t('services.clientFocused.description')
         },
         {
             icon: ThumbsUpIcon,
-            title: 'Trusted Partners',
-            text: 'Partnering with us is a benefits for both side which can lead to better trust and more partnerships.'
+            title: t('services.trustedPartners.title'),
+            text: t('services.trustedPartners.description')
         },
         {
             icon: TargetIcon,
-            title: 'Tailored Solutions',
-            text: 'Problem solving has never been so easy with us, we provide the best solutions for your renting process.'
+            title: t('services.tailoredSolutions.title'),
+            text: t('services.tailoredSolutions.description')
         },
         {
             icon: Waypoints,
-            title: 'Customer Support',
-            text: 'We provide a free customer support services to attend to all our customer`s problems and more.'
+            title: t('services.customerSupport.title'),
+            text: t('services.customerSupport.description')
         },
         {
             icon: CloudyIcon,
-            title: 'Transparent Market',
-            text: 'All our decisions in the market are genuine and all for the interest of the customer`s unique needs.'
+            title: t('services.transparentMarket.title'),
+            text: t('services.transparentMarket.description')
         },
     ];
   return (
