@@ -16,7 +16,10 @@ export type SubscriptionPlanLabel = "daily" | "monthly" | "yearly"
  */
 export interface PaymentMOMO {
     id: string,
-    uid: string,
+    user: {
+        id: string,
+        name: string
+    },
     operator: "MTN"|"Orange",
     phoneNumber: string,
     createdAt: Timestamp,
@@ -29,7 +32,10 @@ export interface PaymentMOMO {
  */
 export interface PaymentCard {
     id: string,
-    uid: string,
+    user: {
+        id: string,
+        name: string
+    },
     cardOwner: string,
     cardNumber: string,
     expDate: string,
@@ -68,6 +74,12 @@ export interface Subscription {
         viewLimits?: number,
         postConstraints?: number,
         duration: number // milliseconds
+    },
+    createdAt: Timestamp,
+    updatedAt?: Timestamp,
+    createdBy: {
+        id: string,
+        name: string
     }
 }
 
@@ -77,7 +89,10 @@ export interface Subscription {
  */
 export interface Transaction {
     id: string,
-    uid: string,
+    user: {
+        id: string,
+        name: string
+    }
     subscription: Subscription,
     payment: PaymentMOMO | PaymentCard,
     paid: number,
@@ -96,8 +111,11 @@ export interface Transaction {
  */
 export interface AnalyticTransaction {
     id: string,
-    uid: string,
-    transactionId: string,
+    user: {
+        id: string,
+        name: string
+    },
+    transactionId: string, // linking back to the /user/uid/Transaction document 
     paid: number,
     createdAt: Timestamp,
     expiresAt: Timestamp
@@ -187,6 +205,12 @@ export interface Plan {
     price: number;
     duration: number;
     features: string[];
+    createdAt: Timestamp,
+    updatedAt?: Timestamp,
+    createdBy: {
+        id: string,
+        name: string
+    }
 }
 
 export interface GeoLocate{
@@ -219,7 +243,7 @@ export interface Unit {
     }
     totalnumber: number,
 
-    visible: boolean,
+    // visible: boolean, // this is deprecated, works the same way as status property where being archived is false and approved is true
     available: boolean,
     remark?: { // incase an info like limited room left needs to be displayed or something like a notice on the unit's page
         type: "basic" | 'info' | 'warning' | 'danger',
@@ -257,7 +281,16 @@ export interface Unit {
     views: number, // number of times the unit has been viewed
 
     
-    status: "pending" | "approved" | "rejected" | "archived", // status of unit during listing process (approval or rejection), rejected means the unit is not suitable for listing, the unit is still available for editing. archived means the unit is no longer available for listing, deleted means the unit is deleted from the system.
+    // status of unit during listing process (approval or rejection), rejected means the unit is not suitable for listing, the unit is still available for editing. archived means the unit is no longer available for listing, deleted means the unit is deleted from the system (not the db, just not available for editing anymore).
+    status: "pending" | "approved" | "rejected" | "archived" | "deleted", // cant archive unless approved
+    statusProperty?: { // can be very helpful during rejection for caretaker to edit details or get more context when needed
+        createdAt: Timestamp,
+        createdBy: {
+            uid: string,
+            name: string
+        },
+        reason?: string
+    }
     isVerified: boolean,
     createdAt: Timestamp,
     updatedAt?: Timestamp,
@@ -267,13 +300,19 @@ export interface Unit {
 
 /**
  * Listing Status, containing listing details like status, reason, reviewed by and reviewed at
- * in firebase, it is stored in the units/id/ListingStatus subcollection
+ * in firebase, it is stored in the units/id/Listing subcollection
  * This is used to track the status of a listing and the reason for the status and also how many times the listing unit has been reviewed
  */
-export interface ListingStatus {
+export interface Listing {
     id: string,
-    unitId: string,
-    landlordId: string,
+    unit: {
+        id: string,
+        name: string
+    },
+    landlord: {
+        id: string,
+        name: string
+    },
     status: 'pending' | 'approved' | 'rejected' | 'archived',
     createdAt: Timestamp,
     updatedAt?: Timestamp,
@@ -291,8 +330,19 @@ export interface ListingStatus {
  */
 export interface UnitReport {
     id: string,
-    unitId: string,
-    uid: string,
+    unit: {
+        id: string,
+        name: string,
+    },
+    user: {
+        id: string,
+        name: string
+    },
+    landlord: {
+        id: string,
+        name: string
+    }
+    about?: string,
     report: string,
     createdAt: Timestamp,
     updatedAt?: Timestamp,
@@ -303,12 +353,23 @@ export interface UnitReport {
  * we cant use the one store as unit subcollection cause finding all pending listings will be time consuming as we'll have to iterate through all units
  * in firebase, it is stored in the listings collection, 
  * yeah, so basically an anchor for the listing status, which triggers for attention when the listing is pending and only be done
+ * 
+ * @deprecated to be honest, this is useless, having a house status as pending , is already need to be reviewed, no need for some long ass collection again
  */
-export interface Listing {
+export interface ListingCollection {
     id: string,
-    unitId: string,
-    landlordId: string,
-    status: 'pending' | 'approved' | 'rejected' | 'archived',
+    listingId: string,
+    unit: {
+        id: string,
+        name: string,
+    },
+    landlord: {
+        id: string,
+        name: string
+    },
+
+
+    status: 'pending' | 'approved' | 'rejected' | 'archived' | 'deleted', // not even necessary, cause when reviewed no attention needed hence delete document
     count: number,
     createdAt: Timestamp,
     updatedAt?: Timestamp,
@@ -333,38 +394,16 @@ export interface UnitView {
  */
 export interface UnitReview{
     id: string, // this id
-    uid: string, // user that sent review
+    user: { // user that sent review
+        id: string,
+        name: string 
+    },
     unit: string,
     rating: number, // stars
-    author: string,
     title: string,
     comment: string // comment
     createdAt: Timestamp,
     updatedAt: Timestamp,
-}
-
-/**
- * To be touched later
- * @todo unsure of what this is for
- */
-export interface Property {
-    id: number;
-    buildingId: number; // FK to building.id
-    unitId: number; // FK to unit.id
-    tenantId?: number; // FK to tenant.userId
-    rentAmount: number;
-}
-
-/**
- * To be touched later
- * @todo unsure of what this is for
- */
-export interface UserRent {
-    buildingId: string,
-    roomId: string,
-    type: RentingType,
-    createdAt: Timestamp,
-    updatedAt?: Timestamp
 }
 
 
