@@ -128,7 +128,7 @@ function PropertyDetails() {
             The property you're looking for doesn't exist or you don't have access to it.
           </p>
           <Link
-            to="/dashboard/properties"
+            href="/dashboard/properties"
             className="inline-flex items-center gap-2 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -178,7 +178,7 @@ function PropertyDetails() {
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
         <Link
-          to="/dashboard/properties"
+          href="/dashboard/properties"
           className="flex items-center gap-2 text-gray-700 hover:text-blue-600 font-medium mb-6 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />

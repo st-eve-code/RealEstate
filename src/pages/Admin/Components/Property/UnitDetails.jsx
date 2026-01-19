@@ -168,7 +168,7 @@ export default function UnitDetails({ isSidebarCollapsed }) {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Unit Not Found</h2>
           <p className="text-gray-600 mb-6">The unit you're looking for doesn't exist.</p>
           <Link
-            to="/dashboard/properties"
+            href="/dashboard/properties"
             className="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <ArrowLeft size={20} />
@@ -194,7 +194,7 @@ export default function UnitDetails({ isSidebarCollapsed }) {
         {/* Header */}
         <div className="mb-6">
           <Link
-            to="/dashboard/properties"
+            href="/dashboard/properties"
             className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
           >
             <ArrowLeft size={20} />
@@ -220,7 +220,7 @@ export default function UnitDetails({ isSidebarCollapsed }) {
               <div className="flex items-center gap-2">
                 {/* View Reports */}
                 <Link
-                  to={`/dashboard/properties/reports/${unit.id}`}
+                  href={`/dashboard/properties/reports/${unit.id}`}
                   className="flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors"
                   title="View Reports"
                 >
@@ -235,7 +235,7 @@ export default function UnitDetails({ isSidebarCollapsed }) {
 
                 {/* View Reviews */}
                 <Link
-                  to={`/dashboard/properties/reviews/${unit.id}`}
+                  href={`/dashboard/properties/reviews/${unit.id}`}
                   className="flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
                   title="View Reviews"
                 >

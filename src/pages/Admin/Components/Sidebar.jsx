@@ -41,7 +41,7 @@ const menuItems = [
 ];
 
 
-function Sidebar({ isCollapsed, setIsCollapsed }) {
+function Sidebar({ isCollapsed, setIsCollapsed, activeView }) {
   // State for mobile menu overlay
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navRef = useRef(null);
@@ -95,7 +95,7 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
             {menuItems.map((item) => (
               <li key={item.id}>
                 <Link
-                  to={item.path || ''}
+                  href={item.path || ''}
                   className="flex items-center text-gray-700 hover:text-blue-500 transition-colors py-2 px-3 rounded-lg hover:bg-gray-100"
                   onClick={() => {setIsMobileMenuOpen(false); item.cb?.dispatch('action')}}
                 >

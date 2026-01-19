@@ -82,7 +82,7 @@ export default function UnitReviews({ isSidebarCollapsed }) {
         {/* Header */}
         <div className="mb-6">
           <Link
-            to="/dashboard/properties"
+            href="/dashboard/properties"
             className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
           >
             <ArrowLeft size={20} />

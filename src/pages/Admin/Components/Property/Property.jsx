@@ -193,7 +193,7 @@ export default function Property({ isSidebarCollapsed }) {
             <div className="flex items-center gap-4">
               {highReportUnits.length > 0 && (
                 <Link
-                  to="/dashboard/properties?filter=high-reports"
+                  href="/dashboard/properties?filter=high-reports"
                   className="flex items-center gap-2 px-4 py-2 text-red-700 transition-colors bg-red-100 rounded-lg hover:bg-red-200"
                 >
                   <AlertTriangle size={18} />

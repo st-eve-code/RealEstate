@@ -59,7 +59,7 @@ For each file that imports from `'react-router-dom'`:
 5. Update Link components:
    ```jsx
    // Before
-   <Link to="/about">About</Link>
+   <Link href="/about">About</Link>
    
    // After
    <Link href="/about">About</Link>
