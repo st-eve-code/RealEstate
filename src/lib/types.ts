@@ -73,9 +73,9 @@ export interface Subscription {
     constraints: {
         viewLimits?: number,
         postConstraints?: number,
-        duration: number // milliseconds
     },
     createdAt: Timestamp,
+    expiresAt: Timestamp, 
     updatedAt?: Timestamp,
     createdBy: {
         id: string,
@@ -165,6 +165,7 @@ export interface User {
     imageUrl?: string,
     liked?: string[],
     saved?: string[],
+    points: number,
 
     fA2: boolean,
     inAppNotification: string[],
@@ -191,7 +192,14 @@ export interface User {
         deviceOSBuildVersion?: string,
         deviceOSBuildVersionCode?: string,
         deviceOSBuildVersionName?: string,
-    }
+    },
+
+    /* subContraints?: {
+        viewed: number,
+        limit: number,
+        updatedAt: Timestamp
+        resetAt: Timestamp
+    } */
 
 }
 
@@ -204,8 +212,9 @@ export interface Plan {
     id: number;
     name: string;
     price: number;
-    duration: number;
+    duration: number; // in milliseconds
     features: string[];
+    points: number,
     createdAt: Timestamp,
     updatedAt?: Timestamp,
     createdBy: {
