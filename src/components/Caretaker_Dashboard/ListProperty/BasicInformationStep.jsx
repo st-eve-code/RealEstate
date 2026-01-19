@@ -74,31 +74,81 @@ function BasicInformationStep({
         </div>
 
         {/* Availability & Visibility */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="available"
-                checked={basic.available !== false}
-                onChange={(e) => updateFormData('basic', 'available', e.target.checked)}
-                className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
-              />
-              <label htmlFor="available" className="text-sm font-medium text-gray-700">
-                {FORM_LABELS.available}
-              </label>
+        <div className="space-y-4">
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Publishing Options
+          </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Available Toggle */}
+            <div className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+              basic.available !== false 
+                ? 'border-green-300 bg-green-50' 
+                : 'border-gray-200 bg-gray-50'
+            }`}>
+              <div className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  id="available"
+                  checked={basic.available !== false}
+                  onChange={(e) => updateFormData('basic', 'available', e.target.checked)}
+                  className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500 mt-0.5"
+                />
+                <div className="flex-1">
+                  <label htmlFor="available" className="text-sm font-semibold text-gray-900 cursor-pointer">
+                    {FORM_LABELS.available}
+                  </label>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Property is ready for tenants
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="visible"
-                checked={basic.visible !== false}
-                onChange={(e) => updateFormData('basic', 'visible', e.target.checked)}
-                className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
-              />
-              <label htmlFor="visible" className="text-sm font-medium text-gray-700">
-                {FORM_LABELS.visible}
-              </label>
+
+            {/* Visible Toggle */}
+            <div className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+              basic.visible !== false 
+                ? 'border-blue-300 bg-blue-50' 
+                : 'border-gray-200 bg-gray-50'
+            }`}>
+              <div className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  id="visible"
+                  checked={basic.visible !== false}
+                  onChange={(e) => updateFormData('basic', 'visible', e.target.checked)}
+                  className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-0.5"
+                />
+                <div className="flex-1">
+                  <label htmlFor="visible" className="text-sm font-semibold text-gray-900 cursor-pointer">
+                    {FORM_LABELS.visible}
+                  </label>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {basic.visible !== false 
+                      ? 'Status: Pending admin approval' 
+                      : 'Status: Archived (hidden)'}
+                  </p>
+                </div>
+              </div>
             </div>
+          </div>
+          
+          {/* Info Box */}
+          <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+            <div className="flex gap-3">
+              <div className="flex-shrink-0">
+                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="text-xs text-blue-800">
+                <p className="font-semibold mb-1">About Visibility:</p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li><strong>Visible ON:</strong> Property will be submitted for admin review (status: pending)</li>
+                  <li><strong>Visible OFF:</strong> Property will be saved as archived (not visible to public)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Total Number */}

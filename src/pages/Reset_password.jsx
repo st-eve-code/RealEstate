@@ -1,16 +1,18 @@
+'use client'
+
 import React, { useState, useEffect } from 'react';
 import logo from '../assets/logo.svg';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 // Mock logo component since we don't have the actual SVG
 const Logo = () => (
   <div className="w-36 h-16 mx-auto flex items-center justify-center mb-2">
-    <img src={logo} alt="" />
+    <img src={logo.src || logo} alt="" />
   </div>
 );
 
 function ResetPassword() {
 
-   const navigate = useNavigate(); 
+   const router = useRouter(); 
   const [formData, setFormData] = useState({
     password: '',
     confirmPassword: ''
@@ -43,7 +45,7 @@ function ResetPassword() {
     // localStorage.removeItem('authToken');
     // localStorage.removeItem('refreshToken');
     // In a real app, this would navigate to /login?passwordReset=success
-    navigate('/login');
+    router.push('/login');
     console.log('Redirecting to login page...');
   };
 
@@ -317,7 +319,7 @@ function ResetPassword() {
               onClick={() => {
                 // In a real app, you would navigate back to login
                 console.log('Navigating back to login page');
-                navigate('/login');
+                router.push('/login');
               }}
               className="text-sm text-blue-600 font-Custom hover:text-blue-800 underline font-medium bg-transparent border-none cursor-pointer"
             >

@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState, useRef } from 'react';
 import { subscribeToConversations, subscribeToMessages, sendMessage, markMessagesAsRead } from '@/lib/messaging';
 import { useAuth } from '@/lib/auth-context';

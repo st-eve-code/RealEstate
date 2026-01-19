@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null)
   const [loading, setLoading] = useState(true)
-  const [authError, setError] = useState<AuthError|null|undefined>();
+  const [authError] = useState<AuthError|null|undefined>();
   const currentDeviceTokenRef = useRef<string | null>(null);
   const deviceTokenUnsubscribeRef = useRef<(() => void) | null>(null);
 

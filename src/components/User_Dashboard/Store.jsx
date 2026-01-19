@@ -1,7 +1,9 @@
+'use client'
+
 import React, { useState } from 'react';
 import { ArrowBigDown, ChevronDown, Eye, MapPin, Calendar, Tag } from 'lucide-react';
 
-function Store({ sidebar }) {
+function Store({ sidebar = null }) {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [isOpen, setIsOpen] = useState(false);
   
@@ -46,7 +48,7 @@ function Store({ sidebar }) {
 
   const handlePropertyClick = (id) => {
     console.log(`Navigating to property ${id}`);
-    // navigate(`/dashboard/property/details/${id}`);
+    // router.push(`/dashboard/property/details/${id}`);
   };
 
   const filteredData = selectedCategory === 'All Categories' 

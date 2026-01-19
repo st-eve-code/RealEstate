@@ -1,6 +1,9 @@
+'use client'
+
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Heart, MapPin, Bed, Bath, UtensilsCrossed, Star, ArrowLeft, CheckCircle, Phone, Mail, Edit, Trash2, Settings } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Heart, MapPin, Bed, Bath, UtensilsCrossed, Star, ArrowLeft, CheckCircle, Phone, Mail, Edit, Trash2, Settings, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { selectDocumentsByConstraint } from '@/lib/utils/firestoreDocumentOperation';
 import { doc, deleteDoc } from 'firebase/firestore';
@@ -34,8 +37,9 @@ function StarRating({ rating }) {
 }
 
 function PropertyDetails() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id;
+  const router = useRouter();
   const { user } = useAuth();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -82,7 +86,11 @@ function PropertyDetails() {
   };
 
   const handleEdit = () => {
-    navigate(`/dashboard/edit-property/${id}`);
+    router.push(`/dashboard/edit-property/${id}`);
+  };
+
+  const handleAnalytics = () => {
+    router.push(`/dashboard/properties/${id}/analytics`);
   };
 
   const handleDelete = async () => {
@@ -94,7 +102,7 @@ function PropertyDetails() {
       await deleteDoc(docRef);
       
       alert('Property deleted successfully');
-      navigate('/dashboard/properties');
+      router.push('/dashboard/properties');
     } catch (error) {
       console.error('Error deleting property:', error);
       alert('An error occurred while deleting the property. Please try again.');
@@ -124,7 +132,7 @@ function PropertyDetails() {
             The property you're looking for doesn't exist or you don't have access to it.
           </p>
           <Link
-            to="/dashboard/properties"
+            href="/dashboard/properties"
             className="inline-flex items-center gap-2 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -174,7 +182,7 @@ function PropertyDetails() {
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
         <Link
-          to="/dashboard/properties"
+          href="/dashboard/properties"
           className="flex items-center gap-2 text-gray-700 hover:text-blue-600 font-medium mb-6 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -192,12 +200,20 @@ function PropertyDetails() {
                   {property.name || 'Untitled Property'}
                 </h1>
                 <button
+                  onClick={handleAnalytics}
+                  className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors group"
+                  title="View Analytics"
+                  aria-label="View Analytics"
+                >
+                  <BarChart3 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                </button>
+                <button
                   onClick={handleEdit}
-                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors group"
                   title="Edit Property"
                   aria-label="Edit Property"
                 >
-                  <Edit className="w-5 h-5" />
+                  <Edit className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 </button>
               </div>
               <div className="flex items-center gap-2 text-gray-600">

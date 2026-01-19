@@ -1,30 +1,31 @@
+'use client'
+
 import { Bell, Search, Users, Building, DollarSign, TrendingUp, Eye, MessageSquare, Settings, Plus, Edit, Trash2 } from 'lucide-react';
 import avatar from '../../../assets/images/tiger.jpg'
 import React, { useState } from 'react';
 import Charts from '../../../components/Chart';
+import RevenueAnalyticsChart from '../../../components/RevenueAnalyticsChart';
+import NewGrowthChart from '../../../components/NewGrowthChart';
+import { useAdminStats, useActivityLogs } from '../../../Hooks/useAdminStats';
 
 function Main({ isSidebarCollapsed }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [timeRange, setTimeRange] = useState(30); // Default to 30 days
+  const [growthViewMode, setGrowthViewMode] = useState('monthly'); // daily, monthly, yearly
+  const [growthTimeRange, setGrowthTimeRange] = useState(30); // For daily view
+  const [activityFilter, setActivityFilter] = useState('all'); // all, user, property, payment
 
-  // Mock data - in real app, this would come from API
-  const [stats] = useState({
-    totalUsers: 1247,
-    totalProperties: 89,
-    totalRevenue: 45680,
-    monthlyGrowth: 12.5,
-    activeListings: 67,
-    occupancyRate: 89,
-    newUsersThisMonth: 156,
-    propertiesAddedThisMonth: 12
-  });
+  // Fetch real stats from Firebase
+  const { stats, loading: statsLoading } = useAdminStats();
+  const { activities, loading: activitiesLoading, totalCount } = useActivityLogs(activityFilter, 10);
 
-  const [systemHealth] = useState({
+  const systemHealth = {
     serverStatus: 'Operational',
     uptime: '99.9%',
     responseTime: '245ms',
-    activeSessions: 89
-  });
+    activeSessions: stats.totalUsers > 0 ? Math.floor(stats.totalUsers * 0.15) : 0 // Estimate 15% active
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -44,58 +45,6 @@ function Main({ isSidebarCollapsed }) {
     }
   };
 
-  const [detailedActivities] = useState([
-    {
-      id: 1,
-      action: 'Property Listed',
-      details: 'Luxury 3BR Apartment in Downtown',
-      user: 'John Doe',
-      time: '2 hours ago',
-      type: 'property',
-      value: '$2,500/month',
-      status: 'active'
-    },
-    {
-      id: 2,
-      action: 'User Registration',
-      details: 'New landlord account created',
-      user: 'Sarah Wilson',
-      time: '4 hours ago',
-      type: 'user',
-      value: 'Premium Plan',
-      status: 'verified'
-    },
-    {
-      id: 3,
-      action: 'Payment Processed',
-      details: 'Monthly subscription payment',
-      user: 'Mike Johnson',
-      time: '6 hours ago',
-      type: 'payment',
-      value: '$49.99',
-      status: 'completed'
-    },
-    {
-      id: 4,
-      action: 'Property Updated',
-      details: 'Price adjustment and new photos',
-      user: 'Emma Davis',
-      time: '8 hours ago',
-      type: 'property',
-      value: '$800 → $850',
-      status: 'updated'
-    },
-    {
-      id: 5,
-      action: 'Support Ticket',
-      details: 'Property verification request',
-      user: 'Robert Brown',
-      time: '12 hours ago',
-      type: 'support',
-      value: 'High Priority',
-      status: 'resolved'
-    }
-  ]);
 
   return (
     <section className={`bg-gray-50 w-full min-h-screen  p-6 px-6 transition-all duration-300 ${
@@ -136,7 +85,7 @@ function Main({ isSidebarCollapsed }) {
                 <Bell className='text-gray-600 transition-colors cursor-pointer hover:text-gray-800' size={20} />
                 <span className='absolute inline-block w-3 h-3 bg-red-500 rounded-full -top-1 -right-1'></span>
               </div>
-              <img src={avatar} alt="Admin Avatar" className='w-8 h-8 transition-colors border-2 border-gray-200 rounded-full cursor-pointer hover:border-gray-300' />
+              <img src={avatar.src || avatar} alt="Admin Avatar" className='w-8 h-8 transition-colors border-2 border-gray-200 rounded-full cursor-pointer hover:border-gray-300' />
             </div>
           </div>
         </div>
@@ -154,20 +103,28 @@ function Main({ isSidebarCollapsed }) {
               <TrendingUp className='text-blue-600' size={24} />
             </div>
           </div>
-          <div className='space-y-3'>
-            <div className='flex items-center justify-between'>
-              <span className='text-sm text-gray-600'>Total Users</span>
-              <span className='font-semibold text-gray-900'>{stats.totalUsers.toLocaleString()}</span>
+          {statsLoading ? (
+            <div className="space-y-3">
+              <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
             </div>
-            <div className='flex items-center justify-between'>
-              <span className='text-sm text-gray-600'>Active Properties</span>
-              <span className='font-semibold text-gray-900'>{stats.activeListings}</span>
+          ) : (
+            <div className='space-y-3'>
+              <div className='flex items-center justify-between'>
+                <span className='text-sm text-gray-600'>Total Users</span>
+                <span className='font-semibold text-gray-900'>{stats.totalUsers.toLocaleString()}</span>
+              </div>
+              <div className='flex items-center justify-between'>
+                <span className='text-sm text-gray-600'>Active Properties</span>
+                <span className='font-semibold text-gray-900'>{stats.activeListings}</span>
+              </div>
+              <div className='flex items-center justify-between'>
+                <span className='text-sm text-gray-600'>Occupancy Rate</span>
+                <span className='font-semibold text-green-600'>{stats.occupancyRate}%</span>
+              </div>
             </div>
-            <div className='flex items-center justify-between'>
-              <span className='text-sm text-gray-600'>Occupancy Rate</span>
-              <span className='font-semibold text-green-600'>{stats.occupancyRate}%</span>
-            </div>
-          </div>
+          )}
         </div>
 
         <div className='p-6 bg-white rounded-lg shadow-sm'>
@@ -180,20 +137,30 @@ function Main({ isSidebarCollapsed }) {
               <DollarSign className='text-green-600' size={24} />
             </div>
           </div>
-          <div className='space-y-3'>
-            <div className='flex items-center justify-between'>
-              <span className='text-sm text-gray-600'>Monthly Revenue</span>
-              <span className='font-semibold text-gray-900'>${stats.totalRevenue.toLocaleString()}</span>
+          {statsLoading ? (
+            <div className="space-y-3">
+              <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
             </div>
-            <div className='flex items-center justify-between'>
-              <span className='text-sm text-gray-600'>Growth Rate</span>
-              <span className='font-semibold text-green-600'>+{stats.monthlyGrowth}%</span>
+          ) : (
+            <div className='space-y-3'>
+              <div className='flex items-center justify-between'>
+                <span className='text-sm text-gray-600'>Monthly Revenue</span>
+                <span className='font-semibold text-gray-900'>${stats.totalRevenue.toLocaleString()}</span>
+              </div>
+              <div className='flex items-center justify-between'>
+                <span className='text-sm text-gray-600'>Growth Rate</span>
+                <span className={`font-semibold ${stats.monthlyGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {stats.monthlyGrowth >= 0 ? '+' : ''}{stats.monthlyGrowth}%
+                </span>
+              </div>
+              <div className='flex items-center justify-between'>
+                <span className='text-sm text-gray-600'>New Users (Month)</span>
+                <span className='font-semibold text-blue-600'>{stats.newUsersThisMonth}</span>
+              </div>
             </div>
-            <div className='flex items-center justify-between'>
-              <span className='text-sm text-gray-600'>New Users (Month)</span>
-              <span className='font-semibold text-blue-600'>{stats.newUsersThisMonth}</span>
-            </div>
-          </div>
+          )}
         </div>
 
         <div className='p-6 bg-white rounded-lg shadow-sm'>
@@ -206,38 +173,138 @@ function Main({ isSidebarCollapsed }) {
               <Settings className='text-purple-600' size={24} />
             </div>
           </div>
-          <div className='space-y-3'>
-            <div className='flex items-center justify-between'>
-              <span className='text-sm text-gray-600'>Server Status</span>
-              <span className='font-semibold text-green-600'>{systemHealth.serverStatus}</span>
+          {statsLoading ? (
+            <div className="space-y-3">
+              <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
             </div>
-            <div className='flex items-center justify-between'>
-              <span className='text-sm text-gray-600'>Uptime</span>
-              <span className='font-semibold text-gray-900'>{systemHealth.uptime}</span>
+          ) : (
+            <div className='space-y-3'>
+              <div className='flex items-center justify-between'>
+                <span className='text-sm text-gray-600'>Server Status</span>
+                <span className='font-semibold text-green-600'>{systemHealth.serverStatus}</span>
+              </div>
+              <div className='flex items-center justify-between'>
+                <span className='text-sm text-gray-600'>Uptime</span>
+                <span className='font-semibold text-gray-900'>{systemHealth.uptime}</span>
+              </div>
+              <div className='flex items-center justify-between'>
+                <span className='text-sm text-gray-600'>Active Sessions</span>
+                <span className='font-semibold text-blue-600'>{systemHealth.activeSessions}</span>
+              </div>
             </div>
-            <div className='flex items-center justify-between'>
-              <span className='text-sm text-gray-600'>Active Sessions</span>
-              <span className='font-semibold text-blue-600'>{systemHealth.activeSessions}</span>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* Main Analytics Chart */}
+      {/* Main Analytics Chart - Cumulative Growth */}
       <div className='p-6 mb-8 bg-white rounded-lg shadow-sm'>
         <div className='flex items-center justify-between mb-6'>
           <div>
             <h3 className='text-xl font-semibold text-gray-800'>Revenue Analytics</h3>
-            <p className='text-sm text-gray-600'>Monthly performance trends and projections</p>
+            <p className='text-sm text-gray-600'>Revenue growth and user acquisition over time (Cumulative)</p>
           </div>
           <div className='flex items-center space-x-2'>
-            <button className='px-3 py-1 text-sm transition-colors bg-gray-100 rounded-md hover:bg-gray-200'>7D</button>
-            <button className='px-3 py-1 text-sm text-white bg-blue-600 rounded-md'>30D</button>
-            <button className='px-3 py-1 text-sm transition-colors bg-gray-100 rounded-md hover:bg-gray-200'>90D</button>
+            <button 
+              onClick={() => setTimeRange(7)}
+              className={`px-3 py-1 text-sm transition-colors rounded-md ${
+                timeRange === 7 ? 'text-white bg-blue-600' : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+            >
+              7D
+            </button>
+            <button 
+              onClick={() => setTimeRange(30)}
+              className={`px-3 py-1 text-sm transition-colors rounded-md ${
+                timeRange === 30 ? 'text-white bg-blue-600' : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+            >
+              30D
+            </button>
+            <button 
+              onClick={() => setTimeRange(90)}
+              className={`px-3 py-1 text-sm transition-colors rounded-md ${
+                timeRange === 90 ? 'text-white bg-blue-600' : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+            >
+              90D
+            </button>
           </div>
         </div>
         <div className='h-80'>
-          <Charts Graph="line" />
+          <RevenueAnalyticsChart timeRange={timeRange} />
+        </div>
+      </div>
+
+      {/* New Growth Chart - Incremental Growth */}
+      <div className='p-6 mb-8 bg-white rounded-lg shadow-sm'>
+        <div className='flex items-center justify-between mb-6'>
+          <div>
+            <h3 className='text-xl font-semibold text-gray-800'>Incremental Growth Analytics</h3>
+            <p className='text-sm text-gray-600'>New revenue and new users per period (Non-cumulative)</p>
+          </div>
+          <div className='flex items-center space-x-2'>
+            <button 
+              onClick={() => {
+                setGrowthViewMode('daily')
+                setGrowthTimeRange(7)
+              }}
+              className={`px-3 py-1 text-sm transition-colors rounded-md ${
+                growthViewMode === 'daily' ? 'text-white bg-blue-600' : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+            >
+              Daily
+            </button>
+            <button 
+              onClick={() => setGrowthViewMode('monthly')}
+              className={`px-3 py-1 text-sm transition-colors rounded-md ${
+                growthViewMode === 'monthly' ? 'text-white bg-blue-600' : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+            >
+              Monthly
+            </button>
+            <button 
+              onClick={() => setGrowthViewMode('yearly')}
+              className={`px-3 py-1 text-sm transition-colors rounded-md ${
+                growthViewMode === 'yearly' ? 'text-white bg-blue-600' : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+            >
+              Yearly
+            </button>
+            {growthViewMode === 'daily' && (
+              <>
+                <span className='mx-2 text-gray-300'>|</span>
+                <button 
+                  onClick={() => setGrowthTimeRange(7)}
+                  className={`px-3 py-1 text-sm transition-colors rounded-md ${
+                    growthTimeRange === 7 ? 'text-white bg-green-600' : 'bg-gray-100 hover:bg-gray-200'
+                  }`}
+                >
+                  7D
+                </button>
+                <button 
+                  onClick={() => setGrowthTimeRange(30)}
+                  className={`px-3 py-1 text-sm transition-colors rounded-md ${
+                    growthTimeRange === 30 ? 'text-white bg-green-600' : 'bg-gray-100 hover:bg-gray-200'
+                  }`}
+                >
+                  30D
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+        <div className='h-80'>
+          <NewGrowthChart viewMode={growthViewMode} timeRange={growthTimeRange} />
+        </div>
+        <div className='mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100'>
+          <p className='text-sm text-blue-800'>
+            <strong>Note:</strong> This chart shows <strong>new</strong> growth per period. 
+            {growthViewMode === 'daily' && ' Each bar represents new users and revenue added that day.'}
+            {growthViewMode === 'monthly' && ' Each bar represents new users and revenue added that month.'}
+            {growthViewMode === 'yearly' && ' Each bar represents new users and revenue added that year.'}
+          </p>
         </div>
       </div>
 
@@ -246,22 +313,41 @@ function Main({ isSidebarCollapsed }) {
         <div className='flex items-center justify-between mb-6'>
           <div>
             <h3 className='text-xl font-semibold text-gray-800'>Activity Log</h3>
-            <p className='text-sm text-gray-600'>Detailed system activities and user interactions</p>
+            <p className='text-sm text-gray-600'>Real-time system activities and user interactions</p>
           </div>
           <div className='flex items-center space-x-3'>
-            <select className='px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'>
-              <option>All Activities</option>
-              <option>User Actions</option>
-              <option>Property Updates</option>
-              <option>Payments</option>
-              <option>Support</option>
+            <select 
+              value={activityFilter} 
+              onChange={(e) => setActivityFilter(e.target.value)}
+              className='px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+            >
+              <option value="all">All Activities</option>
+              <option value="user">User Actions</option>
+              <option value="property">Property Updates</option>
+              <option value="payment">Payments</option>
             </select>
             <button className='text-sm font-medium text-blue-600 hover:text-blue-800'>Export</button>
           </div>
         </div>
 
-        <div className='space-y-4'>
-          {detailedActivities.map((activity) => (
+        {activitiesLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <p className="mt-2 text-sm text-gray-600">Loading activities...</p>
+            </div>
+          </div>
+        ) : activities.length === 0 ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <MessageSquare size={48} className="mx-auto mb-3 text-gray-300" />
+              <p className="text-sm text-gray-600">No activities found</p>
+              <p className="mt-1 text-xs text-gray-500">Activities will appear here as they occur</p>
+            </div>
+          </div>
+        ) : (
+          <div className='space-y-4'>
+            {activities.map((activity) => (
             <div key={activity.id} className='flex items-center justify-between p-4 transition-colors border border-gray-100 rounded-lg hover:bg-gray-50'>
               <div className='flex items-center space-x-4'>
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
@@ -307,16 +393,16 @@ function Main({ isSidebarCollapsed }) {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
 
         <div className='flex items-center justify-between pt-4 mt-6 border-t border-gray-100'>
-          <p className='text-sm text-gray-600'>Showing 5 of 247 activities</p>
-          <div className='flex space-x-2'>
-            <button className='px-3 py-1 text-sm transition-colors border border-gray-300 rounded-md hover:bg-gray-50'>Previous</button>
-            <button className='px-3 py-1 text-sm text-white bg-blue-600 rounded-md'>1</button>
-            <button className='px-3 py-1 text-sm transition-colors border border-gray-300 rounded-md hover:bg-gray-50'>2</button>
-            <button className='px-3 py-1 text-sm transition-colors border border-gray-300 rounded-md hover:bg-gray-50'>3</button>
-            <button className='px-3 py-1 text-sm transition-colors border border-gray-300 rounded-md hover:bg-gray-50'>Next</button>
+          <p className='text-sm text-gray-600'>
+            Showing {activities.length} {activityFilter === 'all' ? 'activities' : `${activityFilter} activities`}
+            {totalCount > 0 && ` of ${totalCount} total`}
+          </p>
+          <div className='text-xs text-gray-500'>
+            Live data from Firebase
           </div>
         </div>
       </div>

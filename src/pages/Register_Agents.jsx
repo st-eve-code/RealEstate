@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react';
 import '../App.css';
 import logo from '../assets/logo.svg';
@@ -5,7 +7,7 @@ function Register_Agents() {
   return (
     <section>
         <div className='max-w-[28rem] shadow-lg shadow-gray-200 mx-auto p-5 m-8 rounded-xl'>
-            <img src={logo} alt="logo" className='w-36 mx-auto'/>
+            <img src={logo.src || logo} alt="logo" className='w-36 mx-auto'/>
             <p className='text-gray-500 text-center mx-auto font-Nunito font-medium text-md pt-2'>
                 please fill in the form and get registered as an agent
             </p>

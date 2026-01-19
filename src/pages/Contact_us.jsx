@@ -1,9 +1,12 @@
+'use client'
+
 import React, { useRef, useEffect, useState } from 'react';
 import '../App.css';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import L from 'leaflet';
 import Navbar from '../components/Navbar';
 import Footer from './Footer';
+import { useTranslation } from '@/i18n';
 import { 
   Coins, 
   DoorClosed, 
@@ -18,8 +21,10 @@ import {
 } from 'lucide-react';
 
 function ContactUs() {
+  const { t } = useTranslation();
+  
   // initialize navigation
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -92,64 +97,64 @@ function ContactUs() {
   const faqs = [
     {
       icon: Trophy,
-      question: 'Is there a free trial available?',
-      answer: 'No, there are no free trials. Subscribe to a subscription plan and get enough views to continue browsing.'
+      question: t('contactPage.faq.freeTrial.question'),
+      answer: t('contactPage.faq.freeTrial.answer')
     },
     {
       icon: Plane,
-      question: 'Can I change my plan later?',
-      answer: 'Yes, you can change your plan after it has expired and subscribe to another plan.'
+      question: t('contactPage.faq.changePlan.question'),
+      answer: t('contactPage.faq.changePlan.answer')
     },
     {
       icon: MailIcon,
-      question: 'How do I change my email?',
-      answer: 'After creating an account, you can access the dashboard and change your email in the profile section.'
+      question: t('contactPage.faq.changeEmail.question'),
+      answer: t('contactPage.faq.changeEmail.answer')
     },
     {
       icon: Coins,
-      question: 'How does billing work?',
-      answer: 'We provide accessible payment methods for all your billing transactions worldwide.'
+      question: t('contactPage.faq.billing.question'),
+      answer: t('contactPage.faq.billing.answer')
     },
     {
       icon: Lock,
-      question: 'Is our data kept private and secure?',
-      answer: 'Yes, all your data is kept private and secure as long as you have agreed with our terms and policies.'
+      question: t('contactPage.faq.dataSecurity.question'),
+      answer: t('contactPage.faq.dataSecurity.answer')
     },
     {
       icon: UserCircle,
-      question: 'Can I cancel or delete my account?',
-      answer: 'Yes, if you no longer wish to use the platform, you can delete your account in the dashboard.'
+      question: t('contactPage.faq.cancelAccount.question'),
+      answer: t('contactPage.faq.cancelAccount.answer')
     },
     {
       icon: PersonStanding,
-      question: 'How does user support work?',
-      answer: 'You can contact our friendly team if you face any challenges or difficulties while using the platform.'
+      question: t('contactPage.faq.userSupport.question'),
+      answer: t('contactPage.faq.userSupport.answer')
     },
     {
       icon: DoorClosed,
-      question: 'How can I know if my subscription has finished?',
-      answer: 'When your subscription ends, we will keep you updated by sending you a notification.'
+      question: t('contactPage.faq.subscriptionEnd.question'),
+      answer: t('contactPage.faq.subscriptionEnd.answer')
     },
   ];
 
   const contactInfo = [
     {
       icon: MapIcon,
-      title: 'Visit Us',
+      title: t('contactPage.visitUs'),
       link: 'Molyko, Buea, SouthWest',
-      ariaLabel: 'Our office address'
+      ariaLabel: t('contactPage.officeAddress')
     },
     {
       icon: PhoneIncoming,
-      title: 'Call Us',
+      title: t('contactPage.callUs'),
       link: '+237681906850',
-      ariaLabel: 'Call us at +237681906850'
+      ariaLabel: t('contactPage.callUsAt')
     },
     {
       icon: MailIcon,
-      title: 'Email Us',
+      title: t('contactPage.emailUs'),
       link: 'rentspot@gmail.com',
-      ariaLabel: 'Send us an email'
+      ariaLabel: t('contactPage.sendEmail')
     },
   ];
 
@@ -164,11 +169,10 @@ function ContactUs() {
           {/* Contact Information */}
           <div className='w-full'>
             <h1 className='font-bold text-3xl text-center md:text-left text-white mb-4'>
-              We'd Love to Hear From You
+              {t('contactPage.title')}
             </h1>
             <p className='font-medium text-sm text-center md:text-left text-white mb-8 leading-relaxed'>
-              Are you seeking to have a one-on-one conversation with our amazing team members? 
-              Fill in the contact form and we shall attend to all your unique needs.
+              {t('contactPage.subtitle')}
             </p>
             
             <div className='space-y-4 max-w-sm mx-auto md:mx-0'>
@@ -204,13 +208,13 @@ function ContactUs() {
               <form onSubmit={handleSubmit} className='space-y-5'>
                 <div>
                   <label htmlFor="username" className='block font-bold text-sm text-gray-700 mb-2'>
-                    Full Name
+                    {t('contact.name')}
                   </label>
                   <input 
                     type="text" 
                     name="username" 
                     id="username" 
-                    placeholder='Your full name' 
+                    placeholder={t('contactPage.namePlaceholder')} 
                     value={formData.username}
                     onChange={handleInputChange}
                     className='w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
@@ -220,13 +224,13 @@ function ContactUs() {
                 
                 <div>
                   <label htmlFor="email" className='block font-bold text-sm text-gray-700 mb-2'>
-                    Email Address
+                    {t('contact.email')}
                   </label>
                   <input 
                     type="email" 
                     name="email" 
                     id="email" 
-                    placeholder='your@email.com' 
+                    placeholder={t('contactPage.emailPlaceholder')} 
                     value={formData.email}
                     onChange={handleInputChange}
                     className='w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
@@ -236,12 +240,12 @@ function ContactUs() {
                 
                 <div>
                   <label htmlFor="message" className='block font-bold text-sm text-gray-700 mb-2'>
-                    Message
+                    {t('contact.message')}
                   </label>
                   <textarea 
                     name="message" 
                     id="message" 
-                    placeholder='Tell us how we can help you...' 
+                    placeholder={t('contactPage.messagePlaceholder')} 
                     value={formData.message}
                     onChange={handleInputChange}
                     rows={4}
@@ -255,14 +259,14 @@ function ContactUs() {
                   disabled={isSubmitting}
                   className='w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold rounded-lg transition-colors duration-200'
                 >
-                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                  {isSubmitting ? t('contactPage.sending') : t('contact.sendMessage')}
                 </button>
                 
                 <p className='text-xs text-gray-500 text-center leading-relaxed'>
-                  By contacting us you agree to our{' '}
-                  <a href="/terms" className='text-blue-600 hover:underline'>terms and conditions</a>{' '}
-                  and{' '}
-                  <a href="/privacy" className='text-blue-600 hover:underline'>privacy policy</a>
+                  {t('contactPage.agreement')}{' '}
+                  <a href="/terms" className='text-blue-600 hover:underline'>{t('auth.termsAndConditions')}</a>{' '}
+                  {t('auth.and')}{' '}
+                  <a href="/privacy" className='text-blue-600 hover:underline'>{t('auth.privacyPolicy')}</a>
                 </p>
                 
               </form>
@@ -291,7 +295,7 @@ function ContactUs() {
           {/* FAQ Section */}
           <div id='faqs'>
             <h3 className='text-center mb-12 font-bold text-3xl text-gray-800'>
-              Frequently Asked Questions
+              {t('help.faq')}
             </h3>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               {faqs.map((faq, index) => {
@@ -317,11 +321,11 @@ function ContactUs() {
           {/* section for contact us */}
           <div className='mt-8 md:mt-28 w-full bg-blue-700/80 py-8'>
              <h2 className='font-Custom font-semibold text-3xl text-center px-2 lg:text-4xl md:max-w-[24rem] mx-auto py-2 text-white flex justify-center items-center '>
-              Personalized Services, Globally Recognized 
+              {t('home.globalServices.title')}
              </h2>
-            <p className='font-medium font-Custom text-white text-sm flex justify-center md:max-w-[34rem] leading-5 mx-auto items-center text-center px-3'>whether renting, investing or advertising, our clients appreciate the tailored approach that transcends geographical boundaries.</p>
-            <button onClick={()=>navigate('/signup')} className='max-w-[10rem] mx-auto flex mt-5 h-8 bg-white font-Custom font-medium text-xs text-blue-700 rounded-full px-8 py-2'>
-              Get Started
+            <p className='font-medium font-Custom text-white text-sm flex justify-center md:max-w-[34rem] leading-5 mx-auto items-center text-center px-3'>{t('home.globalServices.description')}</p>
+            <button onClick={()=>router.push('/signup')} className='max-w-[10rem] mx-auto flex mt-5 h-8 bg-white font-Custom font-medium text-xs text-blue-700 rounded-full px-8 py-2'>
+              {t('common.getStarted')}
             </button>
           </div>
         </div>

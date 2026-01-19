@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { Timestamp } from 'firebase/firestore';
@@ -20,7 +22,7 @@ import { setDocumentWithInternalId } from '@/lib/utils/firestoreDocumentOperatio
  */
 function ListProperty() {
   // Get current user (caretaker) from auth context
-  const { user } = useAuth();
+  const { user, firebaseUser } = useAuth();
   
   // Current step in the multi-step form (1, 2, or 3)
   const [currentStep, setCurrentStep] = useState(1);
@@ -143,8 +145,10 @@ function ListProperty() {
       // Get caretaker info from current user
       const caretaker = user ? {
         id: user.uid,
-        name: user.displayName || user.fullName || 'Caretaker'
-      } : { id: '', name: '' };
+        name: user.displayName || user.fullName || 'Caretaker',
+        email: user.email || firebaseUser.email || '',
+        phoneNumber: user.phoneNumber || firebaseUser.phoneNumber || undefined
+      } : { id: '', name: '', email: '' };
 
       // Generate unique ID for this property listing
       const uniqueId = generateUniqueId(caretaker.name || 'property');
@@ -204,7 +208,6 @@ function ListProperty() {
         console.error('Failed to save unit to Firestore:', saveResult.error);
         throw new Error(saveResult.message || 'Failed to save property to database');
       }
-      up
       
       console.log('Property saved successfully with ID:', saveResult.newDocId);
       alert('Property listed successfully! It will be reviewed by an admin before going live.');
@@ -272,45 +275,54 @@ function ListProperty() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 px-4 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 py-6 px-4 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        {/* Page Title */}
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          List Your First Property
-        </h1>
+        {/* Page Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
+            List Your Property
+          </h1>
+          <p className="text-gray-600 text-lg">
+            Fill in the details below to create your property listing
+          </p>
+        </div>
 
         {/* Progress Indicator */}
-        <ProgressIndicator
-          steps={steps}
-          currentStep={currentStep}
-        />
+        <div className="mb-8">
+          <ProgressIndicator
+            steps={steps}
+            currentStep={currentStep}
+          />
+        </div>
 
         {/* Form Content Container */}
-        <div className="bg-white shadow-md rounded-lg p-6 lg:p-8 mt-8">
+        <div className="bg-white shadow-2xl rounded-2xl p-6 lg:p-10 border border-gray-100">
           {renderCurrentStep()}
 
           {/* Navigation Buttons - Only show on steps 1 and 2 */}
           {currentStep < 3 && (
-            <div className="flex justify-end gap-4 mt-8 pt-6 border-t">
-              {currentStep > 1 && (
+            <div className="flex justify-between gap-4 mt-8 pt-8 border-t-2 border-gray-100">
+              {currentStep > 1 ? (
                 <button
                   onClick={handlePrevious}
                   disabled={isUploading}
-                  className={`px-6 py-2.5 rounded-lg font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 transition-colors ${
+                  className={`px-8 py-3 rounded-xl font-semibold text-purple-600 bg-purple-50 border-2 border-purple-200 hover:bg-purple-100 hover:border-purple-300 transition-all duration-200 shadow-md hover:shadow-lg ${
                     isUploading ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                 >
-                  Previous
+                  ← Previous
                 </button>
+              ) : (
+                <div></div>
               )}
               <button
                 onClick={handleNext}
                 disabled={isUploading}
-                className={`px-6 py-2.5 rounded-lg font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors ${
+                className={`px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl ${
                   isUploading ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
-                Next
+                {currentStep === 2 ? 'Review Listing →' : 'Next →'}
               </button>
             </div>
           )}

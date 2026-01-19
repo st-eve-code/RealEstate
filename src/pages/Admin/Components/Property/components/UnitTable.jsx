@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react';
 import { 
   Eye, 
@@ -10,7 +12,7 @@ import {
   AlertTriangle,
   FileText
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const STATUS_CONFIG = {
   pending: {
@@ -149,7 +151,7 @@ export default function UnitTable({
                     <div className="flex items-center gap-2 flex-wrap">
                       {/* View Details */}
                       <Link
-                        to={`/dashboard/properties/${unit.id}`}
+                        href={`/dashboard/properties/${unit.id}`}
                         className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors"
                         title="View Details"
                       >
@@ -158,7 +160,7 @@ export default function UnitTable({
 
                       {/* View Reports */}
                       <Link
-                        to={`/dashboard/properties/reports/${unit.id}`}
+                        href={`/dashboard/properties/reports/${unit.id}`}
                         className="p-1.5 text-orange-600 hover:bg-orange-50 rounded transition-colors"
                         title="View Reports"
                       >

@@ -1,6 +1,8 @@
+'use client'
+
 import React, { useState, useEffect } from 'react';
 import { Heart, MapPin, Bed, Bath, UtensilsCrossed, Star, ArrowUpRight, Search, DollarSign, Home, Filter, X, TrendingUp, Sparkles, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { selectDocumentsByConstraint } from '@/lib/utils/firestoreDocumentOperation';
 
@@ -236,7 +238,7 @@ function PropertyPage() {
   });
 
   const [favorites, setFavorites] = useState({});
-  const navigate = useNavigate();
+  const router = useRouter();
 
   // Fetch units for current caretaker
   useEffect(() => {
@@ -315,7 +317,7 @@ function PropertyPage() {
   };
 
   const handleViewDetails = (propertyId) => {
-    navigate(`/dashboard/properties/${propertyId}`);
+    router.push(`/dashboard/properties/${propertyId}`);
   };
 
   const hasActiveFilters = Object.values(filters).some(value => value !== '');
@@ -368,7 +370,7 @@ function PropertyPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="flex items-center justify-center py-20">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
           <p className="text-gray-600">Loading properties...</p>
@@ -378,7 +380,7 @@ function PropertyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 p-3 sm:p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 bg-clip-text text-transparent mb-2">

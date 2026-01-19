@@ -42,19 +42,33 @@ export async function fetchUnits(filters = {}) {
 }
 
 /**
- * Fetch a single unit by ID
+ * Fetch a single unit by ID (checks both properties and units collections)
  */
 export async function fetchUnitById(unitId) {
   try {
+    if (!unitId) {
+      throw new Error('Unit ID is required');
+    }
+    
+    // Try properties collection first (main collection)
+    const propertyRef = doc(db, 'properties', unitId);
+    const propertySnap = await getDoc(propertyRef);
+    
+    if (propertySnap.exists()) {
+      return { id: propertySnap.id, ...propertySnap.data() };
+    }
+    
+    // Fallback to units collection if it exists
     const unitRef = doc(db, 'units', unitId);
     const unitSnap = await getDoc(unitRef);
     
     if (unitSnap.exists()) {
       return { id: unitSnap.id, ...unitSnap.data() };
     }
+    
     return null;
   } catch (error) {
-    console.error('Error fetching unit:', error);
+    console.error('Error fetching property/unit:', error);
     throw error;
   }
 }

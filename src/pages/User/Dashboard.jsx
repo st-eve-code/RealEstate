@@ -1,7 +1,7 @@
 import Sidebar from '../../components/Sidebar';
 import MainContent from '../../components/MainContent';
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import DashboardContent from '../../components/User_Dashboard/Dashboard';
 import Property from '../../components/User_Dashboard/Properties';
 import Profile from '../../components/User_Dashboard/Profile';
@@ -15,18 +15,21 @@ import { useAuth } from '@/lib/auth-context';
 import Loader from '@/components/ado/loader';
 
 // Main Dashboard Component
+// NOTE: This file is kept for backward compatibility but the actual routing
+// is now handled by /app/dashboard/user/* pages
 export default function Dashboard() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const {loadingUser, firebaseUser, user} = useAuth();
+  const router = useRouter();
+  
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
-  const navigate = useNavigate();
 
   useEffect(()=>{
     if(loadingUser) return;
-    if(!firebaseUser) return navigate('/login');
-  }, [loadingUser, firebaseUser, navigate])
+    if(!firebaseUser) return router.push('/login');
+  }, [loadingUser, firebaseUser, router])
 
   if(loadingUser) {
     return (
@@ -36,25 +39,15 @@ export default function Dashboard() {
     )
   }
 
+  // This component is deprecated - routing is now handled by Next.js App Router
+  // Redirect to the new dashboard structure
+  useEffect(() => {
+    router.push('/dashboard');
+  }, [router]);
+
   return (
-    <div className="min-h-screen bg-gray-100/30 block md:flex">
-      <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        onToggle={toggleSidebar}
-      />
-      <MainContent isSidebarCollapsed={isSidebarCollapsed}>
-        <Routes>
-          <Route path="/" element={<DashboardContent />} />
-          <Route path="properties" element={<Property />} />
-          <Route path="profile" element={<Profile user={user} />} />
-          <Route path="transaction" element={<Transaction />} />
-          <Route path="store" element={<Store />} />
-          <Route path="notification" element={<Notification />} />
-          <Route path="subscription" element={<Subscription />} />
-          <Route path="help" element={<HelpSection />} />
-          <Route path="setting" element={<Setting />} />
-        </Routes>
-      </MainContent>
+    <div className="min-h-screen bg-gray-100/30 flex items-center justify-center">
+      <Loader style='factory-stack' />
     </div>
   );
 }

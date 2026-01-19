@@ -1,16 +1,20 @@
+'use client'
+
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowLeft, Star, User, Clock } from 'lucide-react';
 import { fetchUnitReviews, fetchUnitById } from './services/unitService';
 
-export default function UnitReviews({ isSidebarCollapsed }) {
-  const { unitId } = useParams();
+export default function UnitReviews({ unitID, isSidebarCollapsed }) {
+  const params = useParams();
+  const unitId = unitID || params?.unitId;
   const [reviews, setReviews] = useState([]);
   const [unit, setUnit] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
+    if(unitId) loadData();
   }, [unitId]);
 
   const loadData = async () => {
@@ -79,7 +83,7 @@ export default function UnitReviews({ isSidebarCollapsed }) {
         {/* Header */}
         <div className="mb-6">
           <Link
-            to="/dashboard/properties"
+            href="/dashboard/properties"
             className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
           >
             <ArrowLeft size={20} />

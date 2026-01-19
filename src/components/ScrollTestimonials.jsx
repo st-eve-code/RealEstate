@@ -1,3 +1,5 @@
+'use client'
+
 import React,{useRef, useEffect} from 'react';
 import image from '../assets/images/tiger.jpg';
 import { Star } from 'lucide-react';
@@ -52,7 +54,7 @@ function Testimonial(){
                         return (
                             <div key={`first-row-first-${data.id}`} className='min-w-[20rem] max-w-[28rem] p-4 bg-white shadow-md shadow-gray-400/40 rounded-lg border hover:shadow-xl flex-shrink-0'>
                                 <div className='flex flex-row justify-center gap-3 items-center'>
-                                    <img src={`${image}`} alt="user1" className='size-10 rounded-full object-cover'/>
+                                    <img src={image.src || image} alt="user1" className='size-10 rounded-full object-cover'/>
                                     <div className='flex-col flex-1 flex-nowrap flex justify-center items-start'>
                                         <h1 className='font-Custom font-bold text-sm text-gray-800'>{data.name}</h1>
                                         <p className='font-Custom font-normal text-xs text-blue-400/95'>{data.position}</p>
@@ -89,7 +91,7 @@ function Testimonial(){
                         return (
                             <div key={`first-row-second-${data.id}`} className='min-w-[20rem] max-w-[28rem] p-4 bg-white shadow-xl shadow-gray-100/60 rounded-lg border hover:shadow-xl flex-shrink-0'>
                                 <div className='flex flex-row justify-center gap-3 items-center'>
-                                    <img src={`${image}`} alt="user1" className='size-10 rounded-full object-cover'/>
+                                    <img src={image.src || image} alt="user1" className='size-10 rounded-full object-cover'/>
                                     <div className='flex-col flex-1 flex-nowrap flex justify-center items-start'>
                                         <h1 className='font-Custom font-bold text-sm text-gray-800'>{data.name}</h1>
                                         <p className='font-Custom font-normal text-xs text-blue-400/95'>{data.position}</p>
@@ -133,7 +135,7 @@ function Testimonial(){
                         return (
                             <div key={`second-row-first-${data.id}`} className='min-w-[20rem] max-w-[28rem] p-4 bg-white shadow-md shadow-gray-400/40 rounded-lg border hover:shadow-xl flex-shrink-0'>
                                 <div className='flex flex-row justify-center gap-3 items-center'>
-                                    <img src={`${image}`} alt="user1" className='size-10 rounded-full object-cover'/>
+                                    <img src={image.src || image} alt="user1" className='size-10 rounded-full object-cover'/>
                                     <div className='flex-col flex-1 flex-nowrap flex justify-center items-start'>
                                         <h1 className='font-Custom font-bold text-sm text-gray-800'>{data.name}</h1>
                                         <p className='font-Custom font-normal text-xs text-blue-400/95'>{data.position}</p>
@@ -170,7 +172,7 @@ function Testimonial(){
                         return (
                             <div key={`second-row-second-${data.id}`} className='min-w-[20rem] max-w-[28rem] p-4 bg-white shadow-xl shadow-gray-100/60 rounded-lg border hover:shadow-xl flex-shrink-0'>
                                 <div className='flex flex-row justify-center gap-3 items-center'>
-                                    <img src={`${image}`} alt="user1" className='size-10 rounded-full object-cover'/>
+                                    <img src={image.src || image} alt="user1" className='size-10 rounded-full object-cover'/>
                                     <div className='flex-col flex-1 flex-nowrap flex justify-center items-start'>
                                         <h1 className='font-Custom font-bold text-sm text-gray-800'>{data.name}</h1>
                                         <p className='font-Custom font-normal text-xs text-blue-400/95'>{data.position}</p>

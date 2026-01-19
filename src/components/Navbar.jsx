@@ -1,21 +1,22 @@
+'use client'
+
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown, User, Globe } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Logo from '../assets/logo.svg';
+import { LANGUAGES, SERVICE_LINKS, ACCOUNT_LINKS } from '@/constants';
+import { useTranslation } from '@/i18n';
 
 const Nav_bar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
-    const [currentLanguage, setCurrentLanguage] = useState('en');
-
-    // Available languages
-    const Languages = [
-        { code: 'en', name: 'English' },
-        { code: 'fr', name: 'Français' },
-    ];
+    const { t, language, changeLanguage } = useTranslation();
 
     //passing useNavigate to navigate for better accessibility
-    const navigate = useNavigate();
+    const router = useRouter();
+    
+    // Constants imported from @/constants
     
     // Close dropdowns when clicking anywhere
     useEffect(() => {
@@ -44,21 +45,11 @@ const Nav_bar = () => {
     };
 
     const handleLanguageChange = (langCode) => {
-        setCurrentLanguage(langCode);
+        changeLanguage(langCode);
         setActiveDropdown(null);
     };
 
-    // Navigation data
-    const servicesLinks = [
-        { name: 'Cite Cleaning', link: '/services/cite-cleaning' },
-        { name: 'Pickups / Deliveries', link: '/services/pickups-deliveries' },
-        { name: 'Laundry Services', link: '/services/laundry' },
-    ];
-
-    const accountLinks = [
-        { name: 'Login', link: '/login' },
-        { name: 'Sign Up', link: '/signup' },
-    ];
+    // Navigation data imported from constants
 
     // Account dropdown for mobile
     const AccountMobileDropdown = () => {
@@ -71,7 +62,7 @@ const Nav_bar = () => {
                     className="w-full flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                 >
                     <User className="mr-2" size={16} />
-                    <span>Account</span>
+                    <span>{t('nav.account')}</span>
                     <ChevronDown
                         className={`ml-auto transition-transform ${activeDropdown === 'accountMobile' ? 'transform rotate-180' : ''}`}
                         size={16}
@@ -80,10 +71,10 @@ const Nav_bar = () => {
                 
                 {activeDropdown === 'accountMobile' && (
                     <div className="pl-6 py-2 space-y-1">
-                        {accountLinks.map(link => (
+                        {ACCOUNT_LINKS.map(link => (
                             <Link
                                 key={link.name}
-                                to={link.link}
+                                href={link.link || '#'}
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                                 onClick={(e) => e.stopPropagation()}
                             >
@@ -99,7 +90,7 @@ const Nav_bar = () => {
                             className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                         >
                             <div className="flex justify-between items-center font-Custom font-normal">
-                                <span>Services</span>
+                                <span>{t('nav.services')}</span>
                                 <ChevronDown
                                     className={`transition-transform ${showServices ? 'transform rotate-180' : ''}`}
                                     size={12}
@@ -109,10 +100,10 @@ const Nav_bar = () => {
                         
                         {showServices && (
                             <div className="pl-4 space-y-1">
-                                {servicesLinks.map(service => (
+                                {SERVICE_LINKS.map(service => (
                                     <Link
                                         key={service.name}
-                                        to={service.link}
+                                        href={service.link || '#'}
                                         className="block px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600"
                                         onClick={(e) => e.stopPropagation()}
                                     >
@@ -132,47 +123,47 @@ const Nav_bar = () => {
         <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg z-50">
             <div className="px-2 pt-2 pb-4 space-y-1">
                 <Link
-                    to="/"
+                    href="/"
                     className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                     onClick={(e) => {
                         e.stopPropagation();
                         setIsMenuOpen(false);
                     }}
                 >
-                    Home
+                    {t('nav.home')}
                 </Link>
                 
                 <Link
-                    to="/about"
+                    href="/about"
                     className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                     onClick={(e) => {
                         e.stopPropagation();
                         setIsMenuOpen(false);
                     }}
                 >
-                    About
+                    {t('nav.about')}
                 </Link>
                 
                 <Link
-                    to="/blog"
+                    href="/blog"
                     className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                     onClick={(e) => {
                         e.stopPropagation();
                         setIsMenuOpen(false);
                     }}
                 >
-                    Blog
+                    {t('nav.blog')}
                 </Link>
                 
                 <Link
-                    to="/contact"
+                    href="/contact"
                     className="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                     onClick={(e) => {
                         e.stopPropagation();
                         setIsMenuOpen(false);
                     }}
                 >
-                    Contact Us
+                    {t('nav.contact')}
                 </Link>
                 
                 <div>
@@ -181,7 +172,7 @@ const Nav_bar = () => {
                         className="w-full flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                     >
                         <Globe size={16} className="mr-2" />
-                        <span>{Languages.find(l => l.code === currentLanguage)?.name}</span>
+                        <span>{LANGUAGES.find(l => l.code === language)?.name}</span>
                         <ChevronDown
                             className={`ml-auto transition-transform ${activeDropdown === 'languageMobile' ? 'transform rotate-180' : ''}`}
                             size={16}
@@ -189,7 +180,7 @@ const Nav_bar = () => {
                     </button>
                     {activeDropdown === 'languageMobile' && (
                         <div className="pl-6 py-2 space-y-1" onClick={(e) => e.stopPropagation()}>
-                            {Languages.map((item) => (
+                            {LANGUAGES.map((item) => (
                                 <button
                                     key={item.code}
                                     onClick={(e) => {
@@ -197,7 +188,7 @@ const Nav_bar = () => {
                                         handleLanguageChange(item.code);
                                         setActiveDropdown(null);
                                     }}
-                                    className={`block w-full text-left px-4 py-2 text-sm ${item.code === currentLanguage ? 'text-blue-600 font-medium' : 'text-gray-700'} hover:bg-blue-50 hover:text-blue-600`}
+                                    className={`block w-full text-left px-4 py-2 text-sm ${item.code === language ? 'text-blue-600 font-medium' : 'text-gray-700'} hover:bg-blue-50 hover:text-blue-600`}
                                 >
                                     {item.name}
                                 </button>
@@ -219,20 +210,20 @@ const Nav_bar = () => {
             >
                 {icon}
                 <span className={icon ? 'ml-1' : ''}>
-                    {isLanguage ? Languages.find(l => l.code === currentLanguage)?.name : title}
+                    {isLanguage ? LANGUAGES.find(l => l.code === language)?.name : title}
                 </span>
                 <ChevronDown className="ml-1" size={16} />
             </button>
             {activeDropdown === dropdownKey && (
                 <div className="absolute right-0 z-10 mt-2 w-48 bg-white rounded-md shadow-lg py-1" onClick={(e) => e.stopPropagation()}>
-                    {items.map((item) => (
-                        <React.Fragment key={item.name || item.code}>
+                    {items.map((item, index) => (
+                        <React.Fragment key={item.name || item.code || `item-${index}`}>
                             {item.isDivider ? (
                                 <div className="border-t border-gray-200 my-1"></div>
                             ) : (
                                 <Link
-                                    to={item.link}
-                                    className={`block px-4 py-2 text-sm ${isLanguage && item.code === currentLanguage ? 'text-blue-600 font-medium' : 'text-gray-700'} hover:bg-blue-50 hover:text-blue-600`}
+                                    href={item.link || '#'}
+                                    className={`block px-4 py-2 text-sm ${isLanguage && item.code === language ? 'text-blue-600 font-medium' : 'text-gray-700'} hover:bg-blue-50 hover:text-blue-600`}
                                     onClick={(e) => {
                                         if (isLanguage) {
                                             e.preventDefault();
@@ -257,41 +248,41 @@ const Nav_bar = () => {
                 <div className="flex justify-between h-16">
                     {/* Logo - using imported SVG */}
                     <div className="flex-shrink-0 flex items-center">
-                        <img src={Logo} onClick={()=>navigate('/')} alt="RentSpot Logo" className="h-9 lg:h-9 w-auto cursor-pointer" />
+                        <img src={Logo.src || Logo} onClick={()=>router.push('/')} alt="RentSpot Logo" className="h-9 lg:h-9 w-auto cursor-pointer" />
                     </div>
                     
                     {/* Desktop navigation */}
                     <div className="hidden md:flex items-center space-x-4">
-                        <Link to="/" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
-                            Home
+                        <Link href="/" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+                            {t('nav.home')}
                         </Link>
-                        <Link to="/about" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 cursor-pointer">
-                            About us
-                        </Link>
-                        
-                        <Link to="/blog" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
-                            Blog
+                        <Link href="/about" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 cursor-pointer">
+                            {t('nav.about')}
                         </Link>
                         
-                        <Link to="/contact" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
-                            Contact Us
+                        <Link href="/blog" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+                            {t('nav.blog')}
+                        </Link>
+                        
+                        <Link href="/contact" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
+                            {t('nav.contact')}
                         </Link>
                         
                         <DesktopDropdown
                             icon={<Globe size={16} />}
                             title="Language"
-                            items={Languages}
+                            items={LANGUAGES}
                             dropdownKey="language"
                             isLanguage
                         />
                         
                         <DesktopDropdown 
                             icon={<User size={16} />}
-                            title="Account"
+                            title={t('nav.account')}
                             items={[
-                                ...accountLinks,
+                                ...ACCOUNT_LINKS,
                                 { isDivider: true },
-                                ...servicesLinks
+                                ...SERVICE_LINKS
                             ]} 
                             dropdownKey="account" 
                         />

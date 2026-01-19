@@ -1,3 +1,5 @@
+'use client'
+
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import ConversationPopup from './ConversationPopup';
 import { useAuth } from '@/lib/auth-context';
