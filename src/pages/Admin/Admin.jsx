@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-// React Router removed - using Next.js App Router
+import { usePathname } from 'next/navigation';
 import '../../App.css';
 import Sidebar from './Components/Sidebar';
 import Main from './Components/Main';
@@ -17,24 +17,20 @@ import Settings from './Components/Settings';
 function Admin() {
   // Shared state for sidebar collapse - controls main content width
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [activeView, setActiveView] = useState('dashboard');
+  const pathname = usePathname();
   
-  /* 
-  // Handle hash changes for navigation
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash) {
-        setActiveView(hash);
-      }
-    };
+  // Determine active view based on pathname
+  const getActiveView = () => {
+    const path = pathname.split('/').pop();
+    if (path && path !== 'dashboard') {
+      return path;
+    }
+    return 'dashboard';
+  };
 
-    handleHashChange();
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  const activeView = getActiveView();
 
-  // Render the appropriate view based on activeView
+  // Render the appropriate view based on pathname
   const renderView = () => {
     switch (activeView) {
       case 'properties':
@@ -57,7 +53,7 @@ function Admin() {
       default:
         return <Main isSidebarCollapsed={isSidebarCollapsed} />;
     }
-  }; */
+  };
 
   return (
     <section className="admin-section bg-gray-100 min-h-screen flex flex-col md:flex-row justify-start gap-2">
@@ -66,8 +62,7 @@ function Admin() {
         setIsCollapsed={setIsSidebarCollapsed}
         activeView={activeView}
       />
-      <Main isSidebarCollapsed={isSidebarCollapsed} />
-      {/* {renderView()} */}
+      {renderView()}
     </section>
   )
 }

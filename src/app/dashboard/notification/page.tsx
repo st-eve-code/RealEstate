@@ -1,20 +1,29 @@
 'use client'
 
 import { useAuth } from '@/lib/auth-context'
-import Notification from '@/components/User_Dashboard/Notification'
-import UserDashboardLayout from '../layouts/UserDashboardLayout'
+import Loader from '@/components/ado/loader'
+import AdminDashboard from '@/pages/Admin/Admin'
 
 export default function NotificationPage() {
-  const { user } = useAuth()
+  const { user, loadingUser } = useAuth()
 
-  // Only for regular users
-  if (user?.role?.role !== 'user') {
+  if (loadingUser) {
+    return (
+      <div className='absolute top-0 left-0 w-screen h-screen'>
+        <Loader style='dot-121' />
+      </div>
+    )
+  }
+
+  if (!user) {
     return null
   }
 
-  return (
-    <UserDashboardLayout>
-      <Notification />
-    </UserDashboardLayout>
-  )
+  const userRole = user.role?.role || 'user'
+
+  if (userRole === 'admin') {
+    return <AdminDashboard />
+  }
+
+  return <div>Access denied. Admin only.</div>
 }

@@ -431,18 +431,29 @@ export interface HandlerResult<T> {
     error?: string;
 }
 
+/**
+ * a collection with Activity
+ */
 export interface Activity {
     id: string,
-    uid: string,
-    name: string,
-    description: string,
+    user: {
+        id: string,
+        name: string
+    },
+    title: string,
+    context: string,
+    featured: {
+        type: 'user.creation' | 'user.action' | 'user.delete' | 'property.update' | 'payment' | 'support' | 'admin.action' // for the filtering
+        badge: string, // for the badge
+        primary?: string // the blue text beside time ago, it's mostly the subject
+    },
+    color: string, // the color of the badge
+
     createdAt: Timestamp,
     location: {
         geo?: GeoLocate,
         ip?: string
     },
-    type: 'login-attempt' | 'login' | 'search' | 'support' | 'feedback',
-    subjectId?: string
 }
 
 export interface FirestoreResult {

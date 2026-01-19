@@ -5,7 +5,7 @@ type UploadResult = {
   error?: string;
 };
 
-const UPLOAD_ENDPOINT = import.meta.env.VITE_MEDIA_UPLOAD_ENDPOINT || 'http://localhost:8000/upload';
+const UPLOAD_ENDPOINT = process.env.NEXT_MEDIA_UPLOAD_ENDPOINT || 'http://localhost:8000/upload';
 
 export function generateUniqueId(prefix = ''): string {
   const rand = Math.random().toString(36).slice(2, 10);

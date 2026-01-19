@@ -4,7 +4,7 @@ import { useAuth } from '@/lib/auth-context'
 import Loader from '@/components/ado/loader'
 import AdminDashboard from '@/pages/Admin/Admin'
 
-export default function PropertiesPage() {
+export default function MembersPage() {
   const { user, loadingUser } = useAuth()
 
   if (loadingUser) {
@@ -21,11 +21,9 @@ export default function PropertiesPage() {
 
   const userRole = user.role?.role || 'user'
 
-  // Only render for admin role
   if (userRole === 'admin') {
     return <AdminDashboard />
   }
 
-  // Redirect non-admin users
   return <div>Access denied. Admin only.</div>
 }

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, where, updateDoc, doc, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Search, Plus, Edit, Trash2, Eye, X, Save, UserPlus, Filter } from 'lucide-react';
+import ConfirmModal from '../../../components/ConfirmModal';
 
 function Clients({ isSidebarCollapsed }) {
   const [clients, setClients] = useState([]);
@@ -14,6 +15,8 @@ function Clients({ isSidebarCollapsed }) {
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [clientToDeactivate, setClientToDeactivate] = useState(null);
   const [selectedClient, setSelectedClient] = useState(null); /* User | null */
   const [formData, setFormData] = useState({
     fullName: '',
@@ -118,17 +121,25 @@ function Clients({ isSidebarCollapsed }) {
   };
 
   /**
-   * 
+   * Open confirmation modal for deactivation
    * @param {string} clientId 
-   * @returns 
    */
-  const handleDeactivateClient = async (clientId) => {
-    if (!confirm('Are you sure you want to deactivate this client?')) return;
+  const openDeactivateModal = (clientId) => {
+    setClientToDeactivate(clientId);
+    setShowConfirmModal(true);
+  };
+
+  /**
+   * Handle actual deactivation after confirmation
+   */
+  const handleDeactivateClient = async () => {
+    if (!clientToDeactivate) return;
 
     try {
-      const clientRef = doc(db, 'users', clientId);
+      const clientRef = doc(db, 'users', clientToDeactivate);
       await updateDoc(clientRef, {
-        // Add a deactivated flag or update status
+        status: 'deactivated',
+        deactivatedAt: Timestamp.now(),
         updatedAt: Timestamp.now()
       });
       await fetchClients();
@@ -136,6 +147,8 @@ function Clients({ isSidebarCollapsed }) {
     } catch (error) {
       console.error('Error deactivating client:', error);
       alert('Failed to deactivate client');
+    } finally {
+      setClientToDeactivate(null);
     }
   };
 
@@ -288,7 +301,7 @@ function Clients({ isSidebarCollapsed }) {
                           <Edit size={16} />
                         </button>
                         <button
-                          onClick={() => handleDeactivateClient(client.uid)}
+                          onClick={() => openDeactivateModal(client.uid)}
                           className="p-2 text-red-600 transition-colors rounded hover:bg-red-50"
                           title="Deactivate"
                         >
@@ -499,6 +512,21 @@ function Clients({ isSidebarCollapsed }) {
           </div>
         </div>
       )}
+
+      {/* Confirm Deactivation Modal */}
+      <ConfirmModal
+        isOpen={showConfirmModal}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setClientToDeactivate(null);
+        }}
+        onConfirm={handleDeactivateClient}
+        title="Deactivate Client"
+        message="Are you sure you want to deactivate this client? They will no longer be able to access their account."
+        confirmText="Deactivate"
+        cancelText="Cancel"
+        type="danger"
+      />
     </section>
   );
 }
