@@ -143,7 +143,7 @@ export const unitToFormData = (unit) => {
  * Format form data for database storage
  * Converts the form data structure to match the Unit interface exactly
  * @param {object} formData - The form data to format
- * @param {object} caretaker - Caretaker info {id: string, name: string}
+ * @param {object} caretaker - Caretaker info {id: string, name: string, email: string, phoneNumber?: string}
  * @param {object} uploadedMedia - Uploaded media with URLs {images: Array, videoUrl?: string}
  * @returns {object} - Formatted data ready for database (matches Unit interface)
  */
@@ -164,8 +164,8 @@ export const formatFormDataForDatabase = (formData, caretaker, uploadedMedia = n
     // Unit.type (RentingType)
     type: basic.propertyType,
     
-    // Unit.caretaker
-    caretaker: caretaker || { id: '', name: '' },
+    // Unit.caretaker (includes id, name, email, and optional phoneNumber)
+    caretaker: caretaker || { id: '', name: '', email: '' },
     
     // Unit.building (optional, can be set later)
     building: { id: '', name: '' },
@@ -226,8 +226,10 @@ export const formatFormDataForDatabase = (formData, caretaker, uploadedMedia = n
     // Unit.views
     views: 0,
     
-    // Unit.status (default to pending for admin review)
-    status: 'pending',
+    // Unit.status - Based on visibility toggle:
+    // - visible: true → status: 'pending' (awaiting admin approval)
+    // - visible: false → status: 'archived' (hidden from public)
+    status: basic.visible ? 'pending' : 'archived',
     
     // Unit.isVerified
     isVerified: false,

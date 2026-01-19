@@ -4,6 +4,9 @@ import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import Loader from '@/components/ado/loader'
+import AdminDashboardLayout from './layouts/AdminDashboardLayout'
+import CaretakerDashboardLayout from './layouts/CaretakerDashboardLayout'
+import UserDashboardLayout from './layouts/UserDashboardLayout'
 
 export default function DashboardLayout({
   children,
@@ -39,5 +42,17 @@ export default function DashboardLayout({
     )
   }
 
-  return <>{children}</>
+  const userRole = user?.role?.role || 'user'
+
+  // Apply role-based layouts
+  if (userRole === 'admin') {
+    return <AdminDashboardLayout>{children}</AdminDashboardLayout>
+  }
+
+  if (userRole === 'landlord') {
+    return <CaretakerDashboardLayout>{children}</CaretakerDashboardLayout>
+  }
+
+  // Default to user layout
+  return <UserDashboardLayout>{children}</UserDashboardLayout>
 }

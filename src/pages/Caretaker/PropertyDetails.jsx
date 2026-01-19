@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Heart, MapPin, Bed, Bath, UtensilsCrossed, Star, ArrowLeft, CheckCircle, Phone, Mail, Edit, Trash2, Settings } from 'lucide-react';
+import { Heart, MapPin, Bed, Bath, UtensilsCrossed, Star, ArrowLeft, CheckCircle, Phone, Mail, Edit, Trash2, Settings, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { selectDocumentsByConstraint } from '@/lib/utils/firestoreDocumentOperation';
 import { doc, deleteDoc } from 'firebase/firestore';
@@ -87,6 +87,10 @@ function PropertyDetails() {
 
   const handleEdit = () => {
     router.push(`/dashboard/edit-property/${id}`);
+  };
+
+  const handleAnalytics = () => {
+    router.push(`/dashboard/properties/${id}/analytics`);
   };
 
   const handleDelete = async () => {
@@ -196,12 +200,20 @@ function PropertyDetails() {
                   {property.name || 'Untitled Property'}
                 </h1>
                 <button
+                  onClick={handleAnalytics}
+                  className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors group"
+                  title="View Analytics"
+                  aria-label="View Analytics"
+                >
+                  <BarChart3 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                </button>
+                <button
                   onClick={handleEdit}
-                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors group"
                   title="Edit Property"
                   aria-label="Edit Property"
                 >
-                  <Edit className="w-5 h-5" />
+                  <Edit className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 </button>
               </div>
               <div className="flex items-center gap-2 text-gray-600">

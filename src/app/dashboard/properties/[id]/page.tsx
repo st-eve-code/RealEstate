@@ -2,7 +2,6 @@
 
 import { useAuth } from '@/lib/auth-context'
 import PropertyDetails from '@/pages/Caretaker/PropertyDetails'
-import CaretakerDashboardLayout from '../../layouts/CaretakerDashboardLayout'
 import UnitDetails from '@/pages/Admin/Components/Property/UnitDetails'
 import Sidebar from '@/pages/Admin/Components/Sidebar'
 import { useState, use, Suspense } from 'react'
@@ -30,11 +29,7 @@ function PropertyDetailsContent({ params }: { params: Promise<{ id: string }> })
 
   // Landlord view
   if (userRole === 'landlord') {
-    return (
-      <CaretakerDashboardLayout>
-        <PropertyDetails />
-      </CaretakerDashboardLayout>
-    )
+    return <PropertyDetails />
   }
 
   return <div>Access denied.</div>

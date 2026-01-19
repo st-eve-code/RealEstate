@@ -32,6 +32,7 @@ function EditProperty() {
   const [isUploading, setIsUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [originalProperty, setOriginalProperty] = useState(null);
+  const [cannotEdit, setCannotEdit] = useState({ blocked: false, status: '', message: '' });
 
   // Step definitions for the progress indicator
   const steps = [
@@ -60,14 +61,35 @@ function EditProperty() {
         if (result.success) {
           const foundProperty = result.data.find(unit => unit.id === id);
           if (foundProperty) {
+            // Check if property can be edited
+            const status = foundProperty.status?.toLowerCase();
+            if (status === 'pending' || status === 'deleted') {
+              const messages = {
+                pending: 'This property is currently under admin review. You cannot make changes until the review is complete.',
+                deleted: 'This property has been deleted and cannot be edited. Please contact an administrator for assistance.'
+              };
+              setCannotEdit({
+                blocked: true,
+                status: status,
+                message: messages[status] || 'This property cannot be edited at this time.'
+              });
+              setLoading(false);
+              return;
+            }
+            
             // Store original property for media preservation
             setOriginalProperty(foundProperty);
             // Convert Unit data to form data format
             const formDataFromUnit = unitToFormData(foundProperty);
             setFormData(formDataFromUnit);
           } else {
-            alert('Property not found or you do not have permission to edit it.');
-            router.push('/dashboard/properties');
+            setCannotEdit({
+              blocked: true,
+              status: 'not-found',
+              message: 'Property not found or you do not have permission to edit it.'
+            });
+            setLoading(false);
+            return;
           }
         }
       } catch (error) {
@@ -155,8 +177,10 @@ function EditProperty() {
       
       const caretaker = user ? {
         id: user.uid,
-        name: user.displayName || user.fullName || 'Caretaker'
-      } : { id: '', name: '' };
+        name: user.displayName || user.fullName || 'Caretaker',
+        email: user.email || '',
+        phoneNumber: user.phoneNumber || user.phone || undefined
+      } : { id: '', name: '', email: '' };
 
       // Generate unique ID (reuse existing or generate new)
       const uniqueId = generateUniqueId(caretaker.name || 'property');
@@ -206,14 +230,16 @@ function EditProperty() {
       );
       
       // Remove fields that should not be updated (preserve existing values)
-      const { createdAt, rating, views, reportCount, status, isVerified, ...updateableFields } = unitData;
+      const { createdAt, rating, views, reportCount, isVerified, ...updateableFields } = unitData;
       
-      // Add updatedAt timestamp
+      const now = Timestamp.now();
+      
+      // Add updatedAt timestamp and set status to pending for admin review
       const updateData = {
         ...updateableFields,
-        updatedAt: Timestamp.now()
-        // Note: createdAt, rating, views, reportCount, status, isVerified are preserved
-        // updateDoc will merge, so these won't be overwritten
+        status: 'pending', // Always set to pending when edited
+        updatedAt: now
+        // Note: createdAt, rating, views, reportCount, isVerified are preserved
       };
       
       // Update unitData in Firestore 'units' collection
@@ -227,7 +253,7 @@ function EditProperty() {
       }
       
       console.log('Property updated successfully');
-      alert('Property updated successfully!');
+      alert('Property updated successfully! It will be reviewed by an admin before going live.');
       
       // Navigate back to property details
       router.push(`/dashboard/properties/${id}`);
@@ -287,10 +313,128 @@ function EditProperty() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
           <p className="text-gray-600">Loading property data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show premium error UI if property cannot be edited
+  if (cannotEdit.blocked) {
+    const statusConfig = {
+      pending: {
+        icon: '⏳',
+        color: 'orange',
+        bgGradient: 'from-orange-50 to-amber-50',
+        iconBg: 'bg-orange-100',
+        iconColor: 'text-orange-600',
+        borderColor: 'border-orange-200',
+        animated: true,
+      },
+      deleted: {
+        icon: '🗑️',
+        color: 'red',
+        bgGradient: 'from-red-50 to-rose-50',
+        iconBg: 'bg-red-100',
+        iconColor: 'text-red-600',
+        borderColor: 'border-red-200',
+      },
+      'not-found': {
+        icon: '🔍',
+        color: 'gray',
+        bgGradient: 'from-gray-50 to-slate-50',
+        iconBg: 'bg-gray-100',
+        iconColor: 'text-gray-600',
+        borderColor: 'border-gray-200',
+      }
+    };
+
+    const config = statusConfig[cannotEdit.status] || statusConfig['not-found'];
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 py-12 px-4">
+        <div className="max-w-2xl mx-auto">
+          {/* Premium Error Card */}
+          <div className={`bg-gradient-to-br ${config.bgGradient} rounded-3xl shadow-2xl overflow-hidden border-2 ${config.borderColor}`}>
+            {/* Icon Section */}
+            <div className="pt-12 pb-6 text-center">
+              <div className={`${config.iconBg} w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg ${config.animated ? 'animate-pulse' : ''}`}>
+                <span className={`text-5xl ${config.animated ? 'inline-block animate-bounce' : ''}`} style={config.animated ? { animationDuration: '2s' } : {}}>
+                  {config.icon}
+                </span>
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-3">
+                {cannotEdit.status === 'pending' && 'Under Review'}
+                {cannotEdit.status === 'deleted' && 'Property Deleted'}
+                {cannotEdit.status === 'not-found' && 'Not Found'}
+              </h1>
+              <p className="text-lg text-gray-600 px-6 max-w-xl mx-auto leading-relaxed">
+                {cannotEdit.message}
+              </p>
+            </div>
+
+            {/* Info Section */}
+            <div className="bg-white/60 backdrop-blur-sm px-8 py-6 border-t-2 border-white">
+              <div className="space-y-4">
+                {cannotEdit.status === 'pending' && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-blue-600 text-sm">ℹ️</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900 mb-1">Why can't I edit?</p>
+                      <p className="text-sm text-gray-600">
+                        When a property is under admin review, editing is temporarily disabled to maintain data integrity. 
+                        Once approved, you'll be able to make changes again.
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {cannotEdit.status === 'deleted' && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-red-600 text-sm">⚠️</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900 mb-1">Need help?</p>
+                      <p className="text-sm text-gray-600">
+                        If you believe this property was deleted by mistake, please contact an administrator 
+                        to review the case and potentially restore it.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="px-8 py-6 bg-white/80 backdrop-blur-sm space-y-3">
+              <button
+                onClick={() => router.push('/dashboard/properties')}
+                className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                ← Back to Properties
+              </button>
+              {cannotEdit.status === 'deleted' && (
+                <button
+                  onClick={() => router.push('/dashboard/messages')}
+                  className="w-full px-6 py-3 bg-white text-gray-700 rounded-xl font-semibold border-2 border-gray-200 hover:bg-gray-50 transition-all duration-200"
+                >
+                  Contact Support
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Additional Info */}
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-500">
+              Property ID: <span className="font-mono font-semibold text-gray-700">{id}</span>
+            </p>
+          </div>
         </div>
       </div>
     );

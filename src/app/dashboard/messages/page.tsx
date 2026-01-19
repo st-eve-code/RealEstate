@@ -2,7 +2,6 @@
 
 import { useAuth } from '@/lib/auth-context'
 import { MessagesPage } from '@/components/Messaging'
-import CaretakerDashboardLayout from '../layouts/CaretakerDashboardLayout'
 
 export default function Messages() {
   const { user } = useAuth()
@@ -12,9 +11,5 @@ export default function Messages() {
     return null
   }
 
-  return (
-    <CaretakerDashboardLayout>
-      <MessagesPage />
-    </CaretakerDashboardLayout>
-  )
+  return <MessagesPage />
 }

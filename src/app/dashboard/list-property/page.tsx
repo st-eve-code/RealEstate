@@ -2,7 +2,6 @@
 
 import { useAuth } from '@/lib/auth-context'
 import ListProperty from '@/pages/Caretaker/ListProperty'
-import CaretakerDashboardLayout from '../layouts/CaretakerDashboardLayout'
 
 export default function ListPropertyPage() {
   const { user } = useAuth()
@@ -12,9 +11,5 @@ export default function ListPropertyPage() {
     return null
   }
 
-  return (
-    <CaretakerDashboardLayout>
-      <ListProperty />
-    </CaretakerDashboardLayout>
-  )
+  return <ListProperty />
 }

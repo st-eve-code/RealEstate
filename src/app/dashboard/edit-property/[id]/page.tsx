@@ -2,7 +2,6 @@
 
 import { useAuth } from '@/lib/auth-context'
 import EditProperty from '@/pages/Caretaker/EditProperty'
-import CaretakerDashboardLayout from '../../layouts/CaretakerDashboardLayout'
 
 export default function EditPropertyPage() {
   const { user } = useAuth()
@@ -12,9 +11,5 @@ export default function EditPropertyPage() {
     return null
   }
 
-  return (
-    <CaretakerDashboardLayout>
-      <EditProperty />
-    </CaretakerDashboardLayout>
-  )
+  return <EditProperty />
 }

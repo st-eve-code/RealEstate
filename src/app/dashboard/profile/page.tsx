@@ -4,10 +4,6 @@ import { useAuth } from '@/lib/auth-context'
 import Profile from '@/components/User_Dashboard/Profile'
 import Loader from '@/components/ado/loader'
 
-import UserDashboardLayout from '../layouts/UserDashboardLayout'
-import CaretakerDashboardLayout from '../layouts/CaretakerDashboardLayout'
-import AdminDashboardLayout from '../layouts/AdminDashboardLayout'
-
 export default function ProfilePage() {
   const { user, loadingUser } = useAuth()
 
@@ -23,30 +19,6 @@ export default function ProfilePage() {
     return null
   }
 
-  const userRole = user.role?.role || 'user'
-
-  // Profile is same for all roles, just different layouts
-  const ProfileContent = <Profile user={user} />
-
-  if (userRole === 'landlord') {
-    return (
-      <CaretakerDashboardLayout>
-        {ProfileContent}
-      </CaretakerDashboardLayout>
-    )
-  }
-
-  if (userRole === 'admin') {
-    return (
-      <AdminDashboardLayout>
-        {ProfileContent}
-      </AdminDashboardLayout>
-    )
-  }
-
-  return (
-    <UserDashboardLayout>
-      {ProfileContent}
-    </UserDashboardLayout>
-  )
+  // Profile is same for all roles, layout applied by dashboard/layout.tsx
+  return <Profile user={user} />
 }

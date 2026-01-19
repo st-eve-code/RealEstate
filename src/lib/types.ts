@@ -242,7 +242,7 @@ export interface GeoLocate{
 export interface Unit {
     id: string,
     building: {id: string, name: string}, // not necessary
-    caretaker: {id: string, name: string},
+    caretaker: {id: string, name: string, email: string, phoneNumber?: string},
     name: string,
     description: string,
     payment: {
@@ -309,7 +309,7 @@ export interface Unit {
 }
 
 /**
- * Listing Status, containing listing details like status, reason, reviewed by and reviewed at
+ * Listing , containing listing details like status, reason, reviewed by and reviewed at
  * in firebase, it is stored in the units/id/Listing subcollection
  * This is used to track the status of a listing and the reason for the status and also how many times the listing unit has been reviewed
  */
