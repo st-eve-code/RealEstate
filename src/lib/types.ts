@@ -128,7 +128,8 @@ export interface AnalyticTransaction {
 export interface LandLord {
     verified: string,
     licenseNumber?: string,
-    documents: string[]
+    documents: string[],
+    complaints?: number
 }
 
 export interface UserRole{

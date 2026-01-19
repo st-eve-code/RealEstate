@@ -6,14 +6,15 @@ import Link from 'next/link';
 import { ArrowLeft, FileText, User, Clock } from 'lucide-react';
 import { fetchUnitReports, fetchUnitById } from './services/unitService';
 
-export default function UnitReports({ isSidebarCollapsed }) {
-  const { unitId } = useParams();
+export default function UnitReports({ unitID, isSidebarCollapsed }) {
+  const params = useParams();
+  const unitId = unitID || params?.unitId;
   const [reports, setReports] = useState([]);
   const [unit, setUnit] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
+    if(unitId) loadData();
   }, [unitId]);
 
   const loadData = async () => {

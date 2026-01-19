@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, where, updateDoc, doc, Timestamp } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import { Search, CheckCircle, XCircle, Eye, X, Building2, AlertCircle, MessageSquare, Filter } from 'lucide-react';
+import ConfirmModal from '../../../components/ConfirmModal';
 function HouseAgents({ isSidebarCollapsed }) {
   const [agents, setAgents] = useState([]);
   const [filteredAgents, setFilteredAgents] = useState([]);
@@ -12,8 +13,12 @@ function HouseAgents({ isSidebarCollapsed }) {
   const [filterStatus, setFilterStatus] = useState('all');
   const [showViewModal, setShowViewModal] = useState(false);
   const [showComplaintModal, setShowComplaintModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null); // 'approve' or 'reject'
+  const [agentToUpdate, setAgentToUpdate] = useState(null);
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [complaintText, setComplaintText] = useState('');
+  const [agentStats, setAgentStats] = useState({}); // Store listings and complaints per agent
 
   useEffect(() => {
     fetchAgents();
@@ -31,15 +36,47 @@ function HouseAgents({ isSidebarCollapsed }) {
       const usersRef = collection(db, 'users');
       const q = query(usersRef, where('role.role', '==', 'landlord'));
       const querySnapshot = await getDocs(q);
-      const agentsData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        applicationStatus: doc.data().role?.landlord?.licenseNumber ? 'verified' : 'pending',
-        licenseNumber: doc.data().role?.landlord?.licenseNumber || '',
-        documents: doc.data().role?.landlord?.documents || [],
-        listingsCount: Math.floor(Math.random() * 20),
-        complaints: Math.floor(Math.random() * 5),
-        appliedAt: doc.data().createdAt
+      
+      // Build agents data with real stats
+      const agentsData = await Promise.all(querySnapshot.docs.map(async (docSnap) => {
+        const data = docSnap.data();
+        
+        try {
+          // Fetch approved listings count for this landlord
+          const propertiesQuery = query(
+            collection(db, 'properties'),
+            where('landlordId', '==', docSnap.id),
+            where('status', '==', 'approved')
+          );
+          const propertiesSnapshot = await getDocs(propertiesQuery);
+          const listingsCount = propertiesSnapshot.size;
+          
+          // Get complaints count from role.landlord.complaints
+          const complaintsCount = data.role?.landlord?.complaints?.length || 0;
+          
+          return {
+            id: docSnap.id,
+            ...data,
+            applicationStatus: data.role?.landlord?.licenseNumber ? 'verified' : 'pending',
+            licenseNumber: data.role?.landlord?.licenseNumber || '',
+            documents: data.role?.landlord?.documents || [],
+            listingsCount: listingsCount, // Real data from properties collection
+            complaints: complaintsCount, // Real data from role.landlord.complaints
+            appliedAt: data.createdAt
+          };
+        } catch (error) {
+          console.error(`Error fetching stats for agent ${docSnap.id}:`, error);
+          return {
+            id: docSnap.id,
+            ...data,
+            applicationStatus: data.role?.landlord?.licenseNumber ? 'verified' : 'pending',
+            licenseNumber: data.role?.landlord?.licenseNumber || '',
+            documents: data.role?.landlord?.documents || [],
+            listingsCount: 0,
+            complaints: data.role?.landlord?.complaints?.length || 0,
+            appliedAt: data.createdAt
+          };
+        }
       }));
       
       setAgents(agentsData);
@@ -71,46 +108,53 @@ function HouseAgents({ isSidebarCollapsed }) {
   };
 
   /**
-   * 
-   * @param {string} agentId 
-   * @returns 
+   * Open confirmation modal for approval
    */
-  const handleApproveAgent = async (agentId) => {
-    if (!confirm('Are you sure you want to approve this agent?')) return;
-
-    try {
-      const agentRef = doc(db, 'users', agentId);
-      await updateDoc(agentRef, {
-        'role.landlord.verified': true,
-        updatedAt: Timestamp.now()
-      });
-      await fetchAgents();
-      alert('Agent approved successfully');
-    } catch (error) {
-      console.error('Error approving agent:', error);
-      alert('Failed to approve agent');
-    }
+  const openApproveModal = (agentId) => {
+    setAgentToUpdate(agentId);
+    setConfirmAction('approve');
+    setShowConfirmModal(true);
   };
 
   /**
-   * 
-   * @param {string} agentId 
-   * @returns 
+   * Open confirmation modal for rejection
    */
-  const handleRejectAgent = async (agentId) => {
-    if (!confirm('Are you sure you want to reject this agent?')) return;
+  const openRejectModal = (agentId) => {
+    setAgentToUpdate(agentId);
+    setConfirmAction('reject');
+    setShowConfirmModal(true);
+  };
+
+  /**
+   * Handle actual approve/reject after confirmation
+   */
+  const handleConfirmAction = async () => {
+    if (!agentToUpdate || !confirmAction) return;
 
     try {
-      const agentRef = doc(db, 'users', agentId);
-      await updateDoc(agentRef, {
-        'role.landlord.verified': false,
-        updatedAt: Timestamp.now()
-      });
+      const agentRef = doc(db, 'users', agentToUpdate);
+      
+      if (confirmAction === 'approve') {
+        await updateDoc(agentRef, {
+          'role.landlord.verified': true,
+          updatedAt: Timestamp.now()
+        });
+        alert('Agent approved successfully');
+      } else if (confirmAction === 'reject') {
+        await updateDoc(agentRef, {
+          'role.landlord.verified': false,
+          updatedAt: Timestamp.now()
+        });
+        alert('Agent rejected');
+      }
+      
       await fetchAgents();
-      alert('Agent rejected');
     } catch (error) {
-      console.error('Error rejecting agent:', error);
-      alert('Failed to reject agent');
+      console.error(`Error ${confirmAction}ing agent:`, error);
+      alert(`Failed to ${confirmAction} agent`);
+    } finally {
+      setAgentToUpdate(null);
+      setConfirmAction(null);
     }
   };
 
@@ -250,14 +294,14 @@ function HouseAgents({ isSidebarCollapsed }) {
                         {agent.applicationStatus === 'pending' && (
                           <>
                             <button
-                              onClick={() => handleApproveAgent(agent.uid)}
+                              onClick={() => openApproveModal(agent.id)}
                               className="p-2 text-green-600 transition-colors rounded hover:bg-green-50"
                               title="Approve"
                             >
                               <CheckCircle size={16} />
                             </button>
                             <button
-                              onClick={() => handleRejectAgent(agent.uid)}
+                              onClick={() => openRejectModal(agent.id)}
                               className="p-2 text-red-600 transition-colors rounded hover:bg-red-50"
                               title="Reject"
                             >
@@ -402,6 +446,26 @@ function HouseAgents({ isSidebarCollapsed }) {
           </div>
         </div>
       )}
+
+      {/* Confirm Approve/Reject Modal */}
+      <ConfirmModal
+        isOpen={showConfirmModal}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setAgentToUpdate(null);
+          setConfirmAction(null);
+        }}
+        onConfirm={handleConfirmAction}
+        title={confirmAction === 'approve' ? 'Approve Agent' : 'Reject Agent'}
+        message={
+          confirmAction === 'approve'
+            ? 'Are you sure you want to approve this agent? They will be able to list properties.'
+            : 'Are you sure you want to reject this agent? They will not be able to list properties.'
+        }
+        confirmText={confirmAction === 'approve' ? 'Approve' : 'Reject'}
+        cancelText="Cancel"
+        type={confirmAction === 'approve' ? 'info' : 'danger'}
+      />
     </section>
   );
 }

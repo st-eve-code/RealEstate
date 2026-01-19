@@ -6,14 +6,15 @@ import Link from 'next/link';
 import { ArrowLeft, Star, User, Clock } from 'lucide-react';
 import { fetchUnitReviews, fetchUnitById } from './services/unitService';
 
-export default function UnitReviews({ isSidebarCollapsed }) {
-  const { unitId } = useParams();
+export default function UnitReviews({ unitID, isSidebarCollapsed }) {
+  const params = useParams();
+  const unitId = unitID || params?.unitId;
   const [reviews, setReviews] = useState([]);
   const [unit, setUnit] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
+    if(unitId) loadData();
   }, [unitId]);
 
   const loadData = async () => {

@@ -3,18 +3,51 @@
 import { useAuth } from '@/lib/auth-context'
 import PropertyDetails from '@/pages/Caretaker/PropertyDetails'
 import CaretakerDashboardLayout from '../../layouts/CaretakerDashboardLayout'
+import UnitDetails from '@/pages/Admin/Components/Property/UnitDetails'
+import Sidebar from '@/pages/Admin/Components/Sidebar'
+import { useState, use, Suspense } from 'react'
+import Loader from '@/components/ado/loader'
 
-export default function PropertyDetailsPage() {
+function PropertyDetailsContent({ params }: { params: Promise<{ id: string }> }) {
   const { user } = useAuth()
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const { id: propertyId } = use(params)
+  const userRole = user?.role?.role || 'user'
 
-  // Only for landlords/caretakers
-  if (user?.role?.role !== 'landlord') {
-    return null
+  // Admin view
+  if (userRole === 'admin') {
+    return (
+      <section className="admin-section bg-gray-100 min-h-screen flex flex-col md:flex-row justify-start gap-2">
+        <Sidebar
+          isCollapsed={isSidebarCollapsed}
+          setIsCollapsed={setIsSidebarCollapsed}
+          activeView="properties"
+        />
+        <UnitDetails unitId={propertyId} isSidebarCollapsed={isSidebarCollapsed} />
+      </section>
+    )
   }
 
+  // Landlord view
+  if (userRole === 'landlord') {
+    return (
+      <CaretakerDashboardLayout>
+        <PropertyDetails />
+      </CaretakerDashboardLayout>
+    )
+  }
+
+  return <div>Access denied.</div>
+}
+
+export default function PropertyDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   return (
-    <CaretakerDashboardLayout>
-      <PropertyDetails />
-    </CaretakerDashboardLayout>
+    <Suspense fallback={
+      <div className='absolute top-0 left-0 w-screen h-screen'>
+        <Loader style='dot-121' />
+      </div>
+    }>
+      <PropertyDetailsContent params={params} />
+    </Suspense>
   )
 }
