@@ -421,20 +421,17 @@ export default function Property({ isSidebarCollapsed }) {
                       </div>
                     </div>
 
-                    {/* Remark Preview */}
+                    {/* Remark Badge */}
                     {unit.remark && (
-                      <div className={`mt-4 p-3 rounded-xl border-l-4 text-sm ${
-                        unit.remark.type === 'danger' ? 'bg-red-50 border-red-500 text-red-800' :
-                        unit.remark.type === 'warning' ? 'bg-yellow-50 border-yellow-500 text-yellow-800' :
-                        'bg-blue-50 border-blue-500 text-blue-800'
-                      }`}>
-                        <div className="flex items-start gap-2">
-                          <AlertTriangle size={16} className="flex-shrink-0 mt-0.5" />
-                          <div>
-                            <span className="font-semibold">Admin Remark: </span>
-                            {unit.remark.text}
-                          </div>
-                        </div>
+                      <div className="mt-4">
+                        <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold shadow-md ${
+                          unit.remark.type === 'danger' ? 'bg-gradient-to-r from-red-400 to-red-600 text-white' :
+                          unit.remark.type === 'warning' ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-white' :
+                          'bg-gradient-to-r from-blue-400 to-blue-600 text-white'
+                        }`}>
+                          <AlertTriangle size={16} />
+                          <span>{unit.remark.text || "Has Admin Remark"}</span>
+                        </span>
                       </div>
                     )}
                   </div>
