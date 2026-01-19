@@ -1,6 +1,7 @@
-"use client";
-import Settings from '@/pages/Admin/Components/Settings';
+'use client'
+
+import EnhancedSettings from '@/components/Admin/Settings/EnhancedSettings';
 
 export default function SettingsPage() {
-  return <Settings isSidebarCollapsed={false} />;
+  return <EnhancedSettings isSidebarCollapsed={false} />;
 }

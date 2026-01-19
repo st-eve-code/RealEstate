@@ -9,13 +9,23 @@ import {
   resetSettings,
   SecuritySettings as SecuritySettingsType 
 } from '@/lib/services/settingsService';
+import AlertModal, { AlertType } from './AlertModal';
+import ConfirmModal from './ConfirmModal';
 
 export default function SecuritySettings() {
   const { user } = useAuth();
   const [settings, setSettings] = useState<SecuritySettingsType | null>(null);
+  const [originalSettings, setOriginalSettings] = useState<SecuritySettingsType | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [ipInput, setIpInput] = useState('');
+  const [alert, setAlert] = useState<{ isOpen: boolean; type: AlertType; title: string; message: string }>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+  });
+  const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
     loadSettings();
@@ -26,42 +36,79 @@ export default function SecuritySettings() {
       setLoading(true);
       const data = await fetchSettings();
       setSettings(data.security);
+      setOriginalSettings(data.security);
     } catch (error) {
       console.error('Error loading settings:', error);
+      setAlert({
+        isOpen: true,
+        type: 'error',
+        title: 'Error Loading Settings',
+        message: 'Failed to load security settings. Please try again.',
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  const hasChanges = () => {
+    if (!settings || !originalSettings) return false;
+    return JSON.stringify(settings) !== JSON.stringify(originalSettings);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!settings || !user) return;
+    if (!settings || !user || !hasChanges()) return;
 
     try {
       setSaving(true);
       await updateSettings('security', settings, user.uid, user.displayName || user.email);
-      alert('Security settings saved successfully');
+      setOriginalSettings(settings);
+      setAlert({
+        isOpen: true,
+        type: 'success',
+        title: 'Settings Saved',
+        message: 'Security settings have been saved successfully!',
+      });
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Failed to save settings');
+      setAlert({
+        isOpen: true,
+        type: 'error',
+        title: 'Save Failed',
+        message: 'Failed to save security settings. Please try again.',
+      });
     } finally {
       setSaving(false);
     }
   };
 
   const handleReset = async () => {
-    if (!confirm('Are you sure you want to reset to default security settings?')) return;
-
     try {
       setSaving(true);
       await resetSettings('security');
       await loadSettings();
-      alert('Settings reset to defaults');
+      setAlert({
+        isOpen: true,
+        type: 'success',
+        title: 'Settings Reset',
+        message: 'Security settings have been reset to defaults successfully!',
+      });
     } catch (error) {
       console.error('Error resetting settings:', error);
-      alert('Failed to reset settings');
+      setAlert({
+        isOpen: true,
+        type: 'error',
+        title: 'Reset Failed',
+        message: 'Failed to reset security settings. Please try again.',
+      });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (originalSettings) {
+      setSettings(originalSettings);
     }
   };
 
@@ -71,7 +118,12 @@ export default function SecuritySettings() {
     // Basic IP validation
     const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
     if (!ipPattern.test(ipInput.trim())) {
-      alert('Please enter a valid IP address');
+      setAlert({
+        isOpen: true,
+        type: 'warning',
+        title: 'Invalid IP Address',
+        message: 'Please enter a valid IP address (e.g., 192.168.1.1)',
+      });
       return;
     }
 
@@ -110,14 +162,32 @@ export default function SecuritySettings() {
   }
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-sm">
+    <>
+      <AlertModal
+        isOpen={alert.isOpen}
+        onClose={() => setAlert({ ...alert, isOpen: false })}
+        type={alert.type}
+        title={alert.title}
+        message={alert.message}
+      />
+      <ConfirmModal
+        isOpen={confirmReset}
+        onClose={() => setConfirmReset(false)}
+        onConfirm={handleReset}
+        title="Reset Security Settings?"
+        message="Are you sure you want to reset all security settings to their default values? This will affect authentication policies, password requirements, and IP restrictions."
+        confirmText="Yes, Reset"
+        cancelText="No, Keep Current"
+        type="danger"
+      />
+    <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Security Settings</h2>
           <p className="text-sm text-gray-600">Configure authentication and security policies</p>
         </div>
         <button
-          onClick={handleReset}
+          onClick={() => setConfirmReset(true)}
           className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
         >
           <RefreshCw size={16} />
@@ -359,21 +429,23 @@ export default function SecuritySettings() {
         <div className="flex gap-3 pt-6 border-t border-gray-200">
           <button
             type="submit"
-            disabled={saving}
-            className="flex items-center gap-2 px-6 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+            disabled={saving || !hasChanges()}
+            className="flex items-center gap-2 px-6 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             <Save size={18} />
-            {saving ? 'Saving...' : 'Save Settings'}
+            {saving ? 'Saving...' : 'Save Changes'}
           </button>
           <button
             type="button"
-            onClick={loadSettings}
-            className="px-6 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
+            onClick={handleCancel}
+            disabled={!hasChanges()}
+            className="px-6 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400"
           >
             Cancel
           </button>
         </div>
       </form>
     </div>
+    </>
   );
 }

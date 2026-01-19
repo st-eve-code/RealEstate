@@ -11,22 +11,21 @@ import {
   Timestamp 
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import {
+  GeneralSettings,
+  PaymentSettings,
+  NotificationSettings,
+  SecuritySettings,
+  PlatformSettings
+} from '@/lib/types';
 
-export interface GeneralSettings {
-  siteName: string;
-  siteDescription: string;
-  siteUrl: string;
-  contactEmail: string;
-  supportEmail: string;
-  companyName: string;
-  companyAddress: string;
-  companyPhone: string;
-  currency: string;
-  timezone: string;
-  language: string;
-  maintenanceMode: boolean;
-  allowRegistration: boolean;
-}
+export type {
+  GeneralSettings,
+  PaymentSettings,
+  NotificationSettings,
+  SecuritySettings,
+  PlatformSettings
+};
 
 export interface EmailSettings {
   smtpHost: string;
@@ -39,49 +38,6 @@ export interface EmailSettings {
   welcomeEmailEnabled: boolean;
   subscriptionEmailEnabled: boolean;
   propertyAlertEnabled: boolean;
-}
-
-export interface PaymentSettings {
-  currency: string;
-  paymentMethods: {
-    momo: boolean;
-    orangeMoney: boolean;
-    paypal: boolean;
-    stripe: boolean;
-  };
-  momoApiKey?: string;
-  orangeApiKey?: string;
-  paypalClientId?: string;
-  stripePublicKey?: string;
-  stripeSecretKey?: string;
-  commissionRate: number;
-  taxRate: number;
-  enableAutoRefund: boolean;
-}
-
-export interface NotificationSettings {
-  enablePushNotifications: boolean;
-  enableEmailNotifications: boolean;
-  enableSmsNotifications: boolean;
-  notifyOnNewProperty: boolean;
-  notifyOnNewUser: boolean;
-  notifyOnSubscription: boolean;
-  notifyOnTransaction: boolean;
-  notifyOnReport: boolean;
-  dailyReportEmail: string;
-}
-
-export interface SecuritySettings {
-  enableTwoFactor: boolean;
-  sessionTimeout: number; // in minutes
-  maxLoginAttempts: number;
-  passwordMinLength: number;
-  requireSpecialChars: boolean;
-  requireNumbers: boolean;
-  requireUppercase: boolean;
-  enableCaptcha: boolean;
-  ipWhitelist: string[];
-  enableAuditLog: boolean;
 }
 
 export interface StorageSettings {
@@ -127,9 +83,9 @@ export interface SystemSettings {
   storage: StorageSettings;
   api: ApiSettings;
   theme: ThemeSettings;
-  updatedAt?: any;
+  updatedAt?: Timestamp;
   updatedBy?: {
-    id: string;
+    uid: string;
     name: string;
   };
 }
@@ -265,6 +221,15 @@ export async function updateSettings(
   try {
     const settingsRef = doc(db, 'system', 'settings');
     
+    // Check if document exists, if not create it with defaults
+    const settingsDoc = await getDoc(settingsRef);
+    if (!settingsDoc.exists()) {
+      await setDoc(settingsRef, {
+        ...defaultSettings,
+        updatedAt: Timestamp.now(),
+      });
+    }
+    
     const updateData: any = {
       [`${section}`]: data,
       updatedAt: Timestamp.now(),
@@ -272,7 +237,7 @@ export async function updateSettings(
     
     if (userId && userName) {
       updateData.updatedBy = {
-        id: userId,
+        uid: userId,
         name: userName,
       };
     }

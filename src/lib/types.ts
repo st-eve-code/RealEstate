@@ -180,7 +180,7 @@ export interface User {
     loadedUnits: Unit[],
 
     subscription?: Transaction | Omit<Transaction, "uid">, // subscription made IDs
-    autoRenewal?: boolean,
+    autoRenewal?: boolean, // for payment subscriptions
     fcmToken?: string,
     deviceInfo?: {
         currentDeviceToken?: string,
@@ -513,4 +513,114 @@ export interface HandlerParams {
     lastCreatedAt?: Date | null; // Use Date type for consistency
     regex?: string;
     table: string;
+}
+
+// ============================================
+// ADMIN SETTINGS TYPES
+// ============================================
+
+/**
+ * General Settings for the platform
+ * Stored in Firestore at: settings/general
+ */
+export interface GeneralSettings {
+    siteName: string;
+    siteUrl: string;
+    siteDescription: string;
+    contactEmail: string;
+    supportEmail: string;
+    companyName: string;
+    companyPhone: string;
+    companyAddress: string;
+    currency: string;
+    timezone: string;
+    language: string;
+    maintenanceMode: boolean;
+    allowRegistration: boolean;
+    updatedAt?: Timestamp;
+    updatedBy?: {
+        uid: string;
+        name: string;
+    };
+}
+
+/**
+ * Payment Settings for the platform
+ * Stored in Firestore at: settings/payment
+ */
+export interface PaymentSettings {
+    currency: string;
+    paymentMethods: {
+        momo: boolean;
+        orangeMoney: boolean;
+        paypal: boolean;
+        stripe: boolean;
+    };
+    momoApiKey?: string;
+    orangeApiKey?: string;
+    paypalClientId?: string;
+    stripePublicKey?: string;
+    stripeSecretKey?: string;
+    commissionRate: number;
+    taxRate: number;
+    enableAutoRefund: boolean;
+    updatedAt?: Timestamp;
+    updatedBy?: {
+        uid: string;
+        name: string;
+    };
+}
+
+/**
+ * Notification Settings for the platform
+ * Stored in Firestore at: settings/notification
+ */
+export interface NotificationSettings {
+    enablePushNotifications: boolean;
+    enableEmailNotifications: boolean;
+    enableSmsNotifications: boolean;
+    notifyOnNewProperty: boolean;
+    notifyOnNewUser: boolean;
+    notifyOnSubscription: boolean;
+    notifyOnTransaction: boolean;
+    notifyOnReport: boolean;
+    dailyReportEmail: string;
+    updatedAt?: Timestamp;
+    updatedBy?: {
+        uid: string;
+        name: string;
+    };
+}
+
+/**
+ * Security Settings for the platform
+ * Stored in Firestore at: settings/security
+ */
+export interface SecuritySettings {
+    enableTwoFactor: boolean;
+    sessionTimeout: number; // in minutes
+    maxLoginAttempts: number;
+    passwordMinLength: number;
+    requireSpecialChars: boolean;
+    requireNumbers: boolean;
+    requireUppercase: boolean;
+    enableCaptcha: boolean;
+    enableAuditLog: boolean;
+    ipWhitelist: string[];
+    updatedAt?: Timestamp;
+    updatedBy?: {
+        uid: string;
+        name: string;
+    };
+}
+
+/**
+ * Combined Settings interface
+ * Used for fetching all settings at once
+ */
+export interface PlatformSettings {
+    general: GeneralSettings;
+    payment: PaymentSettings;
+    notification: NotificationSettings;
+    security: SecuritySettings;
 }

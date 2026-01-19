@@ -9,13 +9,23 @@ import {
   resetSettings,
   NotificationSettings as NotificationSettingsType 
 } from '@/lib/services/settingsService';
+import AlertModal, { AlertType } from './AlertModal';
+import ConfirmModal from './ConfirmModal';
 
 export default function NotificationSettings() {
   const { user } = useAuth();
   const [settings, setSettings] = useState<NotificationSettingsType | null>(null);
+  const [originalSettings, setOriginalSettings] = useState<NotificationSettingsType | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [testEmailSent, setTestEmailSent] = useState(false);
+  const [alert, setAlert] = useState<{ isOpen: boolean; type: AlertType; title: string; message: string }>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+  });
+  const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
     loadSettings();
@@ -26,6 +36,7 @@ export default function NotificationSettings() {
       setLoading(true);
       const data = await fetchSettings();
       setSettings(data.notification);
+      setOriginalSettings(data.notification);
     } catch (error) {
       console.error('Error loading settings:', error);
     } finally {
@@ -33,35 +44,65 @@ export default function NotificationSettings() {
     }
   };
 
+  const hasChanges = () => {
+    if (!settings || !originalSettings) return false;
+    return JSON.stringify(settings) !== JSON.stringify(originalSettings);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!settings || !user) return;
+    if (!settings || !user || !hasChanges()) return;
 
     try {
       setSaving(true);
       await updateSettings('notification', settings, user.uid, user.displayName || user.email);
-      alert('Notification settings saved successfully');
+      setOriginalSettings(settings);
+      setAlert({
+        isOpen: true,
+        type: 'success',
+        title: 'Settings Saved',
+        message: 'Notification settings have been saved successfully!',
+      });
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Failed to save settings');
+      setAlert({
+        isOpen: true,
+        type: 'error',
+        title: 'Save Failed',
+        message: 'Failed to save notification settings. Please try again.',
+      });
     } finally {
       setSaving(false);
     }
   };
 
   const handleReset = async () => {
-    if (!confirm('Are you sure you want to reset to default notification settings?')) return;
-
     try {
       setSaving(true);
       await resetSettings('notification');
       await loadSettings();
-      alert('Settings reset to defaults');
+      setAlert({
+        isOpen: true,
+        type: 'success',
+        title: 'Settings Reset',
+        message: 'Notification settings have been reset to defaults successfully!',
+      });
     } catch (error) {
       console.error('Error resetting settings:', error);
-      alert('Failed to reset settings');
+      setAlert({
+        isOpen: true,
+        type: 'error',
+        title: 'Reset Failed',
+        message: 'Failed to reset notification settings. Please try again.',
+      });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (originalSettings) {
+      setSettings(originalSettings);
     }
   };
 
@@ -70,10 +111,20 @@ export default function NotificationSettings() {
       // In a real implementation, this would send a test email
       setTestEmailSent(true);
       setTimeout(() => setTestEmailSent(false), 3000);
-      alert('Test email functionality will be implemented with email service');
+      setAlert({
+        isOpen: true,
+        type: 'info',
+        title: 'Test Email',
+        message: 'Test email functionality will be implemented with email service integration.',
+      });
     } catch (error) {
       console.error('Error sending test email:', error);
-      alert('Failed to send test email');
+      setAlert({
+        isOpen: true,
+        type: 'error',
+        title: 'Test Failed',
+        message: 'Failed to send test email. Please try again.',
+      });
     }
   };
 
@@ -97,14 +148,32 @@ export default function NotificationSettings() {
   }
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-sm">
+    <>
+      <AlertModal
+        isOpen={alert.isOpen}
+        onClose={() => setAlert({ ...alert, isOpen: false })}
+        type={alert.type}
+        title={alert.title}
+        message={alert.message}
+      />
+      <ConfirmModal
+        isOpen={confirmReset}
+        onClose={() => setConfirmReset(false)}
+        onConfirm={handleReset}
+        title="Reset Notification Settings?"
+        message="Are you sure you want to reset all notification settings to their default values? This will affect all notification preferences."
+        confirmText="Yes, Reset"
+        cancelText="No, Keep Current"
+        type="warning"
+      />
+    <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Notification Settings</h2>
           <p className="text-sm text-gray-600">Configure notification channels and preferences</p>
         </div>
         <button
-          onClick={handleReset}
+          onClick={() => setConfirmReset(true)}
           className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
         >
           <RefreshCw size={16} />
@@ -311,21 +380,23 @@ export default function NotificationSettings() {
         <div className="flex gap-3 pt-6 border-t border-gray-200">
           <button
             type="submit"
-            disabled={saving}
-            className="flex items-center gap-2 px-6 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+            disabled={saving || !hasChanges()}
+            className="flex items-center gap-2 px-6 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             <Save size={18} />
-            {saving ? 'Saving...' : 'Save Settings'}
+            {saving ? 'Saving...' : 'Save Changes'}
           </button>
           <button
             type="button"
-            onClick={loadSettings}
-            className="px-6 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
+            onClick={handleCancel}
+            disabled={!hasChanges()}
+            className="px-6 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400"
           >
             Cancel
           </button>
         </div>
       </form>
     </div>
+    </>
   );
 }

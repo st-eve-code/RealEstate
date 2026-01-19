@@ -9,10 +9,13 @@ import {
   resetSettings,
   PaymentSettings as PaymentSettingsType 
 } from '@/lib/services/settingsService';
+import AlertModal, { AlertType } from './AlertModal';
+import ConfirmModal from './ConfirmModal';
 
 export default function PaymentSettings() {
   const { user } = useAuth();
   const [settings, setSettings] = useState<PaymentSettingsType | null>(null);
+  const [originalSettings, setOriginalSettings] = useState<PaymentSettingsType | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showApiKeys, setShowApiKeys] = useState({
@@ -21,6 +24,13 @@ export default function PaymentSettings() {
     paypal: false,
     stripe: false,
   });
+  const [alert, setAlert] = useState<{ isOpen: boolean; type: AlertType; title: string; message: string }>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+  });
+  const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
     loadSettings();
@@ -31,42 +41,79 @@ export default function PaymentSettings() {
       setLoading(true);
       const data = await fetchSettings();
       setSettings(data.payment);
+      setOriginalSettings(data.payment);
     } catch (error) {
       console.error('Error loading settings:', error);
+      setAlert({
+        isOpen: true,
+        type: 'error',
+        title: 'Error Loading Settings',
+        message: 'Failed to load payment settings. Please try again.',
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  const hasChanges = () => {
+    if (!settings || !originalSettings) return false;
+    return JSON.stringify(settings) !== JSON.stringify(originalSettings);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!settings || !user) return;
+    if (!settings || !user || !hasChanges()) return;
 
     try {
       setSaving(true);
       await updateSettings('payment', settings, user.uid, user.displayName || user.email);
-      alert('Payment settings saved successfully');
+      setOriginalSettings(settings);
+      setAlert({
+        isOpen: true,
+        type: 'success',
+        title: 'Settings Saved',
+        message: 'Payment settings have been saved successfully!',
+      });
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Failed to save settings');
+      setAlert({
+        isOpen: true,
+        type: 'error',
+        title: 'Save Failed',
+        message: 'Failed to save payment settings. Please try again.',
+      });
     } finally {
       setSaving(false);
     }
   };
 
   const handleReset = async () => {
-    if (!confirm('Are you sure you want to reset to default payment settings?')) return;
-
     try {
       setSaving(true);
       await resetSettings('payment');
       await loadSettings();
-      alert('Settings reset to defaults');
+      setAlert({
+        isOpen: true,
+        type: 'success',
+        title: 'Settings Reset',
+        message: 'Payment settings have been reset to defaults successfully!',
+      });
     } catch (error) {
       console.error('Error resetting settings:', error);
-      alert('Failed to reset settings');
+      setAlert({
+        isOpen: true,
+        type: 'error',
+        title: 'Reset Failed',
+        message: 'Failed to reset payment settings. Please try again.',
+      });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (originalSettings) {
+      setSettings(originalSettings);
     }
   };
 
@@ -94,14 +141,32 @@ export default function PaymentSettings() {
   }
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-sm">
+    <>
+      <AlertModal
+        isOpen={alert.isOpen}
+        onClose={() => setAlert({ ...alert, isOpen: false })}
+        type={alert.type}
+        title={alert.title}
+        message={alert.message}
+      />
+      <ConfirmModal
+        isOpen={confirmReset}
+        onClose={() => setConfirmReset(false)}
+        onConfirm={handleReset}
+        title="Reset Payment Settings?"
+        message="Are you sure you want to reset all payment settings to their default values? This will clear all API keys and payment configurations."
+        confirmText="Yes, Reset"
+        cancelText="No, Keep Current"
+        type="warning"
+      />
+    <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Payment Settings</h2>
           <p className="text-sm text-gray-600">Configure payment methods and transaction settings</p>
         </div>
         <button
-          onClick={handleReset}
+          onClick={() => setConfirmReset(true)}
           className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
         >
           <RefreshCw size={16} />
@@ -395,21 +460,23 @@ export default function PaymentSettings() {
         <div className="flex gap-3 pt-6 border-t border-gray-200">
           <button
             type="submit"
-            disabled={saving}
-            className="flex items-center gap-2 px-6 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+            disabled={saving || !hasChanges()}
+            className="flex items-center gap-2 px-6 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             <Save size={18} />
-            {saving ? 'Saving...' : 'Save Settings'}
+            {saving ? 'Saving...' : 'Save Changes'}
           </button>
           <button
             type="button"
-            onClick={loadSettings}
-            className="px-6 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
+            onClick={handleCancel}
+            disabled={!hasChanges()}
+            className="px-6 py-2 text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400"
           >
             Cancel
           </button>
         </div>
       </form>
     </div>
+    </>
   );
 }
