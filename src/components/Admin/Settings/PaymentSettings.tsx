@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { Save, RefreshCw, DollarSign, CreditCard, Percent, Key, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '../../../lib/auth-context';
 import { 
   fetchSettings, 
   updateSettings, 
   resetSettings,
   PaymentSettings as PaymentSettingsType 
-} from '@/lib/services/settingsService';
+} from '../../../lib/services/settingsService';
 import AlertModal, { AlertType } from './AlertModal';
 import ConfirmModal from './ConfirmModal';
 

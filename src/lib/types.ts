@@ -58,29 +58,43 @@ export interface Payment{
 }
 
 /**
- * Subscription Transaction, containing subscription details like expiry date, subscription plan details and payment details
+ * Subscription Plan, containing plan details like name, price, duration and features. 
+ * This is used to display the plan details to the user for them to subscribe to and to
+ * in firebase, it is stored in the plans collection
  */
-export interface Subscription {
-    id: string,
-    name: string,
+export interface Plan {
+    id: string;
+    name: string;
     description: string,
-    plan: SubscriptionPlanLabel,
-    amount: number,
-    accType?: "tenant"|"landlord",
+    price: number;
     type: 'subscription',
-    features?: string[]
-    tax?: number // 0.25 = 25%, 0.1 = 10%
+    accType?: "tenant"|"landlord",
+    features: string[];
+    points: number,
     constraints: {
         viewLimits?: number,
         postConstraints?: number,
+        duration: number // in milliseconds
     },
+    plan: SubscriptionPlanLabel,
+    tax?: number // 0.25 = 25%, 0.1 = 10%
     createdAt: Timestamp,
-    expiresAt: Timestamp, 
     updatedAt?: Timestamp,
     createdBy: {
         id: string,
         name: string
     }
+}
+
+
+/**
+ * Subscription Transaction, containing subscription details like expiry date, subscription plan details and payment details
+ */
+export interface Subscription {
+    amount: number,
+    plan: Plan,
+    createdAt: Timestamp,
+    expiresAt: Timestamp,
 }
 
 /**
@@ -89,11 +103,10 @@ export interface Subscription {
  */
 export interface Transaction {
     id: string,
-    user: {
-        id: string,
-        name: string
-    }
+    uid: string,
+    userName: string
     subscription: Subscription,
+    type: 'subscription'|'payment',
     payment: PaymentMOMO | PaymentCard,
     paid: number,
     createdAt: Timestamp,
@@ -179,7 +192,7 @@ export interface User {
 
     loadedUnits: Unit[],
 
-    subscription?: Transaction | Omit<Transaction, "uid">, // subscription made IDs
+    subscription?: Transaction, // subscription made IDs
     autoRenewal?: boolean, // for payment subscriptions
     fcmToken?: string,
     deviceInfo?: {
@@ -203,25 +216,6 @@ export interface User {
 
 }
 
-/**
- * Subscription Plan, containing plan details like name, price, duration and features. 
- * This is used to display the plan details to the user for them to subscribe to and to
- * in firebase, it is stored in the plans collection
- */
-export interface Plan {
-    id: number;
-    name: string;
-    price: number;
-    duration: number; // in milliseconds
-    features: string[];
-    points: number,
-    createdAt: Timestamp,
-    updatedAt?: Timestamp,
-    createdBy: {
-        id: string,
-        name: string
-    }
-}
 
 export interface GeoLocate{
     lat: number,

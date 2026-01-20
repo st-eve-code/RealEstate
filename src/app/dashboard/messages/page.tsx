@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-context'
+import { useAuth } from '../../../lib/auth-context'
 import { MessagesPage } from '@/components/Messaging'
 
 export default function Messages() {

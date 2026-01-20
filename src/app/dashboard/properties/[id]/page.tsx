@@ -1,11 +1,11 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-context'
+import { useAuth } from '../../../../lib/auth-context'
 import PropertyDetails from '@/pages/Caretaker/PropertyDetails'
 import UnitDetails from '@/pages/Admin/Components/Property/UnitDetails'
 import Sidebar from '@/pages/Admin/Components/Sidebar'
 import { useState, use, Suspense } from 'react'
-import Loader from '@/components/ado/loader'
+import Loader from '../../../../components/ado/loader'
 
 function PropertyDetailsContent({ params }: { params: Promise<{ id: string }> }) {
   const { user } = useAuth()

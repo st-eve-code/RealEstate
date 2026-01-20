@@ -13,7 +13,7 @@ import {
   TrendingUp,
   Users
 } from 'lucide-react';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '../../lib/auth-context';
 import { 
   fetchPlans, 
   createPlan, 
@@ -21,8 +21,8 @@ import {
   deletePlan,
   getPlanStats,
   PlanFormData 
-} from '@/lib/services/planService';
-import { Plan } from '@/lib/types';
+} from '../../lib/services/planService';
+import { Plan } from '../../lib/types';
 
 interface PlanManagementProps {
   isSidebarCollapsed?: boolean;
@@ -89,7 +89,7 @@ export default function PlanManagement({ isSidebarCollapsed }: PlanManagementPro
       setFormData({
         name: plan.name,
         price: plan.price,
-        duration: plan.duration,
+        duration: plan.constraints.duration,
         features: plan.features,
         points: plan.points,
         description: '',
@@ -292,7 +292,7 @@ export default function PlanManagement({ isSidebarCollapsed }: PlanManagementPro
 
             <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
               <Calendar size={16} />
-              <span>{plan.duration} days</span>
+              <span>{plan.constraints.duration} days</span>
             </div>
 
             <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">

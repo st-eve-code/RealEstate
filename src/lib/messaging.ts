@@ -1,6 +1,6 @@
 import { collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot, orderBy, limit, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from './firebase';
-import { uploadFile, uploadFiles } from '@/lib/services/mediaUploadService';
+import { uploadFile, uploadFiles } from './services/mediaUploadService';
 
 export async function getOrCreateConversation(currentUserId: string, otherUserId: string, propertyId?: string) {
   // Look for conversation that has both participants

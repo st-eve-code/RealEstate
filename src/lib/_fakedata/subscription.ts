@@ -1,12 +1,13 @@
-import { Subscription } from "@/lib/types";
+import { serverTimestamp, Timestamp } from "firebase/firestore";
+import { Plan, Subscription } from "../types";
 
-const subscription: Subscription[] = [
+const subscription: Plan[] = [
     {
         id: 'basicUse',
         name: 'Basic',
         description: 'Perfect for individuals looking for a few properties',
         plan: 'monthly',
-        amount: 1000,
+        price: 1000,
         accType: "tenant",
         type: 'subscription',
         features: [
@@ -20,37 +21,72 @@ const subscription: Subscription[] = [
         constraints: {
             duration: 24 * 60 * 60 * 1000, // 24hours
             viewLimits: 4
-        }
+        },
+        createdBy:{
+            id: '',
+            name: ''
+        },
+        createdAt: Timestamp.now(),
+        points: 3
     },
     {
         id: 'basic2Use',
         name: "Starter",
         plan: 'monthly',
-        amount: 5000,
+        price: 5000,
         accType: "tenant",
         type: 'subscription',
         description: "20",
         constraints: {
             duration: 30 * 24 * 60 * 60 * 1000, // 30 days
-        }
+            viewLimits: 10
+        },
+        features: [
+            "View 4 Properties",
+            "Basic Details",
+            "Email Support",
+            "Standard Photos",
+            "Standard live maps"
+        ],
+        tax: 0.25,
+        createdBy:{
+            id: '',
+            name: ''
+        },
+        createdAt: Timestamp.now(),
+        points: 10
     },
     {
         id: 'tenant3moisUse',
         name: "03 Months",
         plan: 'monthly',
-        amount: 12000,
+        price: 12000,
         accType: "tenant",
         type: 'subscription',
         description: "60",
         constraints: {
             duration: 3 * 30 * 24 * 60 * 60 * 1000, // 3months
-        }
+        },
+        features: [
+            "View 4 Properties",
+            "Basic Details",
+            "Email Support",
+            "Standard Photos",
+            "Standard live maps"
+        ],
+        tax: 0.25,
+        createdBy:{
+            id: '',
+            name: ''
+        },
+        createdAt: Timestamp.now(),
+        points: 20
     },
     {
         id: 'tenant6moisUse',
         name: "06 Months",
         plan: 'monthly',
-        amount: 20000,
+        price: 20000,
         accType: "tenant",
         type: 'subscription',
         description: "120",
@@ -60,7 +96,14 @@ const subscription: Subscription[] = [
         features: [
             "Property comparison tools",
             "Customer Support"
-        ]
+        ],
+        tax: 0.25,
+        createdBy:{
+            id: '',
+            name: ''
+        },
+        createdAt: Timestamp.now(),
+        points: 50
     },
 ];
 

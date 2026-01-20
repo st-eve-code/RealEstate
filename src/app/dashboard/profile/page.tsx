@@ -1,8 +1,8 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-context'
+import { useAuth } from '../../../lib/auth-context'
 import Profile from '@/components/User_Dashboard/Profile'
-import Loader from '@/components/ado/loader'
+import Loader from '../../../components/ado/loader'
 
 export default function ProfilePage() {
   const { user, loadingUser } = useAuth()

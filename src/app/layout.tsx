@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import '../index.css'
 import { UserProvider } from '@/components/UserContext'
-import { AuthProvider } from '@/lib/auth-context'
+import { AuthProvider } from '../lib/auth-context'
 import { MessagingProvider } from '@/components/Messaging'
 import { TranslationProvider } from '@/i18n'
 

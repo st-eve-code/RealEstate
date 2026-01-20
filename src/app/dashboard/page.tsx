@@ -1,7 +1,7 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-context'
-import Loader from '@/components/ado/loader'
+import { useAuth } from '../../lib/auth-context'
+import Loader from '../../components/ado/loader'
 
 // Import dashboard components for each role
 import UserDashboardContent from '@/components/User_Dashboard/Dashboard'

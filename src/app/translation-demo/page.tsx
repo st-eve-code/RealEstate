@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useTranslation, useFormatDate, useFormatCurrency, useRelativeTime } from '@/i18n';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 /**
  * Translation System Demo Page

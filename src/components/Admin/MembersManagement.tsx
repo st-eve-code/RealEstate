@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, updateDoc, doc, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '../../lib/firebase';
 import { 
   Search, 
   Eye, 
@@ -19,8 +19,8 @@ import {
   Award
 } from 'lucide-react';
 import { useMessaging } from '@/components/Messaging';
-import { fetchPlans } from '@/lib/services/planService';
-import { Plan } from '@/lib/types';
+import { fetchPlans } from '../../lib/services/planService';
+import { Plan } from '../../lib/types';
 
 interface MembersManagementProps {
   isSidebarCollapsed?: boolean;
@@ -142,7 +142,7 @@ export default function MembersManagement({ isSidebarCollapsed }: MembersManagem
 
       // Create a mock transaction/subscription
       const now = new Date();
-      const expiresAt = new Date(now.getTime() + plan.duration * 24 * 60 * 60 * 1000);
+      const expiresAt = new Date(now.getTime() + plan.constraints.duration * 24 * 60 * 60 * 1000);
 
       const memberRef = doc(db, 'users', selectedMember.uid);
       await updateDoc(memberRef, {
@@ -598,7 +598,7 @@ export default function MembersManagement({ isSidebarCollapsed }: MembersManagem
                 <option value="">Choose a plan...</option>
                 {plans.map((plan) => (
                   <option key={plan.id} value={plan.id}>
-                    {plan.name} - {plan.price} XAF ({plan.duration} days)
+                    {plan.name} - {plan.price} XAF ({plan.constraints.duration} days)
                   </option>
                 ))}
               </select>
@@ -610,7 +610,7 @@ export default function MembersManagement({ isSidebarCollapsed }: MembersManagem
                 <div className="p-3 mb-4 border border-blue-200 rounded-lg bg-blue-50">
                   <h4 className="mb-2 font-semibold text-gray-900">{plan.name}</h4>
                   <p className="mb-2 text-2xl font-bold text-blue-600">{plan.price} XAF</p>
-                  <p className="mb-2 text-sm text-gray-600">Duration: {plan.duration} days</p>
+                  <p className="mb-2 text-sm text-gray-600">Duration: {plan.constraints.duration} days</p>
                   <p className="text-sm text-gray-600">Points: {plan.points}</p>
                 </div>
               ) : null;

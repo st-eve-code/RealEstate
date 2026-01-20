@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-context'
+import { useAuth } from '../../../lib/auth-context'
 import AdminDashboard from '@/pages/Admin/Admin'
 
 export default function ClientsPage() {

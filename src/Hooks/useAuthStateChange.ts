@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { type User as FirebaseUser, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth } from '../lib/firebase';
 
 /**
  * Callback function type for auth state changes

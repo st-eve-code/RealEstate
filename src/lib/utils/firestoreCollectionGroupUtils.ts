@@ -4,7 +4,7 @@ import {
     DocumentData, Query
 } from 'firebase/firestore';
 import { FirestoreResult, FirestoreListResult2, FirestoreConstraint } from '../types'; // Import the new interface
-import { db } from '@/lib/firebase';
+import { db } from '../firebase';
   
   
   /**

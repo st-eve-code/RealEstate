@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Disable pages directory completely - only use app router
+  pageExtensions: ['page.tsx', 'page.ts', 'page.jsx'],
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['localhost:3000'],
+    },
+  },
   eslint: {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
@@ -37,11 +44,6 @@ const nextConfig = {
   },
   // Transpile Ionic packages for Next.js
   transpilePackages: ['@ionic/react', '@ionic/core'],
-  experimental: {
-    serverActions: {
-      allowedOrigins: ['localhost:3000'],
-    },
-  },
 };
 
 export default nextConfig;

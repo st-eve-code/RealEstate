@@ -16,8 +16,8 @@ import {
   orderBy,
   where
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { Plan } from '@/lib/types';
+import { db } from '../firebase';
+import { Plan } from '../types';
 
 export interface PlanFormData {
   name: string;
