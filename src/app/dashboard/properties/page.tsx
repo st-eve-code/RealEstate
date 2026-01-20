@@ -4,8 +4,8 @@ import { useAuth } from '../../../lib/auth-context'
 import Loader from '../../../components/ado/loader'
 
 // Import role-specific property components
-import AdminProperties from '@/pages/Admin/Components/Property/Property'
-import CaretakerProperties from '@/pages/Caretaker/PropertyPage'
+import AdminProperties from '@/components-legacy/Admin/Components/Property/Property'
+import CaretakerProperties from '@/components-legacy/Caretaker/PropertyPage'
 import UserProperties from '@/components/User_Dashboard/Properties'
 
 export default function PropertiesPage() {

@@ -6,7 +6,7 @@ import Loader from '../../components/ado/loader'
 // Import dashboard components for each role
 import UserDashboardContent from '@/components/User_Dashboard/Dashboard'
 import CaretakerDashboard from '@/components/Caretaker_Dashboard/Dashboard'
-import AdminDashboard from '@/pages/Admin/Admin'
+import AdminDashboard from '@/components-legacy/Admin/Admin'
 
 export default function DashboardPage() {
   const { user, loadingUser } = useAuth()

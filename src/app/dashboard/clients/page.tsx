@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuth } from '../../../lib/auth-context'
-import AdminDashboard from '@/pages/Admin/Admin'
+import AdminDashboard from '@/components-legacy/Admin/Admin'
 
 export default function ClientsPage() {
   const { user } = useAuth()

@@ -1,9 +1,9 @@
 'use client'
 
 import { useAuth } from '../../../../lib/auth-context'
-import PropertyDetails from '@/pages/Caretaker/PropertyDetails'
-import UnitDetails from '@/pages/Admin/Components/Property/UnitDetails'
-import Sidebar from '@/pages/Admin/Components/Sidebar'
+import PropertyDetails from '@/components-legacy/Caretaker/PropertyDetails'
+import UnitDetails from '@/components-legacy/Admin/Components/Property/UnitDetails'
+import Sidebar from '@/components-legacy/Admin/Components/Sidebar'
 import { useState, use, Suspense } from 'react'
 import Loader from '../../../../components/ado/loader'
 

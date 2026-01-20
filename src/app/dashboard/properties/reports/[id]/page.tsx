@@ -2,9 +2,9 @@
 
 import { useAuth } from '../../../../../lib/auth-context'
 import Loader from '../../../../../components/ado/loader'
-import UnitReports from '@/pages/Admin/Components/Property/UnitReports'
+import UnitReports from '@/components-legacy/Admin/Components/Property/UnitReports'
 import { useState, use, Suspense } from 'react'
-import Sidebar from '@/pages/Admin/Components/Sidebar'
+import Sidebar from '@/components-legacy/Admin/Components/Sidebar'
 
 function PropertyReportsContent({ params }: { params: Promise<{ id: string }> }) {
   const { user } = useAuth()

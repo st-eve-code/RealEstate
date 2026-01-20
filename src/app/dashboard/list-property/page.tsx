@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuth } from '../../../lib/auth-context'
-import ListProperty from '@/pages/Caretaker/ListProperty'
+import ListProperty from '@/components-legacy/Caretaker/ListProperty'
 
 export default function ListPropertyPage() {
   const { user } = useAuth()
