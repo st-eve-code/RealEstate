@@ -1,9 +1,9 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-context'
+import { useAuth } from '../../lib/auth-context'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import Loader from '@/components/ado/loader'
+import Loader from '../../components/ado/loader'
 import AdminDashboardLayout from './layouts/AdminDashboardLayout'
 import CaretakerDashboardLayout from './layouts/CaretakerDashboardLayout'
 import UserDashboardLayout from './layouts/UserDashboardLayout'

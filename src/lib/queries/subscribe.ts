@@ -1,7 +1,8 @@
 import { updateDocumentById } from "../internal-firebase";
-import { FirestoreResult, PaymentCard, PaymentMOMO, Subscription, Transaction, User } from "../types";
+import { FirestoreResult, PaymentCard, PaymentMOMO, Plan, Subscription, Transaction, User } from "../types";
 import Cookies from "js-cookie";
 import { setDocumentWithInternalId, selectDocumentsByConstraint } from "../utils/firestoreDocumentOperation";
+import { Timestamp } from "firebase/firestore";
 
 const cookiesName = {
     'momo': "momoDetails",
@@ -9,18 +10,20 @@ const cookiesName = {
 }
 
 
-export default async function CompleteSubscription({selectedPlan, paymentMethod, user}: {selectedPlan: Omit<Subscription, "state">, paymentMethod: any, user: User}) {
+export default async function CompleteSubscription({selectedPlan, paymentMethod, user}: {selectedPlan: Omit<Plan, "state">, paymentMethod: PaymentCard|PaymentMOMO, user: User}) {
     if(!['momo', 'card'].includes(paymentMethod.paymentType)) throw "Invalid Payment Type";
-    let now = new Date();
+    let amount = selectedPlan.price + (selectedPlan.tax || 0) * selectedPlan.price;
 
-    const transaction = {
+    const transaction: Transaction = {
         id: "1",
         uid: user.uid,
-        subscription: selectedPlan,
+        userName: user.fullName || user.displayName,
+        subscription: {plan:selectedPlan, createdAt: Timestamp.now(), amount, expiresAt: Timestamp.fromMillis(Date.now()+selectedPlan.constraints.duration)},
+        type: 'subscription',
         payment: paymentMethod,
-        paid: selectedPlan.amount + (selectedPlan.tax || 0) * selectedPlan.amount,
-        createdAt: now,
-        expiresAt: new Date(now.getTime() + selectedPlan.constraints.duration)
+        paid: amount,
+        createdAt: Timestamp.now(),
+        expiresAt: Timestamp.fromMillis(Date.now() + selectedPlan.constraints.duration)
     }
     
     CookiePaymentDetail({paymentDetail: paymentMethod})
@@ -33,6 +36,13 @@ export default async function CompleteSubscription({selectedPlan, paymentMethod,
 export async function getTransactions({userId}: {userId: string}) {
     const { data, success, error } = await selectDocumentsByConstraint<Transaction>(
         `users/${userId}/Transactions`,
+        [
+            {
+                field: "uid",
+                operator: "==",
+                value: userId
+            }
+        ]
     );
     if (!success) throw error || 'Could not fetch subscription transactions';
 
@@ -42,10 +52,22 @@ export async function getTransactions({userId}: {userId: string}) {
 export async function getSubscriptions({userId}: {userId: string}) {
     const { data, success, error } = await selectDocumentsByConstraint<Transaction>(
         `users/${userId}/Transactions`,
+        [
+            {
+                field: "uid",
+                operator: "==",
+                value: userId
+            },
+            {
+                field: "type",
+                operator: "==",
+                value: 'subscription'
+            }
+        ]
     );
     if (!success) throw error || 'Could not fetch subscription transactions';
 
-    const subscriptions = data.filter(t => t.subscription.type === 'subscription');
+    const subscriptions = data.filter(t => t.subscription.plan.type === 'subscription');
     return subscriptions;
 }
 

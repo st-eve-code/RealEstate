@@ -4,7 +4,7 @@ import { doc, getDoc, query, collection, getDocs, orderBy, startAfter, limit, Do
   where, setDoc, updateDoc, deleteDoc, Query
 } from "firebase/firestore"
 
-import { db } from "@/lib/firebase"
+import { db } from "./firebase"
 import type { HandlerParams, HandlerResult, FirestoreResult, FirestoreSingleResult, FirestoreListResult, FirestoreConstraint } from "./types"
 // import { Query } from "@tanstack/react-query"
 

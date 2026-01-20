@@ -10,14 +10,14 @@ import {
   updateDoc,
   Timestamp 
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '../firebase';
 import {
   GeneralSettings,
   PaymentSettings,
   NotificationSettings,
   SecuritySettings,
   PlatformSettings
-} from '@/lib/types';
+} from '../types';
 
 export type {
   GeneralSettings,

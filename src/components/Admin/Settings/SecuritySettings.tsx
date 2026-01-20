@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { Save, RefreshCw, Shield, Lock, Key, AlertTriangle, Clock, Plus, X } from 'lucide-react';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '../../../lib/auth-context';
 import { 
   fetchSettings, 
   updateSettings, 
   resetSettings,
   SecuritySettings as SecuritySettingsType 
-} from '@/lib/services/settingsService';
+} from '../../../lib/services/settingsService';
 import AlertModal, { AlertType } from './AlertModal';
 import ConfirmModal from './ConfirmModal';
 

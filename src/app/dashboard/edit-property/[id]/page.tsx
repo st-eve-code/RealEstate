@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-context'
+import { useAuth } from '../../../../lib/auth-context'
 import EditProperty from '@/pages/Caretaker/EditProperty'
 
 export default function EditPropertyPage() {

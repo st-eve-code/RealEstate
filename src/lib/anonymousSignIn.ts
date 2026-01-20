@@ -1,4 +1,4 @@
-import { auth } from "@/lib/firebase";
+import { auth } from "./firebase";
 import { signInAnonymously, type User } from "firebase/auth";
 
 export async function ensureAnonymousAuth(): Promise<User | null> {

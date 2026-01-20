@@ -1,4 +1,4 @@
-import { db } from "@/lib/firebase";
+import { db } from "../firebase";
 import { DocumentData, Firestore, QueryDocumentSnapshot, WhereFilterOp, addDoc, collection, getDocs, query, setDoc, doc, where, Query, writeBatch } from "firebase/firestore";
 import { FirestoreConstraint, FirestoreListResult, FirestoreResult } from "../types";
 import { applyConstraintsToCollection } from "../internal-firebase";

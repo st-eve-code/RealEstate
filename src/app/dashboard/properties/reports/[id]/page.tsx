@@ -1,7 +1,7 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-context'
-import Loader from '@/components/ado/loader'
+import { useAuth } from '../../../../../lib/auth-context'
+import Loader from '../../../../../components/ado/loader'
 import UnitReports from '@/pages/Admin/Components/Property/UnitReports'
 import { useState, use, Suspense } from 'react'
 import Sidebar from '@/pages/Admin/Components/Sidebar'

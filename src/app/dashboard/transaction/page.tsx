@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-context'
+import { useAuth } from '../../../lib/auth-context'
 import Transaction from '@/components/User_Dashboard/Transaction'
 import UserDashboardLayout from '../layouts/UserDashboardLayout'
 

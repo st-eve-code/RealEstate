@@ -3,7 +3,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import '../App.css';
 import { useRouter } from 'next/navigation';
-import L from 'leaflet';
 import Navbar from '../components/Navbar';
 import Footer from './Footer';
 import { useTranslation } from '@/i18n';
@@ -35,30 +34,35 @@ function ContactUs() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Initialize the map
+  // Initialize the map with dynamic import
   useEffect(() => {
     if (mapRef.current && !mapInstanceRef.current) {
-      try {
-        const mapInstance = L.map(mapRef.current, {
-          center: [51.5074, -0.1278],
-          zoom: 14,
-          maxBounds: [
-            [40, -10],
-            [60, 10]
-          ],
-          maxBoundsViscosity: 1.0
-        });
+      // Dynamically import Leaflet only on client-side
+      import('leaflet').then((L) => {
+        try {
+          const mapInstance = L.default.map(mapRef.current, {
+            center: [51.5074, -0.1278],
+            zoom: 14,
+            maxBounds: [
+              [40, -10],
+              [60, 10]
+            ],
+            maxBoundsViscosity: 1.0
+          });
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          minZoom: 2,
-          attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(mapInstance);
+          L.default.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            minZoom: 2,
+            attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          }).addTo(mapInstance);
 
-        mapInstanceRef.current = mapInstance;
-      } catch (error) {
-        console.error('Error initializing map:', error);
-      }
+          mapInstanceRef.current = mapInstance;
+        } catch (error) {
+          console.error('Error initializing map:', error);
+        }
+      }).catch((error) => {
+        console.error('Error loading Leaflet:', error);
+      });
     }
 
     // Cleanup function

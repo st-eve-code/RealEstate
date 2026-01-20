@@ -697,7 +697,7 @@ function Blog() {
                     article={article} 
                     onClick={() => {
                       setSelectedArticle(article);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     size='small'
                   />
@@ -807,7 +807,7 @@ function Blog() {
                         article={article} 
                         onClick={() => {
                           setSelectedArticle(article);
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                          scrollTo({ top: 0, behavior: 'smooth' });
                         }}
                       />
                     ))
@@ -839,7 +839,7 @@ function Blog() {
                       article={article} 
                       onClick={() => {
                         setSelectedArticle(article);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                       size='small'
                     />
@@ -857,7 +857,7 @@ function Blog() {
                       article={article} 
                       onClick={() => {
                         setSelectedArticle(article);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                       size='small'
                     />

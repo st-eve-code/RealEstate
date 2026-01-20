@@ -1,7 +1,7 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-context'
-import Loader from '@/components/ado/loader'
+import { useAuth } from '../../../lib/auth-context'
+import Loader from '../../../components/ado/loader'
 
 // Import role-specific property components
 import AdminProperties from '@/pages/Admin/Components/Property/Property'

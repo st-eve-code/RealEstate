@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
-import '../../src/App.css';
+import '../App.css';
 
 /**
  * HostSpace Component - Multi-step property listing form
