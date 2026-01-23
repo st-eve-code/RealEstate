@@ -10,7 +10,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, increment, Timestamp } from 'firebase/firestore';
 import { useAuth } from '@/lib/auth-context';
 import Loader from '@/components/ado/loader';
 import { useTranslation } from '@/i18n';
@@ -22,6 +22,7 @@ function Signup() {
     username: '',
     email: '',
     password: '',
+    referralCode: '',
   });
   
   
@@ -29,8 +30,59 @@ function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [shake, setShake] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [referralCodeFromUrl, setReferralCodeFromUrl] = useState('');
+  const [referrerInfo, setReferrerInfo] = useState(null);
+  const [validatingReferral, setValidatingReferral] = useState(false);
   const router = useRouter();
   const {loadingUser, firebaseUser} = useAuth();
+
+  // Check for referral code in URL on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const refCode = urlParams.get('ref');
+      if (refCode) {
+        setReferralCodeFromUrl(refCode);
+        setFormData(prev => ({ ...prev, referralCode: refCode }));
+        validateReferralCode(refCode);
+      }
+    }
+  }, []);
+
+  // Validate referral code
+  const validateReferralCode = async (code) => {
+    if (!code || code.trim() === '') {
+      setReferrerInfo(null);
+      return;
+    }
+
+    setValidatingReferral(true);
+    try {
+      // Search for user with this referral code
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('referralData.referralCode', '==', code.trim().toUpperCase()));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const referrerDoc = querySnapshot.docs[0];
+        const referrerData = referrerDoc.data();
+        setReferrerInfo({
+          uid: referrerDoc.id,
+          name: referrerData.fullName || referrerData.displayName || 'User',
+          code: code.trim().toUpperCase()
+        });
+        setErrors(prev => ({ ...prev, referralCode: '' }));
+      } else {
+        setReferrerInfo(null);
+        setErrors(prev => ({ ...prev, referralCode: 'Invalid referral code' }));
+      }
+    } catch (error) {
+      console.error('Error validating referral code:', error);
+      setReferrerInfo(null);
+    } finally {
+      setValidatingReferral(false);
+    }
+  };
 
 
   // Handle form input change
@@ -39,6 +91,17 @@ function Signup() {
     // Clear error for the field being edited
     if (errors[e.target.name]) {
       setErrors({ ...errors, [e.target.name]: '' });
+    }
+
+    // Validate referral code on blur or after user stops typing
+    if (e.target.name === 'referralCode') {
+      const code = e.target.value;
+      if (code && code.length >= 3) {
+        const debounceTimer = setTimeout(() => {
+          validateReferralCode(code);
+        }, 500);
+        return () => clearTimeout(debounceTimer);
+      }
     }
   };
 
@@ -159,9 +222,45 @@ function Signup() {
         fA2: false,
         emailSubscription: [],
         inAppNotification: [],
-        survey: []
+        survey: [],
+        points: 0
       }
+
+      // Add referral information if valid referrer exists
+      if (referrerInfo) {
+        user.referralData = {
+          referredBy: referrerInfo.uid,
+          referredByCode: referrerInfo.code,
+          referredByName: referrerInfo.name,
+        };
+      }
+
       await setDoc(doc(db, "users", userdata.uid), user);
+
+      // Update referrer's data if referral code was used
+      if (referrerInfo) {
+        try {
+          // Add to referrer's Referrals subcollection
+          const referralDocRef = doc(db, 'users', referrerInfo.uid, 'referrals', userdata.uid);
+          await setDoc(referralDocRef, {
+            displayName: name,
+            email: userdata.email,
+            hasSubscription: false,
+            joinedAt: Timestamp.now(),
+          });
+
+          // Update referrer's referral count
+          const referrerRef = doc(db, 'users', referrerInfo.uid);
+          await updateDoc(referrerRef, {
+            'referralData.referralCount': increment(1),
+            'referralData.updatedAt': Timestamp.now()
+          });
+        } catch (error) {
+          console.error('Error updating referrer data:', error);
+          // Don't block signup if referrer update fails
+        }
+      }
+
       setIsLoading(false)
       router.push('/clientdata');
 
@@ -326,6 +425,49 @@ function Signup() {
                   ></div>
                 </div>
               </div>
+            )}
+          </div>
+
+          {/* Referral Code (Optional) */}
+          <div className='mb-4'>
+            <label htmlFor="referralCode" className='font-Custom font-semibold text-gray-800 text-sm block mb-2'>
+              Referral Code <span className='text-gray-500 font-normal text-xs'>(Optional)</span>
+            </label>
+            <div className='relative'>
+              <input
+                type="text"
+                name="referralCode"
+                id="referralCode"
+                maxLength={20}
+                placeholder='Enter referral code'
+                value={formData.referralCode}
+                onChange={handleChange}
+                onBlur={(e) => validateReferralCode(e.target.value)}
+                disabled={isLoading || referralCodeFromUrl}
+                className={`w-full h-10 rounded-lg outline-none focus:ring-2 focus:ring-blue-400 px-3 font-Custom font-medium text-sm border text-gray-600 uppercase ${
+                  errors.referralCode ? 'border-red-500' : 
+                  referrerInfo ? 'border-green-500 bg-green-50' : 'border-gray-300'
+                } disabled:bg-gray-100 disabled:cursor-not-allowed transition-all`}
+              />
+              {validatingReferral && (
+                <div className='absolute right-3 top-2.5'>
+                  <svg className="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </div>
+              )}
+            </div>
+            {errors.referralCode && (
+              <p className='text-red-500 text-xs mt-1 font-Custom'>{errors.referralCode}</p>
+            )}
+            {referrerInfo && (
+              <p className='text-green-600 text-xs mt-1 font-Custom flex items-center gap-1'>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                Referred by {referrerInfo.name}
+              </p>
             )}
           </div>
 

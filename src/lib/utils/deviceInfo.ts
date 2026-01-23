@@ -1,7 +1,15 @@
+// Store device token in memory to persist across function calls
+let cachedDeviceToken: string | null = null;
+
 /**
- * Generate a unique device token
+ * Generate a unique device token (only once per session)
  */
 export function generateDeviceToken(): string {
+  // Return cached token if it exists
+  if (cachedDeviceToken) {
+    return cachedDeviceToken;
+  }
+
   // Generate a unique token using timestamp, random number, and crypto if available
   const timestamp = Date.now().toString(36);
   const random = Math.random().toString(36).substring(2, 15);
@@ -9,7 +17,8 @@ export function generateDeviceToken(): string {
     ? crypto.randomUUID().replace(/-/g, '').substring(0, 16)
     : Math.random().toString(36).substring(2, 18);
   
-  return `${timestamp}-${random}-${cryptoPart}`;
+  cachedDeviceToken = `${timestamp}-${random}-${cryptoPart}`;
+  return cachedDeviceToken;
 }
 
 /**
@@ -62,7 +71,7 @@ export function getDeviceInfo() {
   }
   
   return {
-    currentDeviceToken: generateDeviceToken(),
+    currentDeviceToken: generateDeviceToken(), // Now returns cached token
     deviceType,
     deviceModel,
     deviceOS,

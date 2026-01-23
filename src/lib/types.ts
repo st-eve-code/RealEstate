@@ -160,7 +160,36 @@ export interface AdminRole{
 }
 
 /**
- * In firebase also includes Transactions subcollection, Favorites subcollection, Payment Methods subcollection
+ * Referral information for a single referred user
+ * sub collection users/uid/Referrals 
+ */
+export interface ReferralInfo {
+    uid: string;
+    displayName: string;
+    email?: string;
+    hasSubscription: boolean; // true if they have subscribed to at least one plan
+    joinedAt: Timestamp;
+    subscriptionDate?: Timestamp; // when they first subscribed
+}
+
+/**
+ * Referral data for tracking user referrals
+ * Note: Referred users are stored in a subcollection users/{uid}/referrals
+ */
+export interface ReferralData {
+    referralCode: string; // unique code for this user (e.g., "USER123ABC")
+    referredBy?: string; // uid of the user who referred this user
+    referredByCode?: string; // referral code of the referrer
+    referredByName?: string; // name of the referrer
+    referralCount: number; // total number of referrals
+    qualifiedReferrals: number; // referrals who have subscribed to a plan
+    referralRewards: number; // points/rewards earned from referrals
+    createdAt?: Timestamp;
+    updatedAt?: Timestamp;
+}
+
+/**
+ * In firebase also includes Transactions subcollection, Favorites subcollection, Payment Methods subcollection, Referrals subcollection
  */
 export interface User {
     uid: string,
@@ -189,6 +218,8 @@ export interface User {
     },
     privacyPolicy: string, // privacy policy accepted by the user
 
+    // Referral system
+    referralData?: ReferralData,
 
     loadedUnits: Unit[],
 

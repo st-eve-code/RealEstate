@@ -193,38 +193,32 @@ export default function Setting() {
           </div>
         </div>
 
-        {/* Referral System */}
-        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-lg p-6 text-white">
-          <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
-            <Share2 className="w-6 h-6" />
-            Refer a Friend
-          </h2>
-          <p className="text-blue-100 mb-4">Share your unique referral link and earn rewards!</p>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <input
-              type="text"
-              value={referralLink}
-              readOnly
-              className="flex-1 px-4 py-3 rounded-xl bg-white/20 backdrop-blur-sm text-white placeholder-blue-200 border border-white/30 min-w-0"
-            />
-            <button
-              onClick={handleCopyLink}
-              className="px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
-            >
-              {copied ? (
-                <>
-                  <Check className="w-5 h-5" />
-                  Copied!
-                </>
-              ) : (
-                <>
-                  <Copy className="w-5 h-5" />
-                  Copy
-                </>
-              )}
-            </button>
+        {/* Referral System - Link to Full Page */}
+        <a 
+          href="/dashboard/referrals"
+          className="block bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-lg p-6 text-white hover:shadow-xl transition-all group"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
+                <Share2 className="w-6 h-6" />
+                Referral Program
+              </h2>
+              <p className="text-blue-100 mb-3">Invite friends, track referrals, and earn rewards!</p>
+              <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-1">
+                  <Users className="w-4 h-4" />
+                  <span>View Your Referrals</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Copy className="w-4 h-4" />
+                  <span>Share Your Code</span>
+                </div>
+              </div>
+            </div>
+            <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
           </div>
-        </div>
+        </a>
 
         {/* Delete Account */}
         <div className="bg-white rounded-2xl shadow-lg p-6 border border-red-200">
