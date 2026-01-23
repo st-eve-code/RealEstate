@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Disable pages directory completely - only use app router
-  pageExtensions: ['page.tsx', 'page.ts', 'page.jsx'],
   experimental: {
     serverActions: {
       allowedOrigins: ['localhost:3000'],
