@@ -16,10 +16,10 @@ import Services from '../components/Services';
 
 const image1 = '../assets/images/mobile-money.jpg',
 image2 = '../assets/images/mastercard.png',
-image6 = '../assets/images/paypal.jpg',
 image3 = '../assets/images/8.jpg',
 image4 = '../assets/images/9.jpg',
 image5 = '../assets/images/10.jpg',
+image6 = '../assets/images/paypal.jpg',
 plan = '../assets/images/plan.png';
 
 
