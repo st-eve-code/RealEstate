@@ -4,6 +4,7 @@ import { useAuth } from '../../../../lib/auth-context'
 import PropertyDetails from '@/pages-components/Caretaker/PropertyDetails'
 import UnitDetails from '@/pages-components/Admin/Components/Property/UnitDetails'
 import Sidebar from '@/pages-components/Admin/Components/Sidebar'
+import UserPropertyDetails from '@/components/User_Dashboard/UserPropertyDetails'
 import { useState, use, Suspense } from 'react'
 import Loader from '../../../../components/ado/loader'
 
@@ -30,6 +31,11 @@ function PropertyDetailsContent({ params }: { params: Promise<{ id: string }> })
   // Landlord view
   if (userRole === 'landlord') {
     return <PropertyDetails />
+  }
+
+  // Regular user view - clean, modern view for browsing/booking
+  if (userRole === 'user') {
+    return <UserPropertyDetails propertyId={propertyId} />
   }
 
   return <div>Access denied.</div>

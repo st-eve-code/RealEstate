@@ -51,24 +51,40 @@ function PropertyDetails() {
   // Fetch the specific property
   useEffect(() => {
     const fetchProperty = async () => {
-      if (!user?.uid || !id) return;
+      if (!id) return;
 
       try {
         setLoading(true);
-        const constraints = [
-          {
-            field: 'caretaker.id',
-            operator: '==',
-            value: user.uid
-          }
-        ];
+        const userRole = user?.role?.role || 'user';
 
-        const result = await selectDocumentsByConstraint('units', constraints);
-        
-        if (result.success) {
-          const foundProperty = result.data.find(unit => unit.id === id);
-          if (foundProperty) {
-            setProperty(foundProperty);
+        // For landlords, filter by caretaker.id
+        // For regular users, just fetch the specific property by ID
+        if (userRole === 'landlord' && user?.uid) {
+          const constraints = [
+            {
+              field: 'caretaker.id',
+              operator: '==',
+              value: user.uid
+            }
+          ];
+
+          const result = await selectDocumentsByConstraint('units', constraints);
+          
+          if (result.success) {
+            const foundProperty = result.data.find(unit => unit.id === id);
+            if (foundProperty) {
+              setProperty(foundProperty);
+            }
+          }
+        } else {
+          // For regular users, fetch property directly by ID (no filtering by owner)
+          const result = await selectDocumentsByConstraint('units', []);
+          
+          if (result.success) {
+            const foundProperty = result.data.find(unit => unit.id === id);
+            if (foundProperty) {
+              setProperty(foundProperty);
+            }
           }
         }
       } catch (error) {
@@ -79,7 +95,7 @@ function PropertyDetails() {
     };
 
     fetchProperty();
-  }, [id, user]);
+  }, [id, user?.uid, user?.role?.role]);
 
   const toggleFavorite = () => {
     setIsFavorite(prev => !prev);

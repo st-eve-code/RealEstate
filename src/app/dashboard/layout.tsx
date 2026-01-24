@@ -7,6 +7,7 @@ import Loader from '../../components/ado/loader'
 import AdminDashboardLayout from './layouts/AdminDashboardLayout'
 import CaretakerDashboardLayout from './layouts/CaretakerDashboardLayout'
 import UserDashboardLayout from './layouts/UserDashboardLayout'
+import TawkToChat from '../../components/TawkToChat'
 
 export default function DashboardLayout({
   children,
@@ -46,13 +47,28 @@ export default function DashboardLayout({
 
   // Apply role-based layouts
   if (userRole === 'admin') {
-    return <AdminDashboardLayout>{children}</AdminDashboardLayout>
+    return (
+      <>
+        <AdminDashboardLayout>{children}</AdminDashboardLayout>
+        <TawkToChat />
+      </>
+    )
   }
 
   if (userRole === 'landlord') {
-    return <CaretakerDashboardLayout>{children}</CaretakerDashboardLayout>
+    return (
+      <>
+        <CaretakerDashboardLayout>{children}</CaretakerDashboardLayout>
+        <TawkToChat />
+      </>
+    )
   }
 
   // Default to user layout
-  return <UserDashboardLayout>{children}</UserDashboardLayout>
+  return (
+    <>
+      <UserDashboardLayout>{children}</UserDashboardLayout>
+      <TawkToChat />
+    </>
+  )
 }
