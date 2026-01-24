@@ -2,184 +2,43 @@
 
 import { Heart, MapPin, Bed, Bath, UtensilsCrossed, Star, ArrowUpRight, Search, DollarSign, Home, Filter, X, TrendingUp, Sparkles, ArrowLeft, Phone, Mail, Share2, Calendar, CheckCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
+import { useUserProperties } from '@/Hooks/useUserProperties';
+import Loader from '@/components/ado/loader';
+import { fallbackProperties } from '@/lib/_fakedata/listing';
 
-// Property data with dynamic badges
-const properties = [
-  {
-    id: 1,
-    name: "Sunny Villa Apartments",
-    location: "Molyko",
-    fullLocation: "Molyko, Buea, Cameroon",
-    price: 150000,
-    priceDisplay: "150,000 FCFA/month",
-    type: "apartments",
-    status: "available",
-    popularity: "popular",
-    badges: ["hot", "verified"],
+// Transform Unit from Firestore to component format
+const transformUnit = (unit) => {
+  if (!unit) return null;
+  
+  return {
+    id: unit.id,
+    name: unit.name,
+    location: unit.location?.city || 'Unknown',
+    fullLocation: `${unit.location?.address || ''}, ${unit.location?.city || ''}, ${unit.location?.country || ''}`,
+    price: unit.payment?.price || 0,
+    priceDisplay: `${(unit.payment?.price || 0).toLocaleString()} ${unit.payment?.currency || 'FCFA'}/${unit.payment?.period || 'month'}`,
+    type: unit.type || 'apartment',
+    status: unit.available ? 'available' : 'unavailable',
+    popularity: 'recent',
+    badges: unit.isVerified ? ['verified'] : [],
     scrollSpeed: 3000,
-    images: [
-      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop"
-    ],
-    beds: 2,
-    bathrooms: 1,
-    kitchens: 1,
-    likes: 100,
-    rating: 5,
-    description: "Beautiful sunny villa apartments with modern amenities and stunning views. Perfect for families and professionals.",
-    shortDescription: "Experience luxury living in this beautifully designed apartment featuring spacious rooms, modern fixtures, and a serene environment. Ideal for families seeking comfort and convenience in the heart of Molyko.",
-    amenities: ["WiFi", "Parking", "Security", "Water Supply", "24/7 Power"],
-    owner: "John Doe",
-    phone: "+237 6XX XXX XXX",
-    email: "sunny.villa@example.com"
-  },
-  {
-    id: 2,
-    name: "Mountain View Residence",
-    location: "Great Soppo",
-    fullLocation: "Great Soppo, Buea, Cameroon",
-    price: 200000,
-    priceDisplay: "200,000 FCFA/month",
-    type: "hostels",
-    status: "available",
-    popularity: "recent",
-    badges: ["new"],
-    scrollSpeed: 4000,
-    images: [
-      "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&h=600&fit=crop"
-    ],
-    beds: 2,
-    bathrooms: 1,
-    kitchens: 1,
-    likes: 85,
-    rating: 4.8,
-    description: "Comfortable hostel accommodation with breathtaking mountain views. Ideal for students and young professionals.",
-    shortDescription: "A cozy hostel offering spectacular mountain views and a peaceful atmosphere. Perfect for students and young professionals looking for affordable yet comfortable accommodation near the university.",
-    amenities: ["WiFi", "Shared Kitchen", "Study Room", "Laundry", "Security"],
-    owner: "Mary Tansi",
-    phone: "+237 6XX XXX XXX",
-    email: "mountain.view@example.com"
-  },
-  {
-    id: 3,
-    name: "Green Park Estate",
-    location: "Bokwango",
-    fullLocation: "Bokwango, Buea, Cameroon",
-    price: 180000,
-    priceDisplay: "180,000 FCFA/month",
-    type: "studio",
-    status: "available",
-    popularity: "popular",
-    badges: ["hot"],
-    scrollSpeed: 2500,
-    images: [
-      "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&h=600&fit=crop"
-    ],
-    beds: 2,
-    bathrooms: 1,
-    kitchens: 1,
-    likes: 92,
-    rating: 3.9,
-    description: "Cozy studio apartment in a peaceful green environment. Perfect for singles and couples.",
-    shortDescription: "Nestled in a tranquil green neighborhood, this studio offers the perfect blend of comfort and nature. With modern amenities and a peaceful setting, it's ideal for singles and couples seeking serenity.",
-    amenities: ["WiFi", "Parking", "Garden", "Backup Generator"],
-    owner: "Peter Njoh",
-    phone: "+237 6XX XXX XXX",
-    email: "green.park@example.com"
-  },
-  {
-    id: 4,
-    name: "Coastal Breeze Apartments",
-    location: "Molyko",
-    fullLocation: "Molyko, Buea, Cameroon",
-    price: 350000,
-    priceDisplay: "350,000 FCFA/month",
-    type: "apartments",
-    status: "available",
-    popularity: "recent",
-    badges: ["premium"],
-    scrollSpeed: 3500,
-    images: [
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop"
-    ],
-    beds: 3,
-    bathrooms: 2,
-    kitchens: 1,
-    likes: 120,
-    rating: 4.7,
-    description: "Premium apartments with coastal breeze and luxury finishes. Designed for executives and discerning tenants.",
-    shortDescription: "Indulge in premium living with this exquisite apartment featuring luxury finishes, spacious layouts, and top-tier amenities. Designed for executives who demand excellence in every detail.",
-    amenities: ["WiFi", "Parking", "Swimming Pool", "Gym", "24/7 Security", "Elevator"],
-    owner: "Sarah Nkeng",
-    phone: "+237 6XX XXX XXX",
-    email: "coastal.breeze@example.com"
-  },
-  {
-    id: 5,
-    name: "Student Haven Hostel",
-    location: "Great Soppo",
-    fullLocation: "Great Soppo, Buea, Cameroon",
-    price: 80000,
-    priceDisplay: "80,000 FCFA/month",
-    type: "hostels",
-    status: "available",
-    popularity: "popular",
-    badges: ["budget"],
-    scrollSpeed: 3200,
-    images: [
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&h=600&fit=crop"
-    ],
-    beds: 1,
-    bathrooms: 1,
-    kitchens: 1,
-    likes: 65,
-    rating: 4.2,
-    description: "Affordable student accommodation near the university. Budget-friendly with all essential amenities.",
-    shortDescription: "Budget-friendly student accommodation strategically located near the university. Offering essential amenities and a conducive environment for studying and socializing with fellow students.",
-    amenities: ["WiFi", "Shared Kitchen", "Study Area", "Security", "Water Supply"],
-    owner: "David Forchu",
-    phone: "+237 6XX XXX XXX",
-    email: "student.haven@example.com"
-  },
-  {
-    id: 6,
-    name: "Modern Studio Loft",
-    location: "Bokwango",
-    fullLocation: "Bokwango, Buea, Cameroon",
-    price: 600000,
-    priceDisplay: "600,000 FCFA/month",
-    type: "studio",
-    status: "available",
-    popularity: "recent",
-    badges: ["premium", "new"],
-    scrollSpeed: 2800,
-    images: [
-      "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&h=600&fit=crop"
-    ],
-    beds: 1,
-    bathrooms: 1,
-    kitchens: 1,
-    likes: 110,
-    rating: 4.9,
-    description: "Ultra-modern studio loft with contemporary design and smart home features. Premium living experience.",
-    shortDescription: "Step into the future with this ultra-modern studio loft featuring cutting-edge smart home technology, contemporary design, and premium finishes. A sophisticated living space for those who appreciate innovation.",
-    amenities: ["WiFi", "Smart Home", "Parking", "Gym", "24/7 Power", "Modern Kitchen"],
-    owner: "Grace Ayuk",
-    phone: "+237 6XX XXX XXX",
-    email: "modern.loft@example.com"
-  }
-];
+    images: unit.images ? unit.images.flatMap(img => img.urls || []) : [],
+    beds: unit.rooms?.bedrooms || 0,
+    bathrooms: unit.rooms?.bathrooms || 0,
+    kitchens: unit.rooms?.kitchens || 0,
+    likes: 0,
+    rating: unit.rating?.total > 0 ? (unit.rating.value / unit.rating.total) : 0,
+    description: unit.description || 'No description available',
+    shortDescription: (unit.description || 'No description available').substring(0, 200) + '...',
+    amenities: unit.amenities || [],
+    owner: unit.caretaker?.name || 'Unknown',
+    phone: unit.caretaker?.phoneNumber || 'N/A',
+    email: unit.caretaker?.email || 'N/A',
+    remark: unit.remark
+  };
+};
 
 // Star Rating Component
 function StarRating({ rating }) {
@@ -702,6 +561,11 @@ function PropertyDetails({ property, onBack, isFavorite, onToggleFavorite }) {
 
 // Main component with filters
 function Property() {
+  // Fetch real data from Firestore
+  const { user } = useAuth();
+  const { allProperties, likedProperties, loading, error } = useUserProperties(user?.uid);
+  const router = useRouter();
+
   const [filters, setFilters] = useState({
     location: '',
     price: '',
@@ -712,6 +576,52 @@ function Property() {
   const [favorites, setFavorites] = useState({});
   const [currentPage, setCurrentPage] = useState('product');
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
+
+  // Use real data if available, otherwise use fallback
+  const properties = !loading && allProperties.length > 0 
+    ? allProperties.map(transformUnit).filter(p => p !== null)
+    : fallbackProperties;
+
+  // Initialize favorites from user's liked properties
+  useEffect(() => {
+    if (user?.liked) {
+      const favs = {};
+      user.liked.forEach(id => {
+        favs[id] = true;
+      });
+      setFavorites(favs);
+    }
+  }, [user?.liked]);
+
+  // Show loader while fetching
+  if (loading) {
+    return (
+      <div className='absolute top-0 left-0 w-screen h-screen'>
+        <Loader style='dot-121' />
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center p-8">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="w-8 h-8 text-red-600" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">Error Loading Properties</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const locations = ['Molyko', 'Great Soppo', 'Bokwango'];
   const priceRanges = [
@@ -757,9 +667,8 @@ function Property() {
   };
 
   const handleViewDetails = (propertyId) => {
-    setSelectedPropertyId(propertyId);
-    setCurrentPage('details');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Navigate to property details page
+    router.push(`/dashboard/properties/${propertyId}`);
   };
 
   const handleBackToList = () => {

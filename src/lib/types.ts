@@ -276,7 +276,8 @@ export interface Unit {
         currency: string,  // XAF, USD, EUR, etc.
         tax?: number, // 0.25 = 25%, 0.1 = 10%
     }
-    totalnumber: number,
+    totalnumber: number, // number of rooms
+    totalTaken: number,  // number of rooms taken (can get availables by getting the difference b/n total and this)
 
     // visible: boolean, // this is deprecated, works the same way as status property where being archived is false and approved is true
     available: boolean,

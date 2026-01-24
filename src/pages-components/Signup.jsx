@@ -110,7 +110,6 @@ function Signup() {
     const provider = new GoogleAuthProvider();
     try {
       const userCredential = await signInWithPopup(auth, provider);
-      // You may add extra signup logic here, e.g., storing user type etc
       const userdata = userCredential.user;
       if(!userdata.email) throw "Email not found";
       const name = userdata.displayName || `user-${Math.floor(Math.random()*1000 + 1)}-${Date.now()}`;
@@ -127,10 +126,44 @@ function Signup() {
         fA2: false,
         inAppNotification: [],
         emailSubscription: [],
-        survey: []
+        survey: [],
+        points: 0
+      }
+
+      // Add referral information if valid referrer exists
+      if (referrerInfo) {
+        user.referralData = {
+          referredBy: referrerInfo.uid,
+          referredByCode: referrerInfo.code,
+          referredByName: referrerInfo.name,
+        };
       }
       
       await setDoc(doc(db, "users", userdata.uid), user);
+
+      // Update referrer's data if referral code was used
+      if (referrerInfo) {
+        try {
+          // Add to referrer's Referrals subcollection
+          const referralDocRef = doc(db, 'users', referrerInfo.uid, 'referrals', userdata.uid);
+          await setDoc(referralDocRef, {
+            displayName: name,
+            email: userdata.email,
+            hasSubscription: false,
+            joinedAt: Timestamp.now(),
+          });
+
+          // Update referrer's referral count
+          const referrerRef = doc(db, 'users', referrerInfo.uid);
+          await updateDoc(referrerRef, {
+            'referralData.referralCount': increment(1),
+            'referralData.updatedAt': Timestamp.now()
+          });
+        } catch (error) {
+          console.error('Error updating referrer data:', error);
+          // Don't block signup if referrer update fails
+        }
+      }
       
       router.push("/clientdata");
     } catch (error) {
