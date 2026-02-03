@@ -17,9 +17,11 @@
     "@reacticons/ionicons": "^7.1.0",
     "@supabase/supabase-js": "^2.78.0",
     "@tanstack/react-query": "^5.85.9",
+    "@types/uuid": "^10.0.0",
     "axios": "^1.11.0",
     "chart.js": "^4.5.0",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
     "firebase": "^12.6.0",
     "framer-motion": "^12.23.12",
     "ionicons": "^8.0.13",
@@ -37,6 +39,7 @@
     "react-image-gallery": "^1.4.0",
     "sweetalert2": "^11.23.0",
     "sweetalert2-react-content": "^5.1.0",
+    "uuid": "^13.0.0",
     "yup": "^1.7.0"
   },
   "devDependencies": {

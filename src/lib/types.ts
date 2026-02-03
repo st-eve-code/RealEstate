@@ -17,13 +17,13 @@ export type SubscriptionPlanLabel = "daily" | "monthly" | "yearly"
 export interface PaymentMOMO {
     id: string,
     user: {
-        id: string,
-        name: string
+        name: string,
+        email: string
     },
     operator: "MTN"|"Orange",
+    transactionId: string, // the transaction id from the payment gateway
     phoneNumber: string,
     createdAt: Timestamp,
-    updatedAt?: Timestamp,
     paymentType: 'momo'
 }
 
@@ -33,15 +33,15 @@ export interface PaymentMOMO {
 export interface PaymentCard {
     id: string,
     user: {
-        id: string,
-        name: string
+        name: string,
+        email: string
     },
+    transactionId: string, // the transaction id from the payment gateway
     cardOwner: string,
     cardNumber: string,
     expDate: string,
     cvv: string,
     createdAt: Timestamp,
-    updatedAt?: Timestamp
     paymentType: 'card'
 }
 
@@ -70,12 +70,17 @@ export interface Plan {
     type: 'subscription',
     accType?: "tenant"|"landlord",
     features: string[];
-    points: number,
+    points: {
+        user: number,
+        referrer: number
+    },
     constraints: {
         viewLimits?: number,
         postConstraints?: number,
-        duration: number // in milliseconds
+        duration?: number // in milliseconds before reset, this is incase u want to limit per certain time e.g 4 view per day, after time.
+        //duration is useless if there is not at least one other constraint, so only available when another exists
     },
+    duration: number, // the lifetime of the plan when subscribed , remember in milliseconds
     plan: SubscriptionPlanLabel,
     tax?: number // 0.25 = 25%, 0.1 = 10%
     createdAt: Timestamp,
@@ -93,6 +98,17 @@ export interface Plan {
 export interface Subscription {
     amount: number,
     plan: Plan,
+    viewed: number, // number of units viewed under the subscription
+    listed: number, // number of units listed under the subscription
+    liked: number, // number of units liked under the subscription
+    saved: number, // number of units saved under the subscription
+    reported: number, // number of units reported under the subscription
+    reviewed: number, // number of units reviewed under the subscription
+
+    // additional data that needs tracking will be recorded
+
+    updatedAt?: Timestamp, // last time updated (probably teh view count)
+    resettedAt?: Timestamp, // when the constraint where last resetted, uses plan.constraints.duration to know if reset needed 
     createdAt: Timestamp,
     expiresAt: Timestamp,
 }
@@ -113,7 +129,12 @@ export interface Transaction {
     expiresAt: Timestamp,
     updatedAt?: Timestamp,
 
-    state?: 'active'|'expired'|'banned'|'terminate'|'refund',
+    status?: 'pending'|'paid'|'failed'|'refunded'|'expired'|'banned'|'terminate'|'refund',
+    reason?: string,
+    updatedBy?: {
+        id: string,
+        name: string
+    }
 }
 
 
@@ -121,6 +142,8 @@ export interface Transaction {
  * We cant display analytic data like monthly revenue with the current method of Transaction sub collection 
  * as it will involve iterating through all users which is time consuming, so this will help fetch data
  * in firebase it is stored in AnalyticsTransactions collection
+ * 
+ * @deprecated no longer needed as we will use group collection feature in firebase to fetch data accross multiple collections with same name
  */
 export interface AnalyticTransaction {
     id: string,
@@ -184,7 +207,7 @@ export interface ReferralData {
     referralCount: number; // total number of referrals
     qualifiedReferrals: number; // referrals who have subscribed to a plan
     referralRewards: number; // points/rewards earned from referrals
-    createdAt?: Timestamp;
+    // createdAt?: Timestamp;
     updatedAt?: Timestamp;
 }
 
@@ -223,7 +246,7 @@ export interface User {
 
     loadedUnits: Unit[],
 
-    subscription?: Transaction, // subscription made IDs
+    transaction?: Transaction, // subscription made IDs
     autoRenewal?: boolean, // for payment subscriptions
     fcmToken?: string,
     deviceInfo?: {
@@ -245,6 +268,36 @@ export interface User {
         resetAt: Timestamp
     } */
 
+}
+
+/**
+ * Last Viewed Unit, containing the details of the last viewed unit
+ * in firebase, it is stored in the users/uid/LastViewedUnits subcollection
+ */
+export interface LastViewedUnit {
+    id: string,
+    viewedBy: {
+        id: string,
+        name: string
+    },
+    name: string,
+    payment: {
+        price: number, // amount to be paid
+        period?: string, // yearly, monthly, weekly, daily
+        currency: string,  // XAF, USD, EUR, etc.
+        tax?: number, // 0.25 = 25%, 0.1 = 10%
+    },
+
+    location: {
+        country: string
+        city: string
+        address: string
+    },
+    type: RentingType,
+    totalnumber: number, // number of rooms
+    createdAt: Timestamp,
+    viewedAt: Timestamp,
+    lastViewedAt?: Timestamp // Optional for backwards compatibility
 }
 
 

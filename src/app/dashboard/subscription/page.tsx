@@ -2,7 +2,6 @@
 
 import { useAuth } from '../../../lib/auth-context'
 import Subscription from '@/components/User_Dashboard/Subscription'
-import UserDashboardLayout from '../layouts/UserDashboardLayout'
 
 export default function SubscriptionPage() {
   const { user } = useAuth()
@@ -12,9 +11,5 @@ export default function SubscriptionPage() {
     return null
   }
 
-  return (
-    <UserDashboardLayout>
-      <Subscription />
-    </UserDashboardLayout>
-  )
+  return <Subscription />
 }

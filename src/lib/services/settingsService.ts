@@ -18,6 +18,7 @@ import {
   SecuritySettings,
   PlatformSettings
 } from '../types';
+import { removeUndefined } from '../utils/removeUndefined';
 
 export type {
   GeneralSettings,
@@ -195,10 +196,11 @@ export async function fetchSettings(): Promise<SystemSettings> {
     
     if (!settingsDoc.exists()) {
       // Initialize with default settings if not exists
-      await setDoc(settingsRef, {
+      const initialSettings = {
         ...defaultSettings,
         updatedAt: Timestamp.now(),
-      });
+      };
+      await setDoc(settingsRef, removeUndefined(initialSettings));
       return defaultSettings;
     }
     
@@ -224,10 +226,11 @@ export async function updateSettings(
     // Check if document exists, if not create it with defaults
     const settingsDoc = await getDoc(settingsRef);
     if (!settingsDoc.exists()) {
-      await setDoc(settingsRef, {
+      const initialSettings = {
         ...defaultSettings,
         updatedAt: Timestamp.now(),
-      });
+      };
+      await setDoc(settingsRef, removeUndefined(initialSettings));
     }
     
     const updateData: any = {
@@ -242,7 +245,7 @@ export async function updateSettings(
       };
     }
     
-    await updateDoc(settingsRef, updateData);
+    await updateDoc(settingsRef, removeUndefined(updateData));
   } catch (error) {
     console.error('Error updating settings:', error);
     throw error;
@@ -259,15 +262,17 @@ export async function resetSettings(
     const settingsRef = doc(db, 'system', 'settings');
     
     if (section) {
-      await updateDoc(settingsRef, {
+      const updateData = {
         [section]: defaultSettings[section],
         updatedAt: Timestamp.now(),
-      });
+      };
+      await updateDoc(settingsRef, removeUndefined(updateData));
     } else {
-      await setDoc(settingsRef, {
+      const resetData = {
         ...defaultSettings,
         updatedAt: Timestamp.now(),
-      });
+      };
+      await setDoc(settingsRef, removeUndefined(resetData));
     }
   } catch (error) {
     console.error('Error resetting settings:', error);

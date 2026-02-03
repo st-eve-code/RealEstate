@@ -6,7 +6,7 @@ import { createContext, useContext, useEffect, useState, useRef } from "react"
 import { type User as FirebaseUser, onAuthStateChanged, signOut as firebaseSignOut } from "firebase/auth"
 import { doc, getDoc, updateDoc, onSnapshot, serverTimestamp } from "firebase/firestore"
 import { auth, db } from "./firebase"
-import type { User } from "./types"
+import type { LastViewedUnit, User } from "./types"
 import { createUser, userExists } from "./internal-firebase"
 import { getDeviceInfo } from "./utils/deviceInfo"
 
@@ -21,23 +21,28 @@ interface AuthError {
 
 interface AuthContextType {
   authError?: AuthError | null
+  viewedUnits: LastViewedUnit[]
   user: User | null
   firebaseUser: FirebaseUser | null
   loadingUser: boolean
   signOut: () => Promise<void>
   refreshUser: () => Promise<void>
+  refreshViewedUnits: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
+  viewedUnits: [],
   firebaseUser: null,
   loadingUser: true,
   signOut: async () => {},
   refreshUser: async () => {},
+  refreshViewedUnits: async () => {},
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [viewedUnits, setViewedUnits] = useState<LastViewedUnit[]>([])
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null)
   const [loading, setLoading] = useState(true)
   const [authError] = useState<AuthError|null|undefined>();
@@ -51,6 +56,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return userData as User
     }
     return null
+  }
+
+  const fetchViewedUnits = async (uid: string) => {
+    try {
+      const userDoc = await getDoc(doc(db, `users`, uid))
+      if (userDoc.exists()) {
+        // Get all lastViewed units from users/uid/lastViewedUnits subcollection
+        const { collection, query, orderBy, limit, getDocs } = await import('firebase/firestore');
+        
+        const lastViewedRef = collection(db, 'users', uid, 'lastViewedUnits');
+        const q = query(lastViewedRef, orderBy('viewedAt', 'desc'), limit(10));
+        const snapshot = await getDocs(q);
+        
+        const units: LastViewedUnit[] = [];
+        snapshot.forEach((doc) => {
+          units.push(doc.data() as LastViewedUnit);
+        });
+        
+        console.log(`[Auth] Fetched ${units.length} viewed units for user ${uid}`);
+        return units;
+      }
+    } catch (error) {
+      console.error('[Auth] Error fetching viewed units:', error);
+    }
+    return []
+  }
+
+  const refreshViewedUnits = async () => {
+    if (firebaseUser) {
+      try {
+        const units = await fetchViewedUnits(firebaseUser.uid)
+        setViewedUnits(units)
+        console.log('[Auth] Refreshed viewed units')
+      } catch (error) {
+        console.error('[Auth] Error refreshing viewed units:', error)
+      }
+    }
   }
 
   /**
@@ -173,6 +215,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const userData = await fetchUserData(firebaseUser.uid)
         setUser(userData)
         
+        // Fetch viewed units
+        const units = await fetchViewedUnits(firebaseUser.uid)
+        setViewedUnits(units)
+        
         // Ensure local token reference is set (fallback if not set above)
         if (userData?.deviceInfo?.currentDeviceToken && !currentDeviceTokenRef.current) {
           currentDeviceTokenRef.current = userData.deviceInfo.currentDeviceToken;
@@ -225,6 +271,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
           const userData = await fetchUserData(firebaseUser.uid)
           setUser(userData)
+          
+          // Fetch viewed units
+          const units = await fetchViewedUnits(firebaseUser.uid)
+          setViewedUnits(units)
 
           // Setup device token listener to detect multi-device sign-ins
           setupDeviceTokenListener(firebaseUser.uid);
@@ -259,7 +309,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = handleSignOut;
 
   return (
-    <AuthContext.Provider value={{ user, firebaseUser, loadingUser: loading, authError, signOut, refreshUser }}>
+    <AuthContext.Provider value={{ viewedUnits, user, firebaseUser, loadingUser: loading, authError, signOut, refreshUser, refreshViewedUnits }}>
       {children}
     </AuthContext.Provider>
   )

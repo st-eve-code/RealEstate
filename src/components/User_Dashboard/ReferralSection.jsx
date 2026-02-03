@@ -91,7 +91,24 @@ export default function ReferralSection() {
   if (needsSetup) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6 flex items-center justify-center">
-        <div className="max-w-2xl w-full">
+        <div className="max-w-2xl w-full space-y-6">
+          {/* Show referredBy info if exists */}
+          {referredBy && (
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl shadow-lg p-6 border border-green-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <UserPlus className="w-5 h-5 text-green-600" />
+                You Were Referred By
+              </h3>
+              <div className="bg-white rounded-xl p-4 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-gray-900 text-lg">{referredBy.name}</p>
+                  <p className="text-sm text-gray-600">Referral Code: <span className="font-mono font-semibold">{referredBy.code}</span></p>
+                </div>
+                <Crown className="w-8 h-8 text-yellow-500" />
+              </div>
+            </div>
+          )}
+
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 border border-indigo-100">
             {/* Icon and Header */}
             <div className="text-center mb-8">
@@ -99,10 +116,12 @@ export default function ReferralSection() {
                 <Gift className="w-10 h-10 text-white" />
               </div>
               <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">
-                Welcome to the Referral Program!
+                {referredBy ? 'Complete Your Referral Setup!' : 'Welcome to the Referral Program!'}
               </h2>
               <p className="text-gray-600 text-lg">
-                Set up your referral system to start earning rewards by inviting friends
+                {referredBy 
+                  ? 'Generate your own referral code to start inviting friends' 
+                  : 'Set up your referral system to start earning rewards by inviting friends'}
               </p>
             </div>
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { doc, getDoc, collection, query, where, getDocs, updateDoc, setDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { ReferralInfo, ReferralData } from '../lib/types';
+import { removeUndefined } from '../lib/utils/removeUndefined';
 
 interface UseReferralsReturn {
   referralCode: string;
@@ -63,7 +64,16 @@ export function useReferrals(uid: string | undefined): UseReferralsReturn {
       let referralData: ReferralData | undefined = userData.referralData;
 
       // If no referral data exists, show setup screen
-      if (!referralData) {
+      if (!referralData || !referralData.referralCode) {
+        // But first check if user has referredBy data in referralData
+        if (referralData?.referredBy) {
+          // User was referred but doesn't have their own referral code yet
+          // We'll show setup but preserve referredBy data
+          setReferredBy({
+            name: referralData.referredByName || 'Unknown User',
+            code: referralData.referredByCode || 'N/A',
+          });
+        }
         setNeedsSetup(true);
         setLoading(false);
         return;
@@ -140,17 +150,27 @@ export function useReferrals(uid: string | undefined): UseReferralsReturn {
       const userData = userSnap.data();
       const newCode = generateReferralCode(uid, userData.displayName || 'USER');
       
+      // Check if referralData already exists
+      const existingReferralData = userData.referralData;
+      
       const referralData: ReferralData = {
         referralCode: newCode,
-        referralCount: 0,
-        qualifiedReferrals: 0,
-        referralRewards: 0,
-        createdAt: Timestamp.now(),
+        referralCount: existingReferralData?.referralCount || 0,
+        qualifiedReferrals: existingReferralData?.qualifiedReferrals || 0,
+        referralRewards: existingReferralData?.referralRewards || 0,
+        createdAt: existingReferralData?.createdAt || Timestamp.now(),
         updatedAt: Timestamp.now(),
       };
 
-      // Save to Firestore
-      await updateDoc(userRef, { referralData });
+      // Preserve referredBy information if it exists in referralData or top-level
+      if (existingReferralData?.referredBy || userData.referredBy) {
+        referralData.referredBy = existingReferralData?.referredBy || userData.referredBy;
+        referralData.referredByName = existingReferralData?.referredByName || userData.referredByName;
+        referralData.referredByCode = existingReferralData?.referredByCode || userData.referredByCode;
+      }
+
+      // Save to Firestore - only update referralData
+      await updateDoc(userRef, removeUndefined({ referralData }));
 
       // Refresh to load the new data
       await fetchReferrals();
