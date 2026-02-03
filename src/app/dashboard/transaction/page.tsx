@@ -2,7 +2,6 @@
 
 import { useAuth } from '../../../lib/auth-context'
 import Transaction from '@/components/User_Dashboard/Transaction'
-import UserDashboardLayout from '../layouts/UserDashboardLayout'
 
 export default function TransactionPage() {
   const { user } = useAuth()
@@ -12,9 +11,5 @@ export default function TransactionPage() {
     return null
   }
 
-  return (
-    <UserDashboardLayout>
-      <Transaction />
-    </UserDashboardLayout>
-  )
+  return <Transaction />
 }

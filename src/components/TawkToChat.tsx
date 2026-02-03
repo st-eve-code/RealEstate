@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useAuth } from '@/lib/auth-context'
 
 export default function TawkToChat() {
+  const { user } = useAuth()
   useEffect(() => {
     // Tawk.to widget script
     // You'll need to replace PROPERTY_ID and WIDGET_ID with your actual Tawk.to credentials
@@ -23,17 +25,19 @@ export default function TawkToChat() {
         // Set custom attributes for tracking
         window.Tawk_API.onLoad = function() {
           console.log('Tawk.to chat loaded successfully')
-        }
-        
-        // You can set visitor information
-        window.Tawk_API.setAttributes({
-          name: 'Property Seeker',
-          email: '',
-        }, function(error: any) {
-          if (error) {
-            console.error('Tawk.to error:', error)
+          
+          // Set visitor information only if user is logged in
+          if (user && user.email) {
+            window.Tawk_API.setAttributes({
+              name: user.displayName || 'User',
+              email: user.email,
+            }, function(error: any) {
+              if (error) {
+                console.error('Tawk.to error:', error)
+              }
+            })
           }
-        })
+        }
       }
     }
     
@@ -50,7 +54,7 @@ export default function TawkToChat() {
         tawkWidget.remove()
       }
     }
-  }, [])
+  }, [user])
 
   return null // This component doesn't render anything
 }

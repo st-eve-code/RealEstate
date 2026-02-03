@@ -18,16 +18,22 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Plan } from '../types';
+import { removeUndefined } from '../utils/removeUndefined';
 
 export interface PlanFormData {
   name: string;
+  description: string;
   price: number;
-  duration: number; // in days
+  duration: number; // in days (will be converted to milliseconds)
   features: string[];
-  points: number;
-  description?: string;
+  userPoints: number; // points awarded to user
+  referrerPoints: number; // points awarded to referrer
   accType?: 'tenant' | 'landlord';
-  popular?: boolean;
+  plan: 'daily' | 'monthly' | 'yearly'; // SubscriptionPlanLabel
+  tax?: number; // optional tax percentage (0.1 = 10%)
+  viewLimits?: number; // optional view limits
+  postConstraints?: number; // optional post constraints
+  constraintDuration?: number; // optional duration for constraints reset (in days)
 }
 
 /**
@@ -82,8 +88,31 @@ export async function createPlan(
   try {
     const plansRef = collection(db, 'plans');
     
-    const newPlan = {
-      ...planData,
+    // Convert durations from days to milliseconds
+    const planDurationInMs = planData.duration * 24 * 60 * 60 * 1000;
+    const constraintDurationInMs = planData.constraintDuration 
+      ? planData.constraintDuration * 24 * 60 * 60 * 1000 
+      : undefined;
+    
+    const newPlan: Omit<Plan, 'id'> = {
+      name: planData.name,
+      description: planData.description,
+      price: planData.price,
+      type: 'subscription',
+      accType: planData.accType,
+      features: planData.features,
+      points: {
+        user: planData.userPoints,
+        referrer: planData.referrerPoints,
+      },
+      constraints: {
+        viewLimits: planData.viewLimits,
+        postConstraints: planData.postConstraints,
+        duration: constraintDurationInMs // in milliseconds, optional
+      },
+      duration: planDurationInMs, // plan lifetime in milliseconds
+      plan: planData.plan,
+      tax: planData.tax,
       createdAt: Timestamp.now(),
       createdBy: {
         id: userId,
@@ -91,7 +120,9 @@ export async function createPlan(
       },
     };
     
-    const docRef = await addDoc(plansRef, newPlan);
+    // Remove undefined values before saving to Firestore
+    const cleanedPlan = removeUndefined(newPlan);
+    const docRef = await addDoc(plansRef, cleanedPlan);
     return docRef.id;
   } catch (error) {
     console.error('Error creating plan:', error);
@@ -109,10 +140,14 @@ export async function updatePlan(
   try {
     const planRef = doc(db, 'plans', planId);
     
-    await updateDoc(planRef, {
+    const updateData = {
       ...planData,
       updatedAt: Timestamp.now(),
-    });
+    };
+    
+    // Remove undefined values before saving to Firestore
+    const cleanedData = removeUndefined(updateData);
+    await updateDoc(planRef, cleanedData);
   } catch (error) {
     console.error('Error updating plan:', error);
     throw error;

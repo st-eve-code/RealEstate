@@ -2,7 +2,6 @@
 
 import { useAuth } from '../../../lib/auth-context'
 import Store from '@/components/User_Dashboard/Store'
-import UserDashboardLayout from '../layouts/UserDashboardLayout'
 
 export default function StorePage() {
   const { user } = useAuth()
@@ -12,9 +11,5 @@ export default function StorePage() {
     return null
   }
 
-  return (
-    <UserDashboardLayout>
-      <Store sidebar={null} />
-    </UserDashboardLayout>
-  )
+  return <Store sidebar={null} />
 }

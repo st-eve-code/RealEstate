@@ -2,6 +2,7 @@ import { db } from "../firebase";
 import { DocumentData, Firestore, QueryDocumentSnapshot, WhereFilterOp, addDoc, collection, getDocs, query, setDoc, doc, where, Query, writeBatch } from "firebase/firestore";
 import { FirestoreConstraint, FirestoreListResult, FirestoreResult } from "../types";
 import { applyConstraintsToCollection } from "../internal-firebase";
+import { removeUndefined } from "./removeUndefined";
 
 interface FirestoreInsertResult {
     success: boolean;
@@ -25,9 +26,10 @@ export async function setDocumentWithInternalId<T extends DocumentData>(
     try {
       const collRef = collection(db, collectionPath);
       
-      const docRef = await addDoc(collRef, data);
+      const cleanedData = removeUndefined(data);
+      const docRef = await addDoc(collRef, cleanedData);
       const finalDocId = docRef.id;
-      await setDoc(docRef, { ...data, id: finalDocId } as unknown as T);
+      await setDoc(docRef, removeUndefined({ ...data, id: finalDocId } as unknown as T));
       
       return { 
           success: true, 
@@ -56,7 +58,7 @@ export async function setDocumentWithId<T extends DocumentData>(
   ): Promise<FirestoreInsertResult> {
     try {
       const docRef = doc(db, collectionPath, docId);
-      await setDoc(docRef, data);
+      await setDoc(docRef, removeUndefined(data));
   
       return { 
           success: true, 
@@ -123,8 +125,9 @@ export async function updateDocumentsByConstraint(
       }
   
       const batch = writeBatch(db);
+      const cleanedUpdateData = removeUndefined(updateData);
       snapshot.docs.forEach((docSnap) => {
-        batch.update(docSnap.ref, updateData);
+        batch.update(docSnap.ref, cleanedUpdateData);
       });
   
       await batch.commit();

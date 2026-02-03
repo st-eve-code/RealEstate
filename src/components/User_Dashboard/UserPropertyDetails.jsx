@@ -2,26 +2,140 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, Timestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { 
   ChevronLeft, MapPin, Bed, Bath, Maximize, Heart, Share2, 
   DollarSign, Star, Eye, Phone, Mail, MessageCircle, Home,
   Sofa, UtensilsCrossed, ShieldCheck, AlertCircle, Images,
-  Video, Tag, Calendar,
-  X
+  Video, Tag, Calendar, X, Lock, Crown
 } from 'lucide-react'
 import Loader from '../ado/loader'
+import { useAuth } from '@/lib/auth-context'
+import { trackPropertyView, hasReachedViewLimit, hasUserViewedProperty } from '@/lib/services/viewTrackingService'
+import ViewLimitModal from './ViewLimitModal'
 
 export default function UserPropertyDetails({ propertyId }) {
   const router = useRouter()
+  const { user, refreshViewedUnits } = useAuth()
   const [property, setProperty] = useState(null)
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
   const [isFavorite, setIsFavorite] = useState(false)
+  const [hasActiveSubscription, setHasActiveSubscription] = useState(false)
+  const [viewTracked, setViewTracked] = useState(false)
+  const [showViewLimitModal, setShowViewLimitModal] = useState(false)
+  const [canViewProperty, setCanViewProperty] = useState(false)
+  const [checkingLimit, setCheckingLimit] = useState(true)
+
+  // Check if user has active subscription
+  useEffect(() => {
+    const checkSubscription = async () => {
+      if (user?.uid) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid))
+          if (userDoc.exists()) {
+            const userData = userDoc.data()
+            // Check if user has an active subscription
+            const subscription = userData.transaction
+            const isActive = subscription && !['banned', 'terminate', 'refund'].includes(subscription.status) && 
+                            subscription.expiresAt && 
+                            subscription.expiresAt.toDate() > Timestamp.now().toDate();
+            setHasActiveSubscription(isActive)
+          }
+        } catch (error) {
+          console.error('Error checking subscription:', error)
+        }
+      }
+    }
+    checkSubscription()
+  }, [user])
+
+  // Check view limit before allowing property view
+  useEffect(() => {
+    const checkViewLimit = async () => {
+      if (!user || !propertyId) {
+        setCheckingLimit(false);
+        return;
+      }
+
+      try {
+        // Check if user already viewed this property
+        const alreadyViewed = await hasUserViewedProperty(user.uid, propertyId);
+        
+        if (alreadyViewed) {
+          // Already viewed, allow access without checking limit
+          setCanViewProperty(true);
+          setCheckingLimit(false);
+          return;
+        }
+
+        // Check if user has reached view limit (no Firestore call needed!)
+        const limitCheck = hasReachedViewLimit(user);
+        
+        if (limitCheck.reached) {
+          // Limit reached, show modal
+          setShowViewLimitModal(true);
+          setCanViewProperty(false);
+        } else {
+          // Under limit, allow viewing
+          setCanViewProperty(true);
+        }
+        
+        setCheckingLimit(false);
+      } catch (error) {
+        console.error('[View Limit] Error checking limit:', error);
+        // On error, allow viewing (fail open)
+        setCanViewProperty(true);
+        setCheckingLimit(false);
+      }
+    };
+
+    checkViewLimit();
+  }, [user, propertyId]);
+
+  // Track property view
+  useEffect(() => {
+    const trackView = async () => {
+      if (user && propertyId && property && !viewTracked && canViewProperty) {
+        const result = await trackPropertyView(user, propertyId);
+        
+        if (result.success) {
+          setViewTracked(true);
+          console.log('[Property View] View tracked successfully:', result.message);
+          
+          // Update local property views count
+          if (property) {
+            setProperty(prev => ({
+              ...prev,
+              views: (prev.views || 0) + (result.alreadyViewed ? 0 : 1)
+            }));
+          }
+
+          // Refresh viewed units in auth context
+          if (refreshViewedUnits) {
+            await refreshViewedUnits();
+          }
+        } else {
+          console.error('[Property View] Failed to track view:', result.message);
+        }
+      }
+    };
+
+    // Track view after property is loaded and limit check passed
+    if (property && !viewTracked && canViewProperty) {
+      trackView();
+    }
+  }, [user, propertyId, property, viewTracked, canViewProperty]);
 
   useEffect(() => {
     const fetchProperty = async () => {
+      // Don't fetch property if user can't view it
+      if (!canViewProperty && !checkingLimit) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const propertyDoc = await getDoc(doc(db, 'units', propertyId))
         if (propertyDoc.exists()) {
@@ -74,16 +188,44 @@ export default function UserPropertyDetails({ propertyId }) {
       }
     }
 
-    if (propertyId) {
+    if (propertyId && canViewProperty) {
       fetchProperty()
     }
-  }, [propertyId])
+  }, [propertyId, canViewProperty, checkingLimit])
 
-  if (loading) {
+  if (loading || checkingLimit) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader style="dot-121" />
       </div>
+    )
+  }
+
+  // Show view limit modal if limit reached
+  if (!canViewProperty && !checkingLimit) {
+    return (
+      <>
+        <ViewLimitModal
+          show={showViewLimitModal}
+          onClose={() => {
+            setShowViewLimitModal(false);
+            router.back();
+          }}
+        />
+        <div className="flex flex-col justify-center items-center min-h-screen p-4">
+          <Lock size={64} className="text-gray-300 mb-4" />
+          <h2 className="text-2xl font-bold text-gray-700 mb-2">Property Locked</h2>
+          <p className="text-gray-500 text-center mb-6">
+            You've reached your viewing limit. Upgrade to view more properties.
+          </p>
+          <button
+            onClick={() => setShowViewLimitModal(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg"
+          >
+            Upgrade Now
+          </button>
+        </div>
+      </>
     )
   }
 
@@ -180,7 +322,14 @@ export default function UserPropertyDetails({ propertyId }) {
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 mb-2">
                     <MapPin className="w-5 h-5" />
-                    <span>{property.address}</span>
+                    {hasActiveSubscription ? (
+                      <span>{property.address}</span>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-400">Exact address hidden</span>
+                        <Lock className="w-4 h-4 text-gray-400" />
+                      </div>
+                    )}
                   </div>
                   <div className="text-sm text-gray-500">
                     {property.city}, {property.country}
@@ -396,6 +545,122 @@ export default function UserPropertyDetails({ propertyId }) {
                 </div>
               </div>
             )}
+
+            {/* Map Location */}
+            <div className="bg-white rounded-2xl p-6 shadow-lg animate-slideUp" style={{animationDelay: '0.7s'}}>
+              <div className="flex items-center gap-2 mb-4">
+                <MapPin className="w-6 h-6 text-blue-600" />
+                <h2 className="text-xl font-bold text-gray-900">Location & Map</h2>
+                {!hasActiveSubscription && (
+                  <span className="ml-auto flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full">
+                    <Crown className="w-3 h-3" />
+                    Premium
+                  </span>
+                )}
+              </div>
+
+              {hasActiveSubscription ? (
+                // PREMIUM USERS: Show full address and map
+                <div className="space-y-4">
+                  <div className="text-gray-700">
+                    <p className="font-medium">{property.address}</p>
+                    <p className="text-sm text-gray-600">{property.city}, {property.country}</p>
+                  </div>
+                  
+                  {/* Google Maps Embed */}
+                  <div className="relative w-full h-80 rounded-xl overflow-hidden shadow-md">
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      loading="lazy"
+                      allowFullScreen
+                      referrerPolicy="no-referrer-when-downgrade"
+                      src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${encodeURIComponent(
+                        `${property.address}, ${property.city}, ${property.country}`
+                      )}`}
+                    ></iframe>
+                    
+                    {/* Fallback if no API key */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                      <div className="text-center p-6">
+                        <MapPin className="w-16 h-16 text-blue-600 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Map View</h3>
+                        <p className="text-sm text-gray-600 mb-4">
+                          {property.address}<br />
+                          {property.city}, {property.country}
+                        </p>
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                            `${property.address}, ${property.city}, ${property.country}`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 hover:shadow-lg"
+                        >
+                          <MapPin className="w-4 h-4" />
+                          Open in Google Maps
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Directions Buttons */}
+                  <div className="flex gap-3">
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        `${property.address}, ${property.city}, ${property.country}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-300 hover:shadow-lg font-medium"
+                    >
+                      <MapPin className="w-5 h-5" />
+                      Get Directions
+                    </a>
+                    <button
+                      onClick={() => {
+                        const address = `${property.address}, ${property.city}, ${property.country}`
+                        navigator.clipboard.writeText(address)
+                        alert('Address copied to clipboard!')
+                      }}
+                      className="px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 font-medium"
+                    >
+                      Copy Address
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // FREE USERS: Show upgrade prompt only (NO sensitive data)
+                <div className="py-12">
+                  <div className="text-center max-w-md mx-auto">
+                    <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full mb-4 shadow-lg">
+                      <Lock className="w-10 h-10 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
+                      <Crown className="w-6 h-6 text-yellow-500" />
+                      Premium Feature
+                    </h3>
+                    <p className="text-gray-600 mb-2">
+                      Get access to exact property location, interactive maps, and direct contact details.
+                    </p>
+                    <p className="text-sm text-gray-500 mb-6">
+                      Currently showing: <span className="font-medium">{property.city}, {property.country}</span>
+                    </p>
+                    <button
+                      onClick={() => router.push('/dashboard/subscription')}
+                      className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white py-4 px-6 rounded-xl font-bold hover:from-yellow-500 hover:to-orange-600 transition-all duration-300 hover:shadow-xl hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                    >
+                      <Crown className="w-5 h-5" />
+                      Upgrade to Premium
+                    </button>
+                    <p className="text-sm text-gray-500 mt-4">
+                      Plans starting from $9.99/month
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Sidebar - Booking Card */}
@@ -404,55 +669,84 @@ export default function UserPropertyDetails({ propertyId }) {
               {/* Contact Caretaker */}
               {property.caretaker?.name && (
                 <div className="pb-6 border-b">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Contact Property Manager</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <Home className="w-5 h-5 text-gray-600" />
-                      <div>
-                        <div className="text-sm text-gray-500">Manager</div>
-                        <div className="font-medium text-gray-900">{property.caretaker.name}</div>
-                      </div>
-                    </div>
-                    
-                    {property.caretaker.phone && (
-                      <a
-                        href={`tel:${property.caretaker.phone}`}
-                        className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group"
-                      >
-                        <Phone className="w-5 h-5 text-blue-600" />
-                        <div>
-                          <div className="text-sm text-gray-500">Phone</div>
-                          <div className="font-medium text-blue-600 group-hover:underline">{property.caretaker.phone}</div>
-                        </div>
-                      </a>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-gray-900">Contact Property Manager</h3>
+                    {!hasActiveSubscription && (
+                      <span className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full">
+                        <Crown className="w-3 h-3" />
+                        Premium
+                      </span>
                     )}
-
-                    {property.caretaker.email && (
-                      <a
-                        href={`mailto:${property.caretaker.email}`}
-                        className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors group"
-                      >
-                        <Mail className="w-5 h-5 text-purple-600" />
-                        <div>
-                          <div className="text-sm text-gray-500">Email</div>
-                          <div className="font-medium text-purple-600 group-hover:underline text-sm">{property.caretaker.email}</div>
-                        </div>
-                      </a>
-                    )}
-
-                    <button
-                      onClick={() => {
-                        // Will be handled by Tawk.to widget
-                        if (window.Tawk_API) {
-                          window.Tawk_API.maximize();
-                        }
-                      }}
-                      className="w-full flex items-center justify-center gap-2 p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 hover:shadow-lg"
-                    >
-                      <MessageCircle className="w-5 h-5" />
-                      <span className="font-medium">Chat with Manager</span>
-                    </button>
                   </div>
+                  
+                  {hasActiveSubscription ? (
+                    // PREMIUM USERS: Show full contact details
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <Home className="w-5 h-5 text-gray-600" />
+                        <div>
+                          <div className="text-sm text-gray-500">Manager</div>
+                          <div className="font-medium text-gray-900">{property.caretaker.name}</div>
+                        </div>
+                      </div>
+                      
+                      {property.caretaker.phone && (
+                        <a
+                          href={`tel:${property.caretaker.phone}`}
+                          className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group"
+                        >
+                          <Phone className="w-5 h-5 text-blue-600" />
+                          <div>
+                            <div className="text-sm text-gray-500">Phone</div>
+                            <div className="font-medium text-blue-600 group-hover:underline">{property.caretaker.phone}</div>
+                          </div>
+                        </a>
+                      )}
+
+                      {property.caretaker.email && (
+                        <a
+                          href={`mailto:${property.caretaker.email}`}
+                          className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors group"
+                        >
+                          <Mail className="w-5 h-5 text-purple-600" />
+                          <div>
+                            <div className="text-sm text-gray-500">Email</div>
+                            <div className="font-medium text-purple-600 group-hover:underline text-sm">{property.caretaker.email}</div>
+                          </div>
+                        </a>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          // Will be handled by Tawk.to widget
+                          if (window.Tawk_API) {
+                            window.Tawk_API.maximize();
+                          }
+                        }}
+                        className="w-full flex items-center justify-center gap-2 p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 hover:shadow-lg"
+                      >
+                        <MessageCircle className="w-5 h-5" />
+                        <span className="font-medium">Chat with Manager</span>
+                      </button>
+                    </div>
+                  ) : (
+                    // FREE USERS: Show upgrade prompt (NO contact details)
+                    <div className="text-center py-6">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full mb-3 shadow-md">
+                        <Lock className="w-8 h-8 text-white" />
+                      </div>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Upgrade to premium to contact the property manager directly.
+                      </p>
+                      <button
+                        onClick={() => router.push('/dashboard/subscription')}
+                        className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white py-3 px-4 rounded-lg font-semibold hover:from-yellow-500 hover:to-orange-600 transition-all duration-300 hover:shadow-lg text-sm flex items-center justify-center gap-2"
+                      >
+                        <Crown className="w-4 h-4" />
+                        Unlock Contact
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 

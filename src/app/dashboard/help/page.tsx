@@ -2,7 +2,6 @@
 
 import { useAuth } from '../../../lib/auth-context'
 import HelpSection from '@/components/User_Dashboard/Help'
-import UserDashboardLayout from '../layouts/UserDashboardLayout'
 
 export default function HelpPage() {
   const { user } = useAuth()
@@ -12,9 +11,5 @@ export default function HelpPage() {
     return null
   }
 
-  return (
-    <UserDashboardLayout>
-      <HelpSection />
-    </UserDashboardLayout>
-  )
+  return <HelpSection />
 }

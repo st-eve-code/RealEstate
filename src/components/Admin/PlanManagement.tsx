@@ -46,13 +46,18 @@ export default function PlanManagement({ isSidebarCollapsed }: PlanManagementPro
   // Form state
   const [formData, setFormData] = useState<PlanFormData>({
     name: '',
+    description: '',
     price: 0,
     duration: 30,
     features: [],
-    points: 0,
-    description: '',
+    userPoints: 0,
+    referrerPoints: 0,
     accType: 'tenant',
-    popular: false,
+    plan: 'monthly',
+    tax: 0,
+    viewLimits: undefined,
+    postConstraints: undefined,
+    constraintDuration: undefined,
   });
   const [featureInput, setFeatureInput] = useState('');
 
@@ -86,27 +91,43 @@ export default function PlanManagement({ isSidebarCollapsed }: PlanManagementPro
   const handleOpenModal = (plan?: Plan) => {
     if (plan) {
       setEditingPlan(plan);
+      // Convert durations from milliseconds to days for display
+      const planDurationInDays = Math.round(plan.duration / (24 * 60 * 60 * 1000));
+      const constraintDurationInDays = plan.constraints.duration 
+        ? Math.round(plan.constraints.duration / (24 * 60 * 60 * 1000))
+        : undefined;
+      
       setFormData({
         name: plan.name,
+        description: plan.description,
         price: plan.price,
-        duration: plan.constraints.duration,
+        duration: planDurationInDays,
         features: plan.features,
-        points: plan.points,
-        description: '',
-        accType: 'tenant',
-        popular: false,
+        userPoints: plan.points.user,
+        referrerPoints: plan.points.referrer,
+        accType: plan.accType,
+        plan: plan.plan,
+        tax: plan.tax,
+        viewLimits: plan.constraints.viewLimits,
+        postConstraints: plan.constraints.postConstraints,
+        constraintDuration: constraintDurationInDays,
       });
     } else {
       setEditingPlan(null);
       setFormData({
         name: '',
+        description: '',
         price: 0,
         duration: 30,
         features: [],
-        points: 0,
-        description: '',
+        userPoints: 0,
+        referrerPoints: 0,
         accType: 'tenant',
-        popular: false,
+        plan: 'monthly',
+        tax: 0,
+        viewLimits: undefined,
+        postConstraints: undefined,
+        constraintDuration: undefined,
       });
     }
     setShowModal(true);
@@ -292,12 +313,12 @@ export default function PlanManagement({ isSidebarCollapsed }: PlanManagementPro
 
             <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
               <Calendar size={16} />
-              <span>{plan.constraints.duration} days</span>
+              <span>{Math.round(plan.duration / (24 * 60 * 60 * 1000))} days</span>
             </div>
 
             <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
               <Award size={16} />
-              <span>{plan.points} points</span>
+              <span>User: {plan.points.user} | Referrer: {plan.points.referrer} points</span>
             </div>
 
             <div className="pt-4 border-t border-gray-200">
@@ -392,44 +413,150 @@ export default function PlanManagement({ isSidebarCollapsed }: PlanManagementPro
                 </div>
               </div>
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-gray-700">
-                  Points *
-                </label>
-                <input
-                  type="number"
-                  value={formData.points}
-                  onChange={(e) => setFormData({ ...formData, points: Number(e.target.value) })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                  min="0"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    User Points *
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.userPoints}
+                    onChange={(e) => setFormData({ ...formData, userPoints: Number(e.target.value) })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="0"
+                    required
+                    placeholder="e.g., 100"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Points awarded to user</p>
+                </div>
+
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Referrer Points *
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.referrerPoints}
+                    onChange={(e) => setFormData({ ...formData, referrerPoints: Number(e.target.value) })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="0"
+                    required
+                    placeholder="e.g., 50"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Points awarded to referrer</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Account Type
+                  </label>
+                  <select
+                    value={formData.accType}
+                    onChange={(e) => setFormData({ ...formData, accType: e.target.value as 'tenant' | 'landlord' })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="tenant">Tenant</option>
+                    <option value="landlord">Landlord</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Plan Type *
+                  </label>
+                  <select
+                    value={formData.plan}
+                    onChange={(e) => setFormData({ ...formData, plan: e.target.value as 'daily' | 'monthly' | 'yearly' })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  >
+                    <option value="daily">Daily</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                  </select>
+                </div>
               </div>
 
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">
-                  Account Type
-                </label>
-                <select
-                  value={formData.accType}
-                  onChange={(e) => setFormData({ ...formData, accType: e.target.value as 'tenant' | 'landlord' })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="tenant">Tenant</option>
-                  <option value="landlord">Landlord</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block mb-1 text-sm font-medium text-gray-700">
-                  Description
+                  Description *
                 </label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   rows={3}
+                  required
+                  placeholder="Describe what this plan offers..."
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Tax (decimal)
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.tax || 0}
+                    onChange={(e) => setFormData({ ...formData, tax: Number(e.target.value) })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    placeholder="0"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">e.g., 0.1 = 10%, 0.25 = 25%</p>
+                </div>
+
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Constraint Reset (days)
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.constraintDuration || ''}
+                    onChange={(e) => setFormData({ ...formData, constraintDuration: e.target.value ? Number(e.target.value) : undefined })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="1"
+                    placeholder="Optional"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Reset limits after X days (optional)</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    View Limits
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.viewLimits || ''}
+                    onChange={(e) => setFormData({ ...formData, viewLimits: e.target.value ? Number(e.target.value) : undefined })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="0"
+                    placeholder="Unlimited"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Max property views (empty = unlimited)</p>
+                </div>
+
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Post Limits
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.postConstraints || ''}
+                    onChange={(e) => setFormData({ ...formData, postConstraints: e.target.value ? Number(e.target.value) : undefined })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="0"
+                    placeholder="Unlimited"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Max property posts (empty = unlimited)</p>
+                </div>
               </div>
 
               <div>
