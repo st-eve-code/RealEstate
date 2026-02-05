@@ -175,7 +175,7 @@ export function useActivityLogs(filterType = 'all', pageSize = 10) {
             value: data.featured?.primary || '',
             status: data.featured?.badge || 'active',
             color: data.color || '#3b82f6',
-            timestamp: data.createdAt?.toDate() || new Date()
+            timestamp: data.createdAt || Timestamp.now()
           }
         })
 

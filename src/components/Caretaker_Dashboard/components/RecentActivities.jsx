@@ -11,6 +11,7 @@ import {
   Edit,
   Clock
 } from 'lucide-react';
+import { toDate } from '@/lib/utils/timestampUtils';
 
 const getActivityIcon = (type) => {
   switch (type) {
@@ -38,7 +39,7 @@ const getActivityIcon = (type) => {
 const formatTimeAgo = (timestamp) => {
   if (!timestamp) return 'Just now';
   
-  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  const date = toDate(timestamp);
   const seconds = Math.floor((new Date() - date) / 1000);
   
   if (seconds < 60) return 'Just now';

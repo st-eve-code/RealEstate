@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { toDate } from '@/lib/utils/timestampUtils';
 
 export default function ConversationList({ 
   conversations, 
@@ -24,9 +25,7 @@ export default function ConversationList({
     <div className="divide-y divide-gray-200">
       {conversations.map((conversation) => {
         const isSelected = selectedConversation === conversation.id;
-        const lastMessageTime = conversation.lastMessage?.timestamp?.toDate 
-          ? conversation.lastMessage.timestamp.toDate() 
-          : null;
+        const lastMessageTime = toDate(conversation.lastMessage?.timestamp)
         
         return (
           <div
