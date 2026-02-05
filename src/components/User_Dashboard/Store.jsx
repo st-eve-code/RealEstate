@@ -7,8 +7,9 @@ import { useLastViewedUnits } from '@/Hooks/useLastViewedUnits';
 import { toDate } from '@/lib/utils/timestampUtils';
 
 function Store({ sidebar = null }) {
-  const { user } = useAuth();
+  const { user, viewedUnits, refreshViewedUnits } = useAuth();
   const { units, loading, error, refetch } = useLastViewedUnits(user?.uid, true);
+  
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [isOpen, setIsOpen] = useState(false);
 

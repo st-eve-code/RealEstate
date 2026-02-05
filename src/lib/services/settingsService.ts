@@ -19,6 +19,7 @@ import {
   PlatformSettings
 } from '../types';
 import { removeUndefined } from '../utils/removeUndefined';
+import { unde_find } from '../utils/filter';
 
 export type {
   GeneralSettings,
@@ -228,14 +229,14 @@ export async function updateSettings(
     if (!settingsDoc.exists()) {
       const initialSettings = {
         ...defaultSettings,
-        updatedAt: Timestamp.now().toDate(),
+        updatedAt: Timestamp.now(),
       };
-      await setDoc(settingsRef, removeUndefined(initialSettings));
+      await setDoc(settingsRef, unde_find(initialSettings));
     }
     
     const updateData: any = {
       [`${section}`]: data,
-      updatedAt: Timestamp.now().toDate(),
+      updatedAt: Timestamp.now(),
     };
     
     if (userId && userName) {
@@ -264,15 +265,15 @@ export async function resetSettings(
     if (section) {
       const updateData = {
         [section]: defaultSettings[section],
-        updatedAt: Timestamp.now().toDate(),
+        updatedAt: Timestamp.now(),
       };
-      await updateDoc(settingsRef, removeUndefined(updateData));
+      await updateDoc(settingsRef, unde_find(updateData));
     } else {
       const resetData = {
         ...defaultSettings,
-        updatedAt: Timestamp.now().toDate(),
+        updatedAt: Timestamp.now(),
       };
-      await setDoc(settingsRef, removeUndefined(resetData));
+      await setDoc(settingsRef, unde_find(resetData));
     }
   } catch (error) {
     console.error('Error resetting settings:', error);

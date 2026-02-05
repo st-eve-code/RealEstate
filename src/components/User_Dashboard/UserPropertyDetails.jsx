@@ -21,7 +21,7 @@ import { User } from '@/lib/types'
 export default function UserPropertyDetails({ propertyId }) {
   const router = useRouter()
   const { user, refreshViewedUnits } = useAuth()
-  const [unitProperty, setUnitProperty] = useState(null)
+  const [unitProperty, setUnitProperty] = useState()
   const [property, setProperty] = useState(null)
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
@@ -100,7 +100,7 @@ export default function UserPropertyDetails({ propertyId }) {
     };
 
     checkViewLimit();
-  }, [user, propertyId]);
+  }, [user, propertyId, setCanViewProperty, setShowViewLimitModal, setCheckingLimit, hasReachedViewLimit, hasUserViewedProperty, ]);
 
   // Track property view
   useEffect(() => {
@@ -136,10 +136,10 @@ export default function UserPropertyDetails({ propertyId }) {
     };
 
     // Track view after property is loaded and limit check passed
-    if (property && !viewTracked && canViewProperty) {
+    if (unitProperty && !viewTracked && canViewProperty) {
       trackView();
     }
-  }, [user, propertyId, property, viewTracked, canViewProperty]);
+  }, [user, propertyId, viewTracked, canViewProperty, unitProperty, trackPropertyView, setViewTracked, setProperty, setUnitProperty, refreshViewedUnits]);
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -153,6 +153,10 @@ export default function UserPropertyDetails({ propertyId }) {
         const propertyDoc = await getDoc(doc(db, 'units', propertyId))
         if (propertyDoc.exists()) {
           const data = propertyDoc.data()
+          
+          // Store raw Firestore data for tracking
+          setUnitProperty({ id: propertyDoc.id, ...data })
+          
           // Transform the unit data to match the component's expected format
           const transformedProperty = {
             id: propertyDoc.id,
@@ -817,7 +821,7 @@ export default function UserPropertyDetails({ propertyId }) {
                   </div>
                   <div className="flex justify-between font-semibold text-gray-900 pt-2 border-t">
                     <span>Total</span>
-                    <span>{(property.price + (property.price * (property.tax || 0)) / 100 + serviceFee).toLocaleString()} {property.currency || 'FCFA'}</span>
+                    <span>{(property.price + (property.price * (property.tax || 0)) / 100 + serviceFee.amount).toLocaleString()} {property.currency || 'FCFA'}</span>
                   </div>
                 </div>
 

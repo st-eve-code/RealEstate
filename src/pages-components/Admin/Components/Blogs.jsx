@@ -30,6 +30,7 @@ import {
   Save
 } from 'lucide-react';
 import ConfirmModal from '@/components/ConfirmModal';
+import { toDate } from '@/lib/utils/timestampUtils';
 
 export default function Blogs({ isSidebarCollapsed }) {
   const [blogs, setBlogs] = useState([]);
@@ -173,7 +174,7 @@ export default function Blogs({ isSidebarCollapsed }) {
 
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const date = toDate(timestamp);
     return date.toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'short', 

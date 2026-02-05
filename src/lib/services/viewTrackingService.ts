@@ -80,7 +80,7 @@ export async function trackPropertyView(
         },
         type: unitData.type || 'apartment',
         totalnumber: unitData.totalnumber || 1,
-        createdAt: unitData.createdAt || Timestamp.now().toDate(),
+        createdAt: unitData.createdAt || Timestamp.now(),
         viewedAt: Timestamp.now(),
         transactionId: currentTransactionId // Track which subscription this view belongs to
       });
@@ -147,10 +147,10 @@ export async function trackPropertyView(
           // Update user document with the modified transaction
           const userRef = doc(db, 'users', userId);
           await updateDoc(userRef, {
-            subscription: updatedTransaction
+            transaction: updatedTransaction
           });
 
-          console.log('[View Tracking] ✅ Incremented user.subscription.subscription.viewed count');
+          console.log('[View Tracking] ✅ Incremented user.transaction.subscription.viewed count');
 
           return {
             success: true,
