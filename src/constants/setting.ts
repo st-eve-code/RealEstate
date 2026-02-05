@@ -7,3 +7,17 @@ export const pointStatus = {
     "Infinity": 500
 }
 
+export const serviceFee = {
+    amount: 0
+}
+
+export const mainCurrency = "FCFA";
+
+// converting from main currency to this currency
+export const currencyConversion = [
+    {
+        divider: 659,
+        multiplier: 1,
+        currency: "EUR"
+    }
+]

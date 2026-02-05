@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { doc, getDoc, Timestamp } from 'firebase/firestore'
+import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { 
   ChevronLeft, MapPin, Bed, Bath, Maximize, Heart, Share2, 
@@ -14,10 +14,14 @@ import Loader from '../ado/loader'
 import { useAuth } from '@/lib/auth-context'
 import { trackPropertyView, hasReachedViewLimit, hasUserViewedProperty } from '@/lib/services/viewTrackingService'
 import ViewLimitModal from './ViewLimitModal'
+import { isFuture } from '@/lib/utils/timestampUtils'
+import { serviceFee } from '@/constants/setting'
+import { User } from '@/lib/types'
 
 export default function UserPropertyDetails({ propertyId }) {
   const router = useRouter()
   const { user, refreshViewedUnits } = useAuth()
+  const [unitProperty, setUnitProperty] = useState(null)
   const [property, setProperty] = useState(null)
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
@@ -35,12 +39,16 @@ export default function UserPropertyDetails({ propertyId }) {
         try {
           const userDoc = await getDoc(doc(db, 'users', user.uid))
           if (userDoc.exists()) {
-            const userData = userDoc.data()
+            /**
+             * @type {User}
+             */
+            const userData = userDoc.data();
             // Check if user has an active subscription
             const subscription = userData.transaction
+            console.log('UserProperties.useEffect: subscription', subscription)
             const isActive = subscription && !['banned', 'terminate', 'refund'].includes(subscription.status) && 
                             subscription.expiresAt && 
-                            subscription.expiresAt.toDate() > Timestamp.now().toDate();
+                            isFuture(subscription.expiresAt);
             setHasActiveSubscription(isActive)
           }
         } catch (error) {
@@ -97,8 +105,9 @@ export default function UserPropertyDetails({ propertyId }) {
   // Track property view
   useEffect(() => {
     const trackView = async () => {
-      if (user && propertyId && property && !viewTracked && canViewProperty) {
-        const result = await trackPropertyView(user, propertyId);
+      if (user && propertyId && unitProperty && !viewTracked && canViewProperty) {
+        // Pass property data to avoid redundant Firestore read!
+        const result = await trackPropertyView(user, unitProperty);
         
         if (result.success) {
           setViewTracked(true);
@@ -110,6 +119,10 @@ export default function UserPropertyDetails({ propertyId }) {
               ...prev,
               views: (prev.views || 0) + (result.alreadyViewed ? 0 : 1)
             }));
+            setUnitProperty(prev => ({
+              ...prev, 
+              views: (prev.views || 0) + (result.alreadyViewed ? 0 : 1)
+            }))
           }
 
           // Refresh viewed units in auth context
@@ -800,11 +813,11 @@ export default function UserPropertyDetails({ propertyId }) {
                   )}
                   <div className="flex justify-between">
                     <span>Service fee</span>
-                    <span>50 {property.currency || 'FCFA'}</span>
+                    <span>{serviceFee.amount} {serviceFee.currency || 'FCFA'}</span>
                   </div>
                   <div className="flex justify-between font-semibold text-gray-900 pt-2 border-t">
                     <span>Total</span>
-                    <span>{(property.price + (property.price * (property.tax || 0)) / 100 + 50).toLocaleString()} {property.currency || 'FCFA'}</span>
+                    <span>{(property.price + (property.price * (property.tax || 0)) / 100 + serviceFee).toLocaleString()} {property.currency || 'FCFA'}</span>
                   </div>
                 </div>
 

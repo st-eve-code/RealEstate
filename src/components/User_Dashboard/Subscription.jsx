@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, CheckCircle, Star, ArrowLeft, AlertCircle } from 'lucide-react';
 import { fetchPlans } from '../../lib/services/planService';
+import { useRouter } from 'next/navigation';
 
 function Subscription() {
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -23,6 +24,7 @@ function Subscription() {
   const [paymentStatus, setPaymentStatus] = useState(null); // 'success', 'failed', or null
   const [plans, setPlans] = useState([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
+  const router = useRouter();
 
   // Fetch plans from Firebase
   useEffect(() => {
@@ -153,7 +155,7 @@ function Subscription() {
     
     // Navigate to payment page with plan ID in URL
     setTimeout(() => {
-      window.location.href = `/dashboard/subscription/${selectedPlanData.id}`;
+      router.push(`/dashboard/subscription/${selectedPlanData.id}`)
     }, 1500);
   };
 

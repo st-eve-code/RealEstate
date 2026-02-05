@@ -14,12 +14,16 @@ export function ViewLimitModal({ show, onClose, onUpgrade }: ViewLimitModalProps
   const { user } = useAuth();
   const router = useRouter();
   const [limitInfo, setLimitInfo] = useState({ current: 0, limit: 0, reached: false });
+  const [hasSubscription, setHasSubscription] = useState(false);
 
   useEffect(() => {
     if (show && user) {
       // No Firestore call needed - user data already in memory!
       const info = hasReachedViewLimit(user);
       setLimitInfo(info);
+      
+      // Check if user has any subscription (to show "Upgrade" vs "Subscribe")
+      setHasSubscription(!!user.transaction);
     }
   }, [show, user]);
 
@@ -52,7 +56,10 @@ export function ViewLimitModal({ show, onClose, onUpgrade }: ViewLimitModalProps
             <div>
               <h2 className="text-2xl font-bold">View Limit Reached</h2>
               <p className="text-orange-100 text-sm mt-1">
-                You've reached your viewing limit
+                {hasSubscription 
+                  ? "You've reached your plan's viewing limit"
+                  : "You've reached your free viewing limit"
+                }
               </p>
             </div>
           </div>
@@ -109,11 +116,11 @@ export function ViewLimitModal({ show, onClose, onUpgrade }: ViewLimitModalProps
             </ul>
           </div>
 
-          {/* Upgrade Benefits */}
+          {/* Upgrade/Subscribe Benefits */}
           <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
             <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
               <Crown size={20} className="text-yellow-500" />
-              Upgrade to Premium
+              {hasSubscription ? 'Upgrade to Higher Plan' : 'Subscribe to Premium'}
             </h3>
             <ul className="space-y-2">
               <li className="flex items-start gap-2 text-sm text-gray-700">
@@ -142,7 +149,7 @@ export function ViewLimitModal({ show, onClose, onUpgrade }: ViewLimitModalProps
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
             >
               <TrendingUp size={20} />
-              Upgrade Now
+              {hasSubscription ? 'Upgrade Now' : 'Subscribe Now'}
             </button>
             <button
               onClick={onClose}

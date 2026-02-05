@@ -6,8 +6,10 @@ import { ArrowLeft, AlertCircle, CheckCircle, ArrowRight, User } from 'lucide-re
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useAuth } from '@/lib/auth-context'
-import type { Transaction, Plan, Subscription } from '@/lib/types'
+import type { Transaction, Plan, Subscription  } from '@/lib/types'
 import { unde_find } from '@/lib/utils/filter'
+import { isExpired } from '@/lib/utils/timestampUtils'
+import Swal from 'sweetalert2'
 
 function PaymentPageContent() {
   const router = useRouter()
@@ -16,7 +18,7 @@ function PaymentPageContent() {
   const { user } = useAuth()
   
   // Plan details from Firestore
-  const [plan, setPlan] = useState<any>(null)
+  const [plan, setPlan] = useState<Plan>()
   const [loadingPlan, setLoadingPlan] = useState(true)
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false)
   const [showOverwriteWarning, setShowOverwriteWarning] = useState(false)
@@ -42,13 +44,8 @@ function PaymentPageContent() {
         const planSnap = await getDoc(planRef)
         
         if (planSnap.exists()) {
-          const planData = planSnap.data()
-          setPlan({
-            id: planSnap.id,
-            name: planData.name,
-            price: planData.price,
-            views: planData.constraints?.viewLimits || 999
-          })
+          const planData = planSnap.data() as Plan
+          setPlan(planData)
         } else {
           router.push('/dashboard/subscription')
           return
@@ -65,10 +62,8 @@ function PaymentPageContent() {
             
             // Check if subscription exists and hasn't expired
             if (userData.transaction && userData.transaction.expiresAt) {
-              const expiryDate = (userData.transaction.expiresAt as Timestamp).toDate()
-              const now = Timestamp.now().toDate(); // server date as users can change device date
-              
-              if (expiryDate > now) {
+              // Use utility function to safely check expiry
+              if (!isExpired(userData.transaction.expiresAt)) {
                 setHasActiveSubscription(true)
               }
             }
@@ -204,14 +199,22 @@ function PaymentPageContent() {
         return
       }
 
+      if(!plan) {
+        Swal.fire({
+          title: 'Plan Error'
+        })
+      }
+
       // Calculate expiry date based on plan duration
       const now = Timestamp.now()
       const expiresAt = Timestamp.fromMillis(
-        now.toMillis() + (plan?.duration || 1 * 24 * 60 * 60 * 1000) // Default 30 days
+        now.toMillis() + ( (plan?.duration || 30) * 24 * 60 * 60 * 1000 ) // Default 30 days
       )
 
+      console.log('expires in', expiresAt.toDate())
+
       // Create subscription object
-      const subscription: Subscription = unde_find({
+      const subscription: Subscription = {
         amount: price,
         plan: plan as Plan,
         viewed: 0, // Initialize view count to 0
@@ -221,11 +224,11 @@ function PaymentPageContent() {
         reported: 0, // Initialize view count to 0
         reviewed: 0, // Initialize view count to 0
         createdAt: now,
-        expiresAt: expiresAt,
-      })
+        expiresAt: expiresAt
+      }
 
       // Create payment object (MTN MoMo)
-      const payment = unde_find({
+      const payment = {
         id: transactionId,
         user: {
           name: userName || user.displayName || 'Unknown',
@@ -236,7 +239,7 @@ function PaymentPageContent() {
         phoneNumber: phoneNumber,
         createdAt: now,
         paymentType: 'momo' as const,
-      })
+      }
 
       // Create transaction document
       const transaction: Transaction = unde_find({
@@ -253,6 +256,8 @@ function PaymentPageContent() {
         reason: failureReason,
       })
 
+      console.log('transaction to save', transaction)
+
       // Save to Firestore
       const transactionRef = doc(db, `users/${user.uid}/Transactions`, transactionId)
       await setDoc(transactionRef, transaction)
@@ -262,12 +267,12 @@ function PaymentPageContent() {
       // If successful, also update user's subscription
       if (status === 'paid') {
         const userRef = doc(db, 'users', user.uid)
-        await setDoc(userRef, unde_find({
+        await setDoc(userRef, {
           transaction: transaction,
           currentSubscription: subscription,
           lastTransactionId: transactionId,
           updatedAt: now,
-        }), { merge: true })
+        }, { merge: true })
 
         console.log(`User ${user.uid} subscription updated`)
       }
@@ -364,7 +369,7 @@ function PaymentPageContent() {
     return null
   }
 
-  const { name: planName, price, views } = plan
+  const { planName, price, views } = {planName:plan.name, price:plan.price, views: plan.constraints.viewLimits}
 
   return (
     <section className="py-6 sm:py-8 min-h-screen bg-gray-50">

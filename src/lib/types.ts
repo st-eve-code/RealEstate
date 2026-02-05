@@ -77,10 +77,10 @@ export interface Plan {
     constraints: {
         viewLimits?: number,
         postConstraints?: number,
-        duration?: number // in milliseconds before reset, this is incase u want to limit per certain time e.g 4 view per day, after time.
+        // duration?: number // in milliseconds before reset, this is incase u want to limit per certain time e.g 4 view per day, after time.
         //duration is useless if there is not at least one other constraint, so only available when another exists
     },
-    duration: number, // the lifetime of the plan when subscribed , remember in milliseconds
+    duration: number, // the lifetime of the plan when subscribed , remember in days
     plan: SubscriptionPlanLabel,
     tax?: number // 0.25 = 25%, 0.1 = 10%
     createdAt: Timestamp,
@@ -294,6 +294,7 @@ export interface LastViewedUnit {
         address: string
     },
     type: RentingType,
+    transactionId?: string, // modifiable
     totalnumber: number, // number of rooms
     createdAt: Timestamp,
     viewedAt: Timestamp,
@@ -473,6 +474,7 @@ export interface ListingCollection {
 export interface UnitView {
     id: string, // this id
     uid: string, // user that viewed the unit
+    // transactionId?: string, // transactionId for users with susbcription
     unit: string, // unit that was viewed
     createdAt: Timestamp, 
 }
