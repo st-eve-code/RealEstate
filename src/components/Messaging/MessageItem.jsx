@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { toDate } from '@/lib/utils/timestampUtils';
 
 export default function MessageItem({ message, currentUserId }) {
   const isMine = message.senderId === currentUserId;
-  const timestamp = message.createdAt?.toDate ? message.createdAt.toDate() : null;
+  const timestamp = toDate(message.createdAt);
   
   return (
     <div className={`flex mb-4 ${isMine ? 'justify-end' : 'justify-start'}`}>

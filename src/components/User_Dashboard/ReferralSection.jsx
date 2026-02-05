@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useReferrals } from '../../Hooks/useReferrals';
 import { useAuth } from '../../lib/auth-context';
+import { toDate } from '@/lib/utils/timestampUtils';
 
 export default function ReferralSection() {
   const { user } = useAuth();
@@ -58,7 +59,7 @@ export default function ReferralSection() {
 
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const date = toDate(timestamp);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 

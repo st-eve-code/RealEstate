@@ -142,7 +142,7 @@ export default function MembersManagement({ isSidebarCollapsed }: MembersManagem
 
       // Create a mock transaction/subscription
       const now = new Date();
-      const expiresAt = new Date(now.getTime() + plan.constraints.duration * 24 * 60 * 60 * 1000);
+      const expiresAt = new Date(now.getTime() + plan.duration * 24 * 60 * 60 * 1000);
 
       const memberRef = doc(db, 'users', selectedMember.uid);
       await updateDoc(memberRef, {
@@ -545,7 +545,7 @@ export default function MembersManagement({ isSidebarCollapsed }: MembersManagem
               <div className="p-4 bg-gray-50 rounded-lg">
                 <label className="block mb-1 text-xs font-semibold text-gray-500 uppercase">Last Active</label>
                 <p className="text-gray-900">
-                  {selectedMember.lastActive?.toDate ? new Date(selectedMember.lastActive.toDate()).toLocaleString() : 'Never'}
+                  {selectedMember.lastActive?.toDate ? selectedMember.lastActive.toDate().toLocaleString() : 'Never'}
                 </p>
               </div>
             </div>
@@ -598,7 +598,7 @@ export default function MembersManagement({ isSidebarCollapsed }: MembersManagem
                 <option value="">Choose a plan...</option>
                 {plans.map((plan) => (
                   <option key={plan.id} value={plan.id}>
-                    {plan.name} - {plan.price} XAF ({plan.constraints.duration} days)
+                    {plan.name} - {plan.price} XAF ({plan.duration} days)
                   </option>
                 ))}
               </select>
@@ -610,8 +610,8 @@ export default function MembersManagement({ isSidebarCollapsed }: MembersManagem
                 <div className="p-3 mb-4 border border-blue-200 rounded-lg bg-blue-50">
                   <h4 className="mb-2 font-semibold text-gray-900">{plan.name}</h4>
                   <p className="mb-2 text-2xl font-bold text-blue-600">{plan.price} XAF</p>
-                  <p className="mb-2 text-sm text-gray-600">Duration: {plan.constraints.duration} days</p>
-                  <p className="text-sm text-gray-600">Points: {plan.points}</p>
+                  <p className="mb-2 text-sm text-gray-600">Duration: {plan.duration} days</p>
+                  <p className="text-sm text-gray-600">Points: {plan.points.user}</p>
                 </div>
               ) : null;
             })()}

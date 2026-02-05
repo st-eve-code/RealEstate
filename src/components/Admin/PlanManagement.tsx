@@ -92,16 +92,16 @@ export default function PlanManagement({ isSidebarCollapsed }: PlanManagementPro
     if (plan) {
       setEditingPlan(plan);
       // Convert durations from milliseconds to days for display
-      const planDurationInDays = Math.round(plan.duration / (24 * 60 * 60 * 1000));
-      const constraintDurationInDays = plan.constraints.duration 
-        ? Math.round(plan.constraints.duration / (24 * 60 * 60 * 1000))
+      const planDurationInDays = (plan.duration / 1 /* (24 * 60 * 60 * 1000) */); 
+      const constraintDurationInDays = plan.duration 
+        ? planDurationInDays
         : undefined;
       
       setFormData({
         name: plan.name,
         description: plan.description,
         price: plan.price,
-        duration: planDurationInDays,
+        duration: plan.duration,
         features: plan.features,
         userPoints: plan.points.user,
         referrerPoints: plan.points.referrer,
@@ -110,7 +110,7 @@ export default function PlanManagement({ isSidebarCollapsed }: PlanManagementPro
         tax: plan.tax,
         viewLimits: plan.constraints.viewLimits,
         postConstraints: plan.constraints.postConstraints,
-        constraintDuration: constraintDurationInDays,
+        constraintDuration: plan.duration,
       });
     } else {
       setEditingPlan(null);
@@ -313,7 +313,7 @@ export default function PlanManagement({ isSidebarCollapsed }: PlanManagementPro
 
             <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
               <Calendar size={16} />
-              <span>{Math.round(plan.duration / (24 * 60 * 60 * 1000))} days</span>
+              <span>{Math.round(plan.duration)} days</span>
             </div>
 
             <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">

@@ -90,9 +90,7 @@ export async function createPlan(
     
     // Convert durations from days to milliseconds
     const planDurationInMs = planData.duration * 24 * 60 * 60 * 1000;
-    const constraintDurationInMs = planData.constraintDuration 
-      ? planData.constraintDuration * 24 * 60 * 60 * 1000 
-      : undefined;
+    const constraintDurationInMs = (planData.constraintDuration || 1) * 24 * 60 * 60 * 1000 ;
     
     const newPlan: Omit<Plan, 'id'> = {
       name: planData.name,
@@ -108,9 +106,9 @@ export async function createPlan(
       constraints: {
         viewLimits: planData.viewLimits,
         postConstraints: planData.postConstraints,
-        duration: constraintDurationInMs // in milliseconds, optional
+        // duration: constraintDurationInMs // in milliseconds, optional
       },
-      duration: planDurationInMs, // plan lifetime in milliseconds
+      duration: planData.duration, // plan lifetime in milliseconds
       plan: planData.plan,
       tax: planData.tax,
       createdAt: Timestamp.now(),

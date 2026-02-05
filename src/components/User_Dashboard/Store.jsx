@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { ArrowBigDown, ChevronDown, Eye, MapPin, Calendar, Tag, RefreshCw, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useLastViewedUnits } from '@/Hooks/useLastViewedUnits';
+import { toDate } from '@/lib/utils/timestampUtils';
 
 function Store({ sidebar = null }) {
   const { user } = useAuth();
@@ -20,7 +21,7 @@ function Store({ sidebar = null }) {
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';
     try {
-      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      const date = toDate(timestamp);
       return date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: '2-digit',
