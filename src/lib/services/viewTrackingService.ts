@@ -1,7 +1,8 @@
 import { doc, getDoc, setDoc, updateDoc, increment, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import type { UnitView, LastViewedUnit, User, Transaction, Subscription } from '@/lib/types';
+import type { UnitView, LastViewedUnit, User, Transaction, Subscription, Unit } from '@/lib/types';
 import { unde_find } from '../utils/filter';
+import { toDate } from '../utils/timestampUtils';
 
 /**
  * Track property view and update all related collections
@@ -13,57 +14,54 @@ import { unde_find } from '../utils/filter';
  * 4. Increments user.subscription.subscription.viewed count if not already viewed
  * 5. Updates user document with updated subscription
  * 
- * @param userData - Complete user object from auth context (avoids redundant Firestore read)
+ * @param userData - Complete user object from auth context (no Firestore read needed!)
  * @param unitId - ID of the property being viewed
+ * @param unitData - Property data already loaded in the component (no Firestore read needed!)
  */
 export async function trackPropertyView(
   userData: User,
-  unitId: string
+  /* unitId: string, */
+  unitData: Unit // Property data from component
 ): Promise<{ success: boolean; message: string; alreadyViewed: boolean }> {
   try {
     const userId = userData.uid;
     const userName = userData.displayName || 'Unknown User';
     
-    console.log('[View Tracking] Starting view tracking for:', { userId, unitId, userName });
+    console.log('[View Tracking] Starting view tracking for:', { userId, unit:unitData, userName });
 
     // 1. Check if user has already viewed this unit in lastViewedUnits
-    const lastViewedRef = doc(db, 'users', userId, 'lastViewedUnits', unitId);
+    const lastViewedRef = doc(db, 'users', userId, 'lastViewedUnits', unitData.id);
     const lastViewedSnap = await getDoc(lastViewedRef);
-    const alreadyViewed = lastViewedSnap.exists();
+    let alreadyViewed = lastViewedSnap.exists();
 
     console.log('[View Tracking] Already viewed?', alreadyViewed);
 
     // 2. Increment property views count in units collection
-    const unitRef = doc(db, 'units', unitId);
-    const unitSnap = await getDoc(unitRef);
-    
-    if (!unitSnap.exists()) {
-      console.error('[View Tracking] Unit not found:', unitId);
-      return { success: false, message: 'Property not found', alreadyViewed: false };
-    }
-
-    const unitData = unitSnap.data();
+    const unitRef = doc(db, 'units', unitData.id);
     await updateDoc(unitRef, {
       views: increment(1)
     });
     console.log('[View Tracking] ✅ Incremented unit views');
 
-    // 3. Create/Update UnitView document
-    const unitViewId = `${userId}_${unitId}_${Date.now()}`;
-    const unitViewRef = doc(db, 'unitViews', unitViewId);
-    const unitViewData: UnitView = {
+    // 3. Create UnitView document as SUBCOLLECTION of the unit
+    const unitViewId = `${userId}_${Date.now()}`;
+    const unitViewRef = doc(db, 'units', unitData.id, 'unitViews', unitViewId);
+    const unitViewData = {
       id: unitViewId,
       uid: userId,
-      unit: unitId,
+      unit: unitData.id,
       createdAt: Timestamp.now()
     };
     await setDoc(unitViewRef, unitViewData);
-    console.log('[View Tracking] ✅ Created UnitView document');
+    console.log('[View Tracking] ✅ Created UnitView document in units/{id}/unitViews subcollection');
 
-    // 4. Add to lastViewedUnits if not already there
+    // 4. Add to lastViewedUnits with transactionId tracking
+    const userTransaction = userData.transaction;
+    const currentTransactionId = userTransaction?.id || null; // Firestore doesn't support undefined, use null
+
     if (!alreadyViewed) {
-      const lastViewedUnit: LastViewedUnit = unde_find({
-        id: unitId,
+      const lastViewedUnit = unde_find({
+        id: unitData.id,
         viewedBy: {
           id: userId,
           name: userName
@@ -82,14 +80,20 @@ export async function trackPropertyView(
         },
         type: unitData.type || 'apartment',
         totalnumber: unitData.totalnumber || 1,
-        createdAt: unitData.createdAt || Timestamp.now(),
-        viewedAt: Timestamp.now()
+        createdAt: unitData.createdAt || Timestamp.now().toDate(),
+        viewedAt: Timestamp.now(),
+        transactionId: currentTransactionId // Track which subscription this view belongs to
       });
 
       await setDoc(lastViewedRef, lastViewedUnit);
-      console.log('[View Tracking] ✅ Added to lastViewedUnits');
+      console.log('[View Tracking] ✅ Added to lastViewedUnits with transactionId:', currentTransactionId);
     } else {
-      // Update viewedAt timestamp
+      // Check if transactionId changed (new subscription period)
+      const existingData = lastViewedSnap.data() as LastViewedUnit;
+      const previousTransactionId = existingData.transactionId;
+      const shouldCountAsNewView = previousTransactionId !== currentTransactionId;
+      
+      // Update viewedAt timestamp, property details, and transactionId
       await updateDoc(lastViewedRef, unde_find({
         name: unitData.name || 'Untitled Property',
         payment: {
@@ -100,9 +104,20 @@ export async function trackPropertyView(
         },
         type: unitData.type || 'apartment',
         totalnumber: unitData.totalnumber || 1,
-        viewedAt: Timestamp.now()
+        viewedAt: Timestamp.now(),
+        transactionId: currentTransactionId
       }));
-      console.log('[View Tracking] ✅ Updated viewedAt in lastViewedUnits');
+      
+      console.log('[View Tracking] ✅ Updated lastViewedUnits');
+      console.log('[View Tracking] Previous transactionId:', previousTransactionId);
+      console.log('[View Tracking] Current transactionId:', currentTransactionId);
+      console.log('[View Tracking] Should count as new view?', shouldCountAsNewView);
+      
+      // Update alreadyViewed flag if transactionId changed
+      if (shouldCountAsNewView) {
+        alreadyViewed = false;
+        console.log('[View Tracking] 🔄 Different subscription period - counting as new view');
+      }
     }
 
     // 5. Update user's subscription.subscription.viewed count (only if first time viewing)
@@ -112,7 +127,7 @@ export async function trackPropertyView(
       if (userTransaction && userTransaction.subscription) {
         // Check if subscription is still active
         const now = new Date();
-        const expiresAt = userTransaction.expiresAt?.toDate();
+        const expiresAt = toDate(userTransaction.expiresAt);
 
         if (expiresAt && expiresAt > now) {
           // Increment viewed count in the subscription object

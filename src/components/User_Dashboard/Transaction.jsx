@@ -2,15 +2,21 @@ import React, { useState } from 'react';
 import { Smartphone, Clock, CheckCircle, XCircle, CreditCard, RefreshCw, AlertCircle, X, Calendar, User, Hash, Phone } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useTransactions } from '@/Hooks/useTransactions';
+import { toDate } from '@/lib/utils/timestampUtils';
+import { Timestamp } from 'firebase/firestore';
 
 function Transaction() {
   const { user } = useAuth();
   const { transactions, loading, error, refetch } = useTransactions(user?.uid, false);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  /**
+   * @type {[Transaction, (t:Transaction)=>void]}
+   */
+  const [selectedTransaction, setSelectedTransaction] = useState();
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   console.log("transactions:", transactions)
   
   const handleTransactionClick = (transaction) => {
+    console.log('selected transaction', transaction, Timestamp.now())
     setSelectedTransaction(transaction);
     setShowDetailsModal(true);
   };
@@ -18,7 +24,7 @@ function Transaction() {
   const formatDetailedDate = (timestamp) => {
     if (!timestamp) return 'N/A';
     try {
-      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      const date = toDate(timestamp);
       return date.toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric',
@@ -94,7 +100,7 @@ function Transaction() {
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';
     try {
-      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      const date = toDate(timestamp);
       return date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -228,7 +234,7 @@ function Transaction() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div className="flex flex-col gap-1">
                     <p className="text-xs text-gray-500">
-                      {formatDate(transaction.createdAt || transaction.date)}
+                      {formatDate(transaction.createdAt)}
                     </p>
                     <p className="text-xs text-gray-400 font-mono">
                       {transaction.id || transaction.transactionId || 'N/A'}
@@ -348,13 +354,13 @@ function Transaction() {
                     <div className="flex justify-between items-start">
                       <span className="text-gray-600 text-sm">Created At</span>
                       <span className="font-semibold text-gray-900">
-                        {formatDetailedDate(selectedTransaction.subscription.createdAt)}
+                        {formatDetailedDate(selectedTransaction.createdAt)}
                       </span>
                     </div>
                     <div className="flex justify-between items-start">
                       <span className="text-gray-600 text-sm">Expires At</span>
                       <span className="font-semibold text-gray-900">
-                        {formatDetailedDate(selectedTransaction.subscription.expiresAt)}
+                        {formatDetailedDate(selectedTransaction.expiresAt)}
                       </span>
                     </div>
                   </div>

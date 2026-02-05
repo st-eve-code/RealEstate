@@ -209,16 +209,18 @@ function Profile({user}) {
       
       // Build update data object
       const updateData = {
-        displayName: formData.displayName,
-        fullName: formData.fullName || undefined,
-        phoneNumber: formData.phoneNumber || undefined,
-        dateOfBirth: formData.dateOfBirth || undefined,
-        imageUrl: formData.imageUrl || undefined,
-        permissions: {
-          shareContactInfo: formData.shareContactInfo,
-          sharePhoto: formData.sharePhoto
-        },
-        autoRenewal: formData.autoRenewal,
+        ...unde_find({
+          displayName: formData.displayName,
+          fullName: formData.fullName || undefined,
+          phoneNumber: formData.phoneNumber || undefined,
+          dateOfBirth: formData.dateOfBirth || undefined,
+          imageUrl: formData.imageUrl || undefined,
+          permissions: {
+            shareContactInfo: formData.shareContactInfo,
+            sharePhoto: formData.sharePhoto
+          },
+          autoRenewal: formData.autoRenewal
+        }),
         updatedAt: Timestamp.now()
       };
 
@@ -266,7 +268,7 @@ function Profile({user}) {
       }
 
       // Update Firestore document
-      const res = await updateDocumentById('users', user.uid, unde_find(updateData));
+      const res = await updateDocumentById('users', user.uid, updateData);
       
       if(!res.success) {
         // Revert Firebase Auth profile

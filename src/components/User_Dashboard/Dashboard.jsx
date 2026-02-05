@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Languages, ChevronDown, Plus, Eye, Coins, UserCircle, BookOpen } from 'lucide-react';
 import { Chart } from 'chart.js/auto';
 import { useAuth } from '@/lib/auth-context';
+import RecentlyViewed from './RecentlyViewed';
 
 // Placeholder images
 const banner = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=400&fit=crop";
@@ -335,8 +336,15 @@ function Dashboard() {
             </div>
           </div>
           
-          {/* Pie Chart */}
-          <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 lg:col-span-5">
+          {/* Recently Viewed Widget */}
+          <div className="lg:col-span-5">
+            <RecentlyViewed variant="sidebar" maxItems={5} />
+          </div>
+        </div>
+
+        {/* Second Row - Pie Chart */}
+        <div className="mt-4 sm:mt-6">
+          <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100">
             <div className="mb-4">
               <h2 className="font-bold text-gray-800 text-lg mb-1">Distribution</h2>
               <p className="text-gray-500 text-sm">

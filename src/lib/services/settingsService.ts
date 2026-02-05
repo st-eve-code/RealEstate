@@ -228,14 +228,14 @@ export async function updateSettings(
     if (!settingsDoc.exists()) {
       const initialSettings = {
         ...defaultSettings,
-        updatedAt: Timestamp.now(),
+        updatedAt: Timestamp.now().toDate(),
       };
       await setDoc(settingsRef, removeUndefined(initialSettings));
     }
     
     const updateData: any = {
       [`${section}`]: data,
-      updatedAt: Timestamp.now(),
+      updatedAt: Timestamp.now().toDate(),
     };
     
     if (userId && userName) {
@@ -264,13 +264,13 @@ export async function resetSettings(
     if (section) {
       const updateData = {
         [section]: defaultSettings[section],
-        updatedAt: Timestamp.now(),
+        updatedAt: Timestamp.now().toDate(),
       };
       await updateDoc(settingsRef, removeUndefined(updateData));
     } else {
       const resetData = {
         ...defaultSettings,
-        updatedAt: Timestamp.now(),
+        updatedAt: Timestamp.now().toDate(),
       };
       await setDoc(settingsRef, removeUndefined(resetData));
     }
