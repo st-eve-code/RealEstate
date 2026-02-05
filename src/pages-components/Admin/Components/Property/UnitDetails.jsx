@@ -36,6 +36,7 @@ import { db } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth-context';
 import ReviewModal from './components/ReviewModal';
 import ConfirmModal from '@/components/ConfirmModal';
+import { toDate } from '@/lib/utils/timestampUtils';
 
 export default function UnitDetails({ unitId: propUnitId, isSidebarCollapsed }) {
   const params = useParams();
@@ -79,14 +80,7 @@ export default function UnitDetails({ unitId: propUnitId, isSidebarCollapsed }) 
 
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';
-    if (timestamp.toDate) {
-      return timestamp.toDate().toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-      });
-    }
-    return new Date(timestamp).toLocaleDateString('en-US', { 
+    return toDate(timestamp).toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'short', 
       day: 'numeric' 

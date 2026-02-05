@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Star, User, Clock } from 'lucide-react';
 import { fetchUnitReviews, fetchUnitById } from './services/unitService';
+import { toDate } from '@/lib/utils/timestampUtils';
 
 export default function UnitReviews({ unitID, isSidebarCollapsed }) {
   const params = useParams();
@@ -36,10 +37,7 @@ export default function UnitReviews({ unitID, isSidebarCollapsed }) {
 
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';
-    if (timestamp.toDate) {
-      return timestamp.toDate().toLocaleString();
-    }
-    return new Date(timestamp).toLocaleString();
+    return toDate(timestamp).toLocaleString();
   };
 
   const renderStars = (rating) => {

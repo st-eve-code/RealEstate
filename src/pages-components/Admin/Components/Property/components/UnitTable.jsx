@@ -13,6 +13,7 @@ import {
   FileText
 } from 'lucide-react';
 import Link from 'next/link';
+import { toDate } from '@/lib/utils/timestampUtils';
 
 const STATUS_CONFIG = {
   pending: {
@@ -54,10 +55,7 @@ export default function UnitTable({
 }) {
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';
-    if (timestamp.toDate) {
-      return timestamp.toDate().toLocaleDateString();
-    }
-    return new Date(timestamp).toLocaleDateString();
+    return toDate(timestamp).toLocaleDateString();
   };
 
   const formatLocation = (location) => {

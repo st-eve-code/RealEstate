@@ -5,6 +5,7 @@ import { collection, getDocs, query, where, updateDoc, doc, Timestamp } from 'fi
 import { db } from '@/lib/firebase';
 import { Search, Plus, Edit, Trash2, Eye, X, Save, UserPlus, Filter } from 'lucide-react';
 import ConfirmModal from '../../../components/ConfirmModal';
+import { toDate } from '@/lib/utils/timestampUtils';
 
 function Clients({ isSidebarCollapsed }) {
   const [clients, setClients] = useState([]);
