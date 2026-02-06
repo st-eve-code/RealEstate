@@ -145,7 +145,7 @@ function Home() {
           <p className='h-9 font-Custom text-gray-400 font-normal text-sm  pt-2'>We've just released an update</p>
         </div>
         <h1 className='block-animate font-Custom font-bold text-gray-800 lg:text-6xl text-5xl lg:max-w-[46rem] max-w-[38rem] mx-auto text-center flex justify-center items-center '>
-          Trusted Real Estate Property Just For You
+          Trusted Real Estate Property Just For Yo
         </h1>
         <p className='block-animate font-Custom font-normal text-gray-500 text-sm text-center px-2 max-w-[45rem] flex justify-center items-center mx-auto my-3'>
           We prioritize your peace of mind throughout the entire home renting process. With unwavering commitment,

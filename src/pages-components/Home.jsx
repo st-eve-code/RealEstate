@@ -138,7 +138,7 @@ function Home() {
                   <div key={index} className='block-animate bg-white border col-span-4 shadow-md shadow-gray-300/40 max-w-[22rem] mt-1 p-3 rounded-2xl'>
                     <div className='size-10 my-2 bg-blue-600 p-1 rounded-md'><Icons size={30} className='text-white'/></div>
                      <h1 className='font-Custom font-bold text-lg text-gray-700 py-2'>{items.title}</h1>
-                     <p className='font-Custom font-medium text-xs text-gray-400 text-left'>{items.body}</p>
+                     <p className='font-Custom font-medium text-sm text-gray-600 text-left'>{items.description}</p>
                      <button className='flex items-center gap-2 font-Custom font-bold text-gray-600 text-sm py-3'>{t('common.learnMore')} <hr className='w-16 mt-1 border-y-1 border-gray-400'/></button>
                   </div>
                 )}
