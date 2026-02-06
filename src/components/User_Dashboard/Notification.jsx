@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react';
 import { Bell, Trash2, BellOff, Home, Heart, MessageSquare, AlertCircle } from 'lucide-react';
 

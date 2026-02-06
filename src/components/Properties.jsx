@@ -1,33 +1,37 @@
-import React from 'react';
+'use client'
 
-const galleryImages = [
-  {
-    id: 1,
-    title: 'Hostels',
-    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop',
-    description: 'We provide the best hostel qualities for all your needs.',
-  },
-  {
-    id: 2,
-    title: 'Apartments',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=500&fit=crop',
-    description: 'Our apartments are designed to offer comfort, style, and convenience.',
-  },
-  {
-    id: 3,
-    title: 'Studios',
-    image: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&h=600&fit=crop',
-    description: 'Compact and modern studios with all the essentials for solo living.',
-  },
-  {
-    id: 4,
-    title: 'Houses',
-    image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop',
-    description: 'Discover homes designed to give you space, privacy, and lifestyle.',
-  },
-];
+import React from 'react';
+import { useTranslation } from '@/i18n';
 
 export default function List_products() {
+  const { t } = useTranslation();
+  
+  const galleryImages = [
+    {
+      id: 1,
+      title: t('propertyTypes.hostels.title'),
+      image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop',
+      description: t('propertyTypes.hostels.description'),
+    },
+    {
+      id: 2,
+      title: t('propertyTypes.apartments.title'),
+      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=500&fit=crop',
+      description: t('propertyTypes.apartments.description'),
+    },
+    {
+      id: 3,
+      title: t('propertyTypes.studios.title'),
+      image: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&h=600&fit=crop',
+      description: t('propertyTypes.studios.description'),
+    },
+    {
+      id: 4,
+      title: t('propertyTypes.houses.title'),
+      image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop',
+      description: t('propertyTypes.houses.description'),
+    },
+  ];
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

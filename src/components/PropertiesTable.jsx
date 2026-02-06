@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from 'react';
 // import { Account } from '../Lib/supabaseClient';
 import { 

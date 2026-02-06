@@ -1,3 +1,5 @@
+'use client'
+
 import { LogOut, X, AlertTriangle } from 'lucide-react';
 import React, { useEffect } from 'react';
 

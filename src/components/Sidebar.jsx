@@ -1,5 +1,7 @@
+'use client'
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import {
   Building,
   UserCircle,
@@ -19,6 +21,7 @@ import {
 
 // Mock logo - replace with your actual import
 import logo from '../assets/logo.svg';
+import { useAuth } from '@/lib/auth-context';
 // Mock Logout component for demo
 function Logout({ isOpen, onClose, onConfirm }) {
   if (!isOpen) return null;
@@ -43,31 +46,29 @@ function Logout({ isOpen, onClose, onConfirm }) {
   );
 }
 
-function Sidebar({ isCollapsed, onToggle }) {
+function Sidebar({ isCollapsed, onToggle, showNotifications = true }) {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isOpen, setOpen] = useState(false);
-  const navigate = useNavigate();
+  const router = useRouter();
+  const {signOut} = useAuth();
 
   const handleLogoutConfirm = () => {
     // Clear authentication tokens/session
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-
-    // Close modal
     setShowLogoutModal(false);
+    signOut()
 
-    // Navigate to login
-    navigate('/login');
   };
 
   // Handle selected option
   const HandleSelection = (option) => {
-    navigate(option === 'dashboard' ? '/dashboard' : `/dashboard/${option}`, { replace: true });
+    router.push(option === 'dashboard' ? '/dashboard' : `/dashboard/${option}`, { replace: true });
     setOpen(false); // Close mobile menu after selection
   };
 
   const handleLogoClick = () => {
-    navigate('/');
+    router.push('/');
   };
 
   // Toggle sidebar collapse for desktop
@@ -102,11 +103,11 @@ function Sidebar({ isCollapsed, onToggle }) {
       name: 'Store',
       content: 'store'
     },
-    {
+    ...(showNotifications ? [{
       menu_icon: Bell,
       name: 'Notifications',
       content: 'notification'
-    },
+    }] : []),
     {
       menu_icon: Coins,
       name: 'Subscription Plans',
@@ -162,7 +163,7 @@ function Sidebar({ isCollapsed, onToggle }) {
               isCollapsed ? 'md:hidden' : 'md:block'
             } ${isOpen ? 'block' : 'block md:block'}`}>
             <img
-              src={logo}
+              src={logo.src || logo}
               alt="RentSpot Logo"
               className="h-10"
               onClick={handleLogoClick}

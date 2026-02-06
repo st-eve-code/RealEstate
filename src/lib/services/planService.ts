@@ -1,0 +1,226 @@
+/**
+ * Plan Management Service
+ * Handles CRUD operations for subscription plans in Firestore
+ */
+
+import { 
+  collection, 
+  getDocs, 
+  getDoc,
+  doc, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  Timestamp,
+  query,
+  orderBy,
+  where
+} from 'firebase/firestore';
+import { db } from '../firebase';
+import { Plan } from '../types';
+import { removeUndefined } from '../utils/removeUndefined';
+
+export interface PlanFormData {
+  name: string;
+  description: string;
+  price: number;
+  duration: number; // in days (will be converted to milliseconds)
+  features: string[];
+  userPoints: number; // points awarded to user
+  referrerPoints: number; // points awarded to referrer
+  accType?: 'tenant' | 'landlord';
+  plan: 'daily' | 'monthly' | 'yearly'; // SubscriptionPlanLabel
+  tax?: number; // optional tax percentage (0.1 = 10%)
+  viewLimits?: number; // optional view limits
+  postConstraints?: number; // optional post constraints
+  constraintDuration?: number; // optional duration for constraints reset (in days)
+}
+
+/**
+ * Fetch all plans from Firestore
+ */
+export async function fetchPlans(): Promise<Plan[]> {
+  try {
+    const plansRef = collection(db, 'plans');
+    const q = query(plansRef, orderBy('price', 'asc'));
+    const querySnapshot = await getDocs(q);
+    
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id as any,
+      ...doc.data(),
+    })) as Plan[];
+  } catch (error) {
+    console.error('Error fetching plans:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch a single plan by ID
+ */
+export async function fetchPlanById(planId: string): Promise<Plan | null> {
+  try {
+    const planRef = doc(db, 'plans', planId);
+    const planDoc = await getDoc(planRef);
+    
+    if (!planDoc.exists()) {
+      return null;
+    }
+    
+    return {
+      id: planDoc.id as any,
+      ...planDoc.data(),
+    } as Plan;
+  } catch (error) {
+    console.error('Error fetching plan:', error);
+    throw error;
+  }
+}
+
+/**
+ * Create a new plan
+ */
+export async function createPlan(
+  planData: PlanFormData, 
+  userId: string, 
+  userName: string
+): Promise<string> {
+  try {
+    const plansRef = collection(db, 'plans');
+    
+    // Convert durations from days to milliseconds
+    const planDurationInMs = planData.duration * 24 * 60 * 60 * 1000;
+    const constraintDurationInMs = (planData.constraintDuration || 1) * 24 * 60 * 60 * 1000 ;
+    
+    const newPlan: Omit<Plan, 'id'> = {
+      name: planData.name,
+      description: planData.description,
+      price: planData.price,
+      type: 'subscription',
+      accType: planData.accType,
+      features: planData.features,
+      points: {
+        user: planData.userPoints,
+        referrer: planData.referrerPoints,
+      },
+      constraints: {
+        viewLimits: planData.viewLimits,
+        postConstraints: planData.postConstraints,
+        // duration: constraintDurationInMs // in milliseconds, optional
+      },
+      duration: planData.duration, // plan lifetime in milliseconds
+      plan: planData.plan,
+      tax: planData.tax,
+      createdAt: Timestamp.now(),
+      createdBy: {
+        id: userId,
+        name: userName,
+      },
+    };
+    
+    // Remove undefined values before saving to Firestore
+    const cleanedPlan = removeUndefined(newPlan);
+    const docRef = await addDoc(plansRef, cleanedPlan);
+    return docRef.id;
+  } catch (error) {
+    console.error('Error creating plan:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update an existing plan
+ */
+export async function updatePlan(
+  planId: string, 
+  planData: Partial<PlanFormData>
+): Promise<void> {
+  try {
+    const planRef = doc(db, 'plans', planId);
+    
+    const updateData = {
+      ...planData,
+      updatedAt: Timestamp.now(),
+    };
+    
+    // Remove undefined values before saving to Firestore
+    const cleanedData = removeUndefined(updateData);
+    await updateDoc(planRef, cleanedData);
+  } catch (error) {
+    console.error('Error updating plan:', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a plan
+ */
+export async function deletePlan(planId: string): Promise<void> {
+  try {
+    const planRef = doc(db, 'plans', planId);
+    await deleteDoc(planRef);
+  } catch (error) {
+    console.error('Error deleting plan:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get plans by account type
+ */
+export async function fetchPlansByAccountType(accType: 'tenant' | 'landlord'): Promise<Plan[]> {
+  try {
+    const plansRef = collection(db, 'plans');
+    const q = query(
+      plansRef, 
+      where('accType', '==', accType),
+      orderBy('price', 'asc')
+    );
+    const querySnapshot = await getDocs(q);
+    
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id as any,
+      ...doc.data(),
+    })) as Plan[];
+  } catch (error) {
+    console.error('Error fetching plans by account type:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get plan statistics
+ */
+export async function getPlanStats() {
+  try {
+    const plans = await fetchPlans();
+    
+    // Get all users to calculate plan subscriptions
+    const usersRef = collection(db, 'users');
+    const usersSnapshot = await getDocs(usersRef);
+    const users = usersSnapshot.docs.map(doc => doc.data());
+    
+    // Calculate stats
+    const totalPlans = plans.length;
+    const activeSubscriptions = users.filter(user => 
+      user.subscription && user.subscription.state === 'active'
+    ).length;
+    
+    const totalRevenue = users.reduce((sum, user) => {
+      if (user.subscription?.state === 'active') {
+        return sum + (user.subscription.paid || 0);
+      }
+      return sum;
+    }, 0);
+    
+    return {
+      totalPlans,
+      activeSubscriptions,
+      totalRevenue,
+      totalMembers: users.length,
+    };
+  } catch (error) {
+    console.error('Error fetching plan stats:', error);
+    throw error;
+  }
+}

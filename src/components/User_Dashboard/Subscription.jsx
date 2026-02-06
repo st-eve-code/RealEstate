@@ -1,5 +1,9 @@
+'use client'
+
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, CheckCircle, Star, ArrowLeft, AlertCircle } from 'lucide-react';
+import { fetchPlans } from '../../lib/services/planService';
+import { useRouter } from 'next/navigation';
 
 function Subscription() {
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -18,65 +22,46 @@ function Subscription() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState(null); // 'success', 'failed', or null
+  const [plans, setPlans] = useState([]);
+  const [loadingPlans, setLoadingPlans] = useState(true);
+  const router = useRouter();
 
-  const plans = [
-    {
-      name: "Basic",
-      price: 1000,
-      description: "Perfect for individuals looking for a few properties",
-      features: [
-        "View 4 Properties",
-        "Basic Details",
-        "Email Support",
-        "Standard Photos",
-        "Standard live maps"
-      ],
-      views: 4,
-      popular: false
-    },
-    {
-      name: "Starter",
-      price: 3000,
-      description: "Ideal for users wanting more options",
-      features: [
-        "View 8 Properties",
-        "Enhanced Details",
-        "Priority Support",
-        "High-Quality Photos",
-        "Premium live maps"
-      ],
-      views: 8,
-      popular: true
-    },
-    {
-      name: "Professional",
-      price: 5000,
-      description: "Best for serious property seekers",
-      features: [
-        "View 12 Properties",
-        "Premium Details",
-        "24/7 Support",
-        "HD Photos & Videos",
-        "Premium live maps"
-      ],
-      views: 12,
-      popular: false
-    },
-    {
-      name: "Enterprise",
-      price: 10000,
-      description: "Complete solution for extensive searches",
-      features: [
-        "View 16 Properties",
-        "Premium Details",
-        "Dedicated Manager",
-        "HD Photos & Videos",
-        "Premium live maps"
-      ],
-      views: 16,
-      popular: false
-    }
-  ];
+  // Fetch plans from Firebase
+  useEffect(() => {
+    const loadPlans = async () => {
+      try {
+        setLoadingPlans(true);
+        const fetchedPlans = await fetchPlans();
+        
+        // Transform Firebase plans to match the expected format
+        const transformedPlans = fetchedPlans.map((plan) => ({
+          id: plan.id,
+          name: plan.name,
+          price: plan.price,
+          description: plan.description,
+          features: plan.features,
+          views: plan.constraints.viewLimits || 999, // Use viewLimits or unlimited
+          popular: false, // You can add a popular field to Firebase Plan type if needed
+          duration: Math.round(plan.duration / (24 * 60 * 60 * 1000)), // Convert plan duration ms to days
+          userPoints: plan.points.user,
+          referrerPoints: plan.points.referrer,
+          plan: plan.plan, // daily, monthly, yearly
+          tax: plan.tax || 0,
+          accType: plan.accType,
+        }));
+        
+        setPlans(transformedPlans);
+      } catch (error) {
+        console.error('Error loading plans:', error);
+        // Fallback to empty array if error
+        setPlans([]);
+      } finally {
+        setLoadingPlans(false);
+      }
+    };
+
+    loadPlans();
+  }, []);
 
   // Generate transaction ID on component mount
   useEffect(() => {
@@ -158,10 +143,19 @@ function Subscription() {
     setIsProcessing(true);
     setRedirectLink('Processing...');
     
-    setTimeout(() => {
-      setStepChange('step2');
+    // Find the selected plan ID
+    const selectedPlanData = plans.find(p => p.name === planName);
+    
+    if (!selectedPlanData) {
+      alert('Selected plan not found');
       setIsProcessing(false);
       setRedirectLink('Continue to Payment');
+      return;
+    }
+    
+    // Navigate to payment page with plan ID in URL
+    setTimeout(() => {
+      router.push(`/dashboard/subscription/${selectedPlanData.id}`)
     }, 1500);
   };
 
@@ -351,8 +345,22 @@ function Subscription() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
-            {plans.map((plan, index) => {
+          {loadingPlans ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="w-12 h-12 mx-auto border-b-2 border-blue-600 rounded-full animate-spin"></div>
+                <p className="mt-4 text-gray-600">Loading subscription plans...</p>
+              </div>
+            </div>
+          ) : plans.length === 0 ? (
+            <div className="text-center py-12">
+              <AlertCircle className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+              <p className="text-gray-600 mb-4">No subscription plans available at the moment.</p>
+              <p className="text-sm text-gray-500">Please check back later or contact support.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
+              {plans.map((plan, index) => {
               const isSelected = selectedPlan === plan.name;
               const isPopular = plan.popular;
 
@@ -452,8 +460,9 @@ function Subscription() {
                   </div>
                 </div>
               );
-            })}
-          </div>
+              })}
+            </div>
+          )}
           
           <div className='flex justify-center mt-16'>
             <button 

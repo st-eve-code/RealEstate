@@ -1,9 +1,11 @@
+'use client'
+
 import React from 'react';
 import { MessageCircle, Mail, Phone, HelpCircle, ArrowRight, Sparkles, Headphones, Clock, CheckCircle } from 'lucide-react';
 
 function HelpSection() {
   const handleRedirect = () => {
-    // In your actual app, use: navigate('/contact') or window.location.href = '/contact'
+    // In your actual app, use: router.push('/contact') or window.location.href = '/contact'
     console.log('Redirecting to /contact');
     alert('Redirecting to /contact page...');
   };

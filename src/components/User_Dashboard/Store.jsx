@@ -1,57 +1,120 @@
-import React, { useState } from 'react';
-import { ArrowBigDown, ChevronDown, Eye, MapPin, Calendar, Tag } from 'lucide-react';
+'use client'
 
-function Store({ sidebar }) {
+import React, { useState } from 'react';
+import { ArrowBigDown, ChevronDown, Eye, MapPin, Calendar, Tag, RefreshCw, AlertCircle } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
+import { useLastViewedUnits } from '@/Hooks/useLastViewedUnits';
+import { toDate } from '@/lib/utils/timestampUtils';
+
+function Store({ sidebar = null }) {
+  const { user, viewedUnits, refreshViewedUnits } = useAuth();
+  const { units, loading, error, refetch } = useLastViewedUnits(user?.uid, true);
+  
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [isOpen, setIsOpen] = useState(false);
-  
-  const Data = [
-    {
-      id: 1,
-      name: 'Chariot Hotel',
-      category: 'Hotel',
-      price: 500000,
-      date: '20/08/2025',
-      location: 'Malingo',
-      status: 'viewed'
-    },
-    {
-      id: 2,
-      name: 'Italio Hostel',
-      category: 'Hostel',
-      price: 450000,
-      date: '20/08/2025',
-      location: 'South',
-      status: 'viewed'
-    },
-    {
-      id: 3,
-      name: 'Evan Studio',
-      category: 'Studio',
-      price: 800000,
-      date: '22/08/2025',
-      location: 'Checkpoint',
-      status: 'viewed'
-    },
-    {
-      id: 4,
-      name: 'Akansas',
-      category: 'Hostel',
-      price: 320000,
-      date: '22/08/2025',
-      location: 'South',
-      status: 'viewed'
-    },
-  ];
 
   const handlePropertyClick = (id) => {
     console.log(`Navigating to property ${id}`);
-    // navigate(`/dashboard/property/details/${id}`);
+    // router.push(`/dashboard/property/details/${id}`);
   };
 
+  // Format timestamp to readable date
+  const formatDate = (timestamp) => {
+    if (!timestamp) return 'N/A';
+    try {
+      const date = toDate(timestamp);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+    } catch (error) {
+      return 'Invalid Date';
+    }
+  };
+
+  // Map type to category for filtering
+  const getCategoryFromType = (type) => {
+    const typeMap = {
+      'hostel': 'Hostel',
+      'apartment': 'Hotel', // Mapping apartment to Hotel for UI consistency
+      'studio': 'Studio'
+    };
+    return typeMap[type] || type;
+  };
+
+  // Transform Firestore units to display format
+  const transformedUnits = units.map(unit => ({
+    id: unit.id,
+    name: unit.name,
+    category: getCategoryFromType(unit.type),
+    type: unit.type,
+    price: unit.payment.price,
+    currency: unit.payment.currency,
+    period: unit.payment.period,
+    date: formatDate(unit.viewedAt),
+    location: `${unit.location.city}, ${unit.location.country}`,
+    address: unit.location.address,
+    status: 'viewed',
+    totalnumber: unit.totalnumber,
+    viewedAt: unit.viewedAt,
+    createdAt: unit.createdAt
+  }));
+
   const filteredData = selectedCategory === 'All Categories' 
-    ? Data 
-    : Data.filter(item => item.category === selectedCategory);
+    ? transformedUnits 
+    : transformedUnits.filter(item => item.category === selectedCategory);
+
+  // Loading State
+  if (loading) {
+    return (
+      <section className={`w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 min-h-screen transition-all ${
+        sidebar ? 'lg:max-w-5xl' : 'lg:max-w-7xl'
+      } mx-auto`}>
+        <div className="mb-6">
+          <h1 className="font-bold text-xl sm:text-2xl text-gray-700">My Store</h1>
+          <p className="text-gray-500 text-sm mt-1.5">
+            View and manage all properties you've explored. Keep track of your favorites in one place.
+          </p>
+        </div>
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <RefreshCw className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Loading your viewed properties...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error State
+  if (error) {
+    return (
+      <section className={`w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 min-h-screen transition-all ${
+        sidebar ? 'lg:max-w-5xl' : 'lg:max-w-7xl'
+      } mx-auto`}>
+        <div className="mb-6">
+          <h1 className="font-bold text-xl sm:text-2xl text-gray-700">My Store</h1>
+          <p className="text-gray-500 text-sm mt-1.5">
+            View and manage all properties you've explored. Keep track of your favorites in one place.
+          </p>
+        </div>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 flex items-start gap-3">
+          <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <h3 className="text-red-800 font-semibold mb-1">Error Loading Properties</h3>
+            <p className="text-red-600 text-sm">{error}</p>
+            <button
+              onClick={refetch}
+              className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={`w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 min-h-screen transition-all ${
@@ -59,11 +122,21 @@ function Store({ sidebar }) {
     } mx-auto`}>
       
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="font-bold text-xl sm:text-2xl text-gray-700">My Store</h1>
-        <p className="text-gray-500 text-sm mt-1.5">
-          View and manage all properties you've explored. Keep track of your favorites in one place.
-        </p>
+      <div className="mb-6 flex justify-between items-start">
+        <div>
+          <h1 className="font-bold text-xl sm:text-2xl text-gray-700">My Store</h1>
+          <p className="text-gray-500 text-sm mt-1.5">
+            View and manage all properties you've explored. Keep track of your favorites in one place.
+          </p>
+        </div>
+        <button
+          onClick={refetch}
+          className="flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          title="Refresh properties"
+        >
+          <RefreshCw className="w-4 h-4" />
+          <span className="hidden sm:inline">Refresh</span>
+        </button>
       </div>
       
       {/* Filters */}
@@ -160,7 +233,8 @@ function Store({ sidebar }) {
                     </td>
                     <td className="py-3 px-4 text-sm text-gray-600">{item.category}</td>
                     <td className="py-3 px-4 text-sm text-gray-800 font-medium">
-                      {item.price.toLocaleString()} FCFA
+                      {item.price.toLocaleString()} {item.currency || 'FCFA'}
+                      {item.period && <span className="text-xs text-gray-500">/{item.period}</span>}
                     </td>
                     <td className="py-3 px-4 text-sm text-gray-600">{item.date}</td>
                     <td className="py-3 px-4 text-sm text-gray-600">{item.location}</td>
@@ -205,7 +279,8 @@ function Store({ sidebar }) {
                   <div className="flex items-center gap-2 text-sm">
                     <Tag className="w-4 h-4 text-gray-400 flex-shrink-0" />
                     <span className="font-semibold text-gray-800">
-                      {item.price.toLocaleString()} FCFA
+                      {item.price.toLocaleString()} {item.currency || 'FCFA'}
+                      {item.period && <span className="text-xs text-gray-500 ml-1">/{item.period}</span>}
                     </span>
                   </div>
                   

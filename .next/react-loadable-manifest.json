@@ -1,1 +1,94 @@
-{}
+{
+  "../node_modules/@ionic/core/components/index2.js -> ./ios.transition.js": {
+    "id": "../node_modules/@ionic/core/components/index2.js -> ./ios.transition.js",
+    "files": []
+  },
+  "../node_modules/@ionic/core/components/index2.js -> ./md.transition.js": {
+    "id": "../node_modules/@ionic/core/components/index2.js -> ./md.transition.js",
+    "files": []
+  },
+  "../node_modules/@ionic/core/components/ion-app.js -> ./focus-visible.js": {
+    "id": "../node_modules/@ionic/core/components/ion-app.js -> ./focus-visible.js",
+    "files": []
+  },
+  "../node_modules/@ionic/core/components/ion-app.js -> ./hardware-back-button.js": {
+    "id": "../node_modules/@ionic/core/components/ion-app.js -> ./hardware-back-button.js",
+    "files": []
+  },
+  "../node_modules/@ionic/core/components/ion-app.js -> ./index7.js": {
+    "id": "../node_modules/@ionic/core/components/ion-app.js -> ./index7.js",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_ionic_core_components_index7_js.js"
+    ]
+  },
+  "../node_modules/@ionic/core/components/ion-app.js -> ./input-shims.js": {
+    "id": "../node_modules/@ionic/core/components/ion-app.js -> ./input-shims.js",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_ionic_core_components_input-shims_js.js"
+    ]
+  },
+  "../node_modules/@ionic/core/components/ion-app.js -> ./keyboard.js": {
+    "id": "../node_modules/@ionic/core/components/ion-app.js -> ./keyboard.js",
+    "files": []
+  },
+  "../node_modules/@ionic/core/components/ion-app.js -> ./status-tap.js": {
+    "id": "../node_modules/@ionic/core/components/ion-app.js -> ./status-tap.js",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_ionic_core_components_status-tap_js.js"
+    ]
+  },
+  "../node_modules/@ionic/core/components/ion-item-sliding.js -> ./index3.js": {
+    "id": "../node_modules/@ionic/core/components/ion-item-sliding.js -> ./index3.js",
+    "files": []
+  },
+  "../node_modules/@ionic/core/components/ion-menu.js -> ./index3.js": {
+    "id": "../node_modules/@ionic/core/components/ion-menu.js -> ./index3.js",
+    "files": []
+  },
+  "../node_modules/@ionic/core/components/ion-nav.js -> ./swipe-back.js": {
+    "id": "../node_modules/@ionic/core/components/ion-nav.js -> ./swipe-back.js",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_ionic_core_components_swipe-back_js.js"
+    ]
+  },
+  "../node_modules/@ionic/core/components/ion-range.js -> ./index3.js": {
+    "id": "../node_modules/@ionic/core/components/ion-range.js -> ./index3.js",
+    "files": []
+  },
+  "../node_modules/@ionic/core/components/ion-refresher.js -> ./index3.js": {
+    "id": "../node_modules/@ionic/core/components/ion-refresher.js -> ./index3.js",
+    "files": []
+  },
+  "../node_modules/@ionic/core/components/ion-reorder-group.js -> ./index3.js": {
+    "id": "../node_modules/@ionic/core/components/ion-reorder-group.js -> ./index3.js",
+    "files": []
+  },
+  "../node_modules/@ionic/core/components/ion-router-outlet.js -> ./swipe-back.js": {
+    "id": "../node_modules/@ionic/core/components/ion-router-outlet.js -> ./swipe-back.js",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_ionic_core_components_swipe-back_js.js"
+    ]
+  },
+  "../node_modules/@ionic/core/components/ion-segment.js -> ./index3.js": {
+    "id": "../node_modules/@ionic/core/components/ion-segment.js -> ./index3.js",
+    "files": []
+  },
+  "../node_modules/@ionic/core/components/ion-toggle.js -> ./index3.js": {
+    "id": "../node_modules/@ionic/core/components/ion-toggle.js -> ./index3.js",
+    "files": []
+  },
+  "../node_modules/@ionic/core/components/picker-column2.js -> ./index3.js": {
+    "id": "../node_modules/@ionic/core/components/picker-column2.js -> ./index3.js",
+    "files": []
+  },
+  "lib/auth-context.tsx -> firebase/firestore": {
+    "id": "lib/auth-context.tsx -> firebase/firestore",
+    "files": []
+  },
+  "pages-components/Home.jsx -> leaflet": {
+    "id": "pages-components/Home.jsx -> leaflet",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_leaflet_dist_leaflet-src_js.js"
+    ]
+  }
+}

@@ -1,42 +1,48 @@
+'use client'
+
 import React from 'react';
 import '../App.css';
 import {Users, ThumbsUpIcon,TargetIcon,Waypoints,CloudyIcon} from 'lucide-react'
+import { useTranslation } from '@/i18n';
+
 function Services() {
+    const { t } = useTranslation();
+    
     const services = [
         {
             icon : Users,
-            title: 'Client Focused',
-            text: 'we prioritize our clients and attend to all their needs , making sure they are satisfied with our services.'
+            title: t('services.clientFocused.title'),
+            text: t('services.clientFocused.description')
         },
         {
             icon: ThumbsUpIcon,
-            title: 'Trusted Partners',
-            text: 'Partnering with us is a benefits for both side which can lead to better trust and more partnerships.'
+            title: t('services.trustedPartners.title'),
+            text: t('services.trustedPartners.description')
         },
         {
             icon: TargetIcon,
-            title: 'Tailored Solutions',
-            text: 'Problem solving has never been so easy with us, we provide the best solutions for your renting process.'
+            title: t('services.tailoredSolutions.title'),
+            text: t('services.tailoredSolutions.description')
         },
         {
             icon: Waypoints,
-            title: 'Customer Support',
-            text: 'We provide a free customer support services to attend to all our customer`s problems and more.'
+            title: t('services.customerSupport.title'),
+            text: t('services.customerSupport.description')
         },
         {
             icon: CloudyIcon,
-            title: 'Transparent Market',
-            text: 'All our decisions in the market are genuine and all for the interest of the customer`s unique needs.'
+            title: t('services.transparentMarket.title'),
+            text: t('services.transparentMarket.description')
         },
     ];
   return (
     <section className='flex flex-wrap lg:p-[1rem] p-5 gap-10 mt-[2rem] items-center justify-center'>
         {/* section having all the services we offer */}
         {services.map(
-            (e)=> {
+            (e, index)=> {
                 const Icons =e.icon;
                 return (
-                    <div className='bg-white shadow-md shadow-gray-300/40 md:max-w-[18rem] lg:max-w-[16rem] rounded-2xl h-[11rem] p-4'>
+                    <div key={index} className='bg-white shadow-md shadow-gray-300/40 md:max-w-[18rem] lg:max-w-[16rem] rounded-2xl h-[11rem] p-4'>
                         <div className='block-animate size-9 bg-blue-600 rounded-full p-2 mb-3 mx-auto m-2'>
                             <Icons size={20} className='text-white'/>
                         </div>
